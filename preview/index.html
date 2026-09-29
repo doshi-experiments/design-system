@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en" data-project="household" data-density="comfortable">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f6f7fb">
+<title>Doshi · Shared design foundation</title>
+<script src="prepaint.js"></script>
+<link rel="stylesheet" href="../dist/tokens.css"><link rel="stylesheet" href="preview.css">
+<script type="module" src="preview.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header><a href="#main" class="brand">doshi<span> / together by design</span></a><span class="badge">Foundation · 0.1</span></header>
+<main id="main" tabindex="-1">
+<section class="hero"><p class="eyebrow">One family. Many personalities.</p><h1>Useful things.<br><em>A little more playful.</em></h1><p class="lede">Shared foundations for the places we build, explore, and call home.</p></section>
+<section class="controls" aria-label="Design settings">
+<label>Project<select id="project"><option value="household">Household</option><option value="finance">Finance</option><option value="portfolio">Portfolio</option><option value="experiments">Experiments</option><option value="visualizations">Visualizations</option><option value="calculator">Calculator</option><option value="game">Game</option></select></label>
+<label>Appearance<select id="appearance"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
+<label>Density<select id="density"><option value="comfortable">Comfortable</option><option value="compact">Compact</option><option value="game">Game · 60px targets</option></select></label>
+</section>
+<section class="grid" aria-label="Component samples">
+<article class="card featured"><p class="eyebrow">At home</p><h2>A place for everything.</h2><p>Recipes, projects, and the everyday tools that keep a household moving.</p><div class="actions"><a class="button" href="#palette">Explore the palette <span aria-hidden="true">↗</span></a></div></article>
+<article class="card"><p class="eyebrow">Finance · sample data</p><h2>Ready for a closer look.</h2><div class="stat">$1,248.50</div><p>Quiet numbers. Clear next steps.</p><div class="notice success">✓ All sample files checked</div><div class="actions"><button disabled aria-describedby="disabled-reason">Continue review</button></div><p id="disabled-reason" class="small">Preview only. Connect the finance workflow to enable review.</p></article>
+<article class="card"><p class="eyebrow">Inputs</p><h2>Room to get it right.</h2><label>Project name<input value="Something worth making" autocomplete="off"></label><div class="notice info">ⓘ Your project uses the same shared controls.</div><details><summary>About this preview</summary><p>This is a foundation preview, not a functional finance application. Project, appearance and density are independent.</p></details></article>
+</section>
+<section id="palette" class="card palette"><h2>Color with a job to do.</h2><p>Status colors stay consistent across every project.</p><div class="statuses"><span class="notice success">✓ Success</span><span class="notice warning">! Needs review</span><span class="notice error">× Could not save</span><span class="notice info">ⓘ Information</span></div><h3>Chart categories</h3><div id="swatches" class="swatches"></div><h3>Sequential intensity</h3><div id="ramp" class="swatches"></div></section>
+<p id="status" role="status" class="small"></p>
+</main><footer>Doshi design system <span>Shared anatomy. Individual expression.</span></footer>
+</body></html>

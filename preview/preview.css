@@ -1,0 +1,50 @@
+* {box-sizing: border-box}
+html {color-scheme: light dark; scroll-padding-top: 24px}
+body {margin:0; background:var(--ds-surface-page); color:var(--ds-text); font:1rem/1.6 var(--ds-font-body)}
+header, main, footer {width:min(var(--ds-page-width), calc(100% - 40px)); margin:auto}
+header, footer {display:flex; justify-content:space-between; align-items:center; gap:16px; padding-block:24px}
+header {border-bottom:1px solid var(--ds-border)}
+.brand {font-weight:800; text-decoration:none; color:var(--ds-text)}
+.brand span, .small, footer {font-size:var(--ds-text-caption); color:var(--ds-text-secondary)}
+.badge {border:1px solid var(--ds-border); border-radius:100px; padding:6px 12px; font-size:.8rem}
+.hero {padding:64px 0 36px}
+h1 {font-size:var(--ds-text-display); letter-spacing:-.06em; line-height:1.03; margin:16px 0 24px; max-width:16ch}
+h1 em {font-style:normal; color:var(--ds-action-primary)}
+h2 {font-size:1.8rem; line-height:1.15; letter-spacing:-.035em; margin:8px 0}
+h3 {font-size:1rem; margin-top:24px}
+p {margin:8px 0; color:var(--ds-text-secondary)}
+.eyebrow {font-size:.78rem; font-weight:750; letter-spacing:.1em; text-transform:uppercase; color:var(--ds-action-primary)}
+.lede {max-width:46ch; font-size:1.2rem}
+.controls {display:flex; flex-wrap:wrap; gap:16px; margin-bottom:32px}
+label {display:grid; gap:6px; font-size:.875rem; font-weight:650; min-width:0}
+.controls label {flex:1 1 180px}
+select, input, button, .button {font:inherit; min-height:var(--ds-control-height); min-width:var(--ds-control-target); padding:10px 16px; border-radius:var(--ds-radius-control); border:1px solid var(--ds-border); background:var(--ds-surface-raised); color:var(--ds-text); max-width:100%}
+select, button {cursor:pointer}
+.grid {display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px}
+.card {display:flex; flex-direction:column; gap:12px; min-width:0; padding:var(--ds-panel-padding); border:1px solid var(--ds-border); border-radius:var(--ds-radius-container); background:var(--ds-surface-raised); box-shadow:var(--ds-shadow-raised)}
+.featured {background:linear-gradient(145deg, color-mix(in srgb, var(--ds-action-primary) 10%, var(--ds-surface-raised)), var(--ds-surface-raised))}
+.actions {margin-top:auto; padding-top:24px}
+.button {display:inline-flex; gap:16px; align-items:center; justify-content:center; text-decoration:none; background:var(--ds-action-primary); color:var(--ds-action-text); border-color:transparent; font-weight:700; transition:background var(--ds-duration-fast) var(--ds-ease)}
+.button:hover {background:var(--ds-action-hover)}
+.button:active {background:var(--ds-action-pressed)}
+button:disabled {cursor:not-allowed; color:var(--ds-text-disabled)}
+.stat {font-size:2.8rem; font-weight:750; font-variant-numeric:tabular-nums; letter-spacing:-.04em}
+.notice {padding:10px 14px; border-radius:var(--ds-radius-control); font-size:.875rem}
+.success {background:var(--ds-success-bg); color:var(--ds-success-text)}
+.warning {background:var(--ds-warning-bg); color:var(--ds-warning-text)}
+.error {background:var(--ds-error-bg); color:var(--ds-error-text)}
+.info {background:var(--ds-info-bg); color:var(--ds-info-text)}
+summary {cursor:pointer; min-height:var(--ds-control-height); padding-block:12px}
+.palette {margin-top:24px}
+.statuses, .swatches {display:flex; flex-wrap:wrap; gap:12px}
+.swatches > div {flex:1 1 120px}
+.swatches span {display:block; height:54px; border:1px solid var(--ds-border); border-radius:12px}
+.swatches small {font-family:var(--ds-font-mono)}
+:focus-visible {outline:3px solid var(--ds-focus); outline-offset:4px}
+::selection {background:var(--ds-selection)}
+.skip {position:fixed; left:16px; top:-120px; background:var(--ds-surface-overlay); color:var(--ds-text); padding:12px; z-index:10}
+.skip:focus {top:16px}
+footer {margin-top:40px; border-top:1px solid var(--ds-border)}
+@media(max-width:950px) {.grid {grid-template-columns:1fr 1fr}.featured {grid-column:1/-1}}
+@media(max-width:620px) {.grid {grid-template-columns:1fr} .brand span {display:none} .hero {padding-top:40px} footer {align-items:flex-start; flex-direction:column}}
+@media(prefers-reduced-motion:reduce) {*, *::before, *::after {animation:none!important; transition:none!important; scroll-behavior:auto!important}}

@@ -1,0 +1,45 @@
+{
+  "name": "@doshi-experiments/design-system",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": "./dist/tokens.js",
+    "./tokens.css": "./dist/tokens.css",
+    "./theme": "./dist/theme.js",
+    "./tokens.json": "./dist/tokens.json",
+    "./react": "./dist/react.js",
+    "./components.css": "./dist/components.css"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test",
+    "preview": "python3 -m http.server 4174 --bind 127.0.0.1",
+    "prepack": "npm run build",
+    "test:browser": "node scripts/check-rollout.mjs && node scripts/check-interactions.mjs"
+  },
+  "license": "UNLICENSED",
+  "peerDependencies": {
+    "@base-ui/react": "^1.8.0",
+    "react": "^18.3.1 || ^19.0.0",
+    "react-dom": "^18.3.1 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "@base-ui/react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "playwright": "^1.63.0"
+  }
+}

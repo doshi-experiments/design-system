@@ -1,0 +1,13 @@
+.ds-button {font:inherit; min-height:var(--ds-control-height); min-width:var(--ds-control-target); border:1px solid var(--ds-border); border-radius:var(--ds-radius-control); padding:10px 16px; background:var(--ds-surface-raised); color:var(--ds-text); cursor:pointer}
+.ds-button:disabled, .ds-button[data-disabled] {cursor:not-allowed; color:var(--ds-text-disabled)}
+.ds-button:focus-visible {outline:3px solid var(--ds-focus); outline-offset:4px}
+.ds-popover-positioner {z-index:100}
+.ds-popover {max-width:min(28rem, var(--available-width)); max-height:var(--available-height); overflow:auto; background:var(--ds-surface-overlay); color:var(--ds-text); padding:var(--ds-panel-padding); border:1px solid var(--ds-border); border-radius:var(--ds-radius-container); box-shadow:var(--ds-shadow-overlay)}
+.ds-help {display:inline-grid; place-items:center; flex-shrink:0; width:var(--ds-control-target); height:var(--ds-control-target); border:1px solid var(--ds-border); border-radius:50%; padding:0; font:600 1rem var(--ds-font-body); background:var(--ds-surface-raised); color:var(--ds-text-secondary); cursor:help}
+.ds-help:focus-visible,.ds-segment:focus-visible {outline:3px solid var(--ds-focus); outline-offset:3px}
+.ds-popover {font:1rem/1.5 var(--ds-font-body); text-align:left; letter-spacing:normal; text-transform:none; white-space:normal}
+.ds-popover-title {font-size:1.125rem; margin:0 0 8px}
+.ds-popover-description {margin:0 0 16px}
+.ds-segmented {display:flex; flex-wrap:wrap; gap:8px}
+.ds-segment {display:inline-flex; align-items:center; justify-content:center; min-height:var(--ds-control-target); padding:8px 12px; font:600 .875rem var(--ds-font-body); border:1px solid var(--ds-border); border-radius:var(--ds-radius-control); color:var(--ds-text-secondary); background:var(--ds-surface-raised); cursor:pointer}
+.ds-segment[data-checked] {color:var(--ds-action-text); background:var(--ds-action-primary); border-color:var(--ds-action-primary)}
