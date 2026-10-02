@@ -97,3 +97,15 @@ export function RangeField({label, value, onValueChange, min = 0, max = 100, ste
           h(Slider.Thumb, {className:'ds-slider-thumb', 'aria-labelledby':id})))),
     h(NumericField, {label:`${label} value`, value, onValueChange, min, max, step, prefix, suffix, sanitize, parse, format, compact:true}));
 }
+
+// Bounded counters for touch-first setup screens. Application owns validation.
+export function NumberStepper({label, value, min = 0, max = Infinity, step = 1, onValueChange, suffix, decreaseLabel, increaseLabel}) {
+  const id = React.useId();
+  return h('div', {className:'ds-stepper', role:'group', 'aria-label':label},
+    h(Button, {type:'button', 'aria-label':decreaseLabel || `Decrease ${label}`, 'aria-describedby':id,
+      disabled:value <= min, onClick:() => onValueChange(Math.max(min, value - step))}, '−'),
+    h('span', {id, className:'ds-stepper-value', 'aria-live':'polite', 'aria-atomic':true}, value,
+      suffix && h('small', null, suffix)),
+    h(Button, {type:'button', 'aria-label':increaseLabel || `Increase ${label}`, 'aria-describedby':id,
+      disabled:value >= max, onClick:() => onValueChange(Math.min(max, value + step))}, '+'));
+}

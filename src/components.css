@@ -65,3 +65,20 @@
 .ds-table :is(th,td) {padding:12px 16px; border-bottom:1px solid color-mix(in srgb,var(--ds-border) 30%,transparent); white-space:nowrap}
 .ds-table tbody tr:hover {background:var(--ds-selection)}
 @media(max-width:380px) {.ds-field-grid {grid-template-columns:minmax(0,1fr)} .ds-card {padding:18px} .ds-metric {padding:16px}}
+
+/* Touch counters and static HTML recipes use the same semantic tokens. */
+.ds-stepper {display:flex; align-items:center; gap:8px; flex-shrink:0}
+.ds-stepper .ds-button {width:var(--ds-control-target); min-width:var(--ds-control-target); min-height:var(--ds-control-target); padding:8px; font-size:1.5rem}
+.ds-stepper-value {min-width:2ch; text-align:center; color:var(--ds-text); font:700 1.5rem/1.2 var(--ds-font-body); font-variant-numeric:tabular-nums}
+.ds-stepper-value small {display:block; margin-top:4px; color:var(--ds-text-secondary); font:400 .75rem/1.4 var(--ds-font-body)}
+.ds-disclosure {overflow:hidden; border:1px solid var(--ds-border); border-radius:var(--ds-radius-container); background:var(--ds-surface-raised); box-shadow:var(--ds-shadow-raised)}
+.ds-disclosure-trigger {display:flex; width:100%; align-items:center; gap:16px; min-height:var(--ds-control-target); padding:20px; border:0; background:transparent; color:var(--ds-text); text-align:left; font:650 1.125rem/1.4 var(--ds-font-body); cursor:pointer}
+.ds-disclosure-trigger:hover,.ds-disclosure-trigger[aria-expanded="true"] {background:var(--ds-selection)}
+.ds-disclosure-trigger:focus-visible,.ds-project-link:focus-visible,.ds-chip-link:focus-visible {outline:3px solid var(--ds-focus); outline-offset:-4px}
+.ds-project-link {display:block; height:100%; padding:20px; color:var(--ds-text); background:var(--ds-surface-page); border:1px solid var(--ds-border); border-radius:var(--ds-radius-container); text-decoration:none; transition:border-color var(--ds-duration-fast) var(--ds-ease)}
+.ds-project-link:hover {border-color:var(--ds-action-primary); background:var(--ds-selection)}
+.ds-badge {display:inline-flex; align-items:center; width:fit-content; padding:3px 9px; border-radius:999px; font:650 .6875rem/1.5 var(--ds-font-body); color:var(--ds-text-secondary); background:var(--ds-surface-page); border:1px solid var(--ds-border)}
+.ds-badge[data-status="live"] {color:var(--ds-success-text); background:var(--ds-success-bg)}
+.ds-badge[data-status="wip"] {color:var(--ds-warning-text); background:var(--ds-warning-bg)}
+.ds-chip-link {display:inline-flex; align-items:center; min-height:var(--ds-control-target); padding:8px 12px; border:1px solid var(--ds-border); border-radius:var(--ds-radius-control); font:600 .8125rem/1.4 var(--ds-font-body); color:var(--ds-action-primary); text-decoration:none}
+.ds-chip-link:hover {background:var(--ds-selection)}

@@ -1,6 +1,6 @@
 {
   "name": "@doshi-experiments/design-system",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "files": [
@@ -20,7 +20,7 @@
     "test": "node --test",
     "preview": "python3 -m http.server 4174 --bind 127.0.0.1",
     "prepack": "npm run build",
-    "test:browser": "node scripts/check-rollout.mjs && node scripts/check-interactions.mjs",
+    "test:browser": "node scripts/check-rollout.mjs && node scripts/check-interactions.mjs && node scripts/check-index.mjs",
     "test:calculator": "node scripts/check-calculator.mjs && node scripts/check-interactions.mjs"
   },
   "license": "UNLICENSED",

@@ -9,7 +9,7 @@ await mkdir(destination, {recursive:true});
 const {version} = JSON.parse(await readFile(new URL('../package.json', import.meta.url)));
 await mkdir(resolve(destination, 'fonts'), {recursive:true});
 const files = {};
-for (const file of ['tokens.css','tokens.js','tokens.json','theme.js','legacy.css','metadata.js','fonts/hanken-grotesk.ttf','fonts/hanken-grotesk-OFL.txt']) {
+for (const file of ['components.css','tokens.css','tokens.js','tokens.json','theme.js','legacy.css','metadata.js','fonts/hanken-grotesk.ttf','fonts/hanken-grotesk-OFL.txt']) {
   const src = new URL(`../dist/${file}`, import.meta.url);
   const bytes = await readFile(src);
   await copyFile(src, resolve(destination, file));

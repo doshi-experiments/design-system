@@ -1,6 +1,6 @@
 # Doshi design system
 
-Version 0.2.0: shared foundations plus the calculator component layer. The source of truth is `src/tokens.js`; generated assets must not be edited in consuming repos.
+Version 0.3.0: shared foundations, calculator components, game counters and static index recipes. The source of truth is `src/tokens.js`; generated assets must not be edited in consuming repos.
 
 ```sh
 npm run build
@@ -69,3 +69,17 @@ Run `npm run test:calculator` against the built adjacent calculator checkout to
 check all six routes at 320, 390 and 1440 pixels in both appearances and the real
 numeric/slider/help/navigation interactions. This remains a targeted check, not
 a complete accessibility audit.
+
+## Game and static index components (0.3.0)
+
+`NumberStepper` accepts a label, numeric value, min/max, optional step/suffix and
+`onValueChange`. Buttons clamp changes to bounds, announce the current value and
+inherit the density target size (60px in game mode). Game rules stay in the app.
+
+Static consumers can load the synced `components.css` after the compatibility
+stylesheet. Use `ds-disclosure` and `ds-disclosure-trigger` for collapsible sections,
+`ds-project-link` for project cards, `ds-badge` with `data-status="live"` or `"wip"`
+for semantic status, and `ds-chip-link` for related links. Native buttons and anchors
+retain their semantics. The application must manage `aria-expanded`,
+`aria-controls` and collapsed content's `inert` state; CSS does not add behavior.
+The experiments index demonstrates this contract with hash-addressable sections.
