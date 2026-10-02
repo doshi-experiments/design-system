@@ -1,6 +1,6 @@
 # Doshi design system
 
-Version 0.1.0: shared foundations and the first public-site integration. The source of truth is `src/tokens.js`; generated assets must not be edited in consuming repos.
+Version 0.2.0: shared foundations plus the calculator component layer. The source of truth is `src/tokens.js`; generated assets must not be edited in consuming repos.
 
 ```sh
 npm run build
@@ -36,7 +36,7 @@ node scripts/sync.mjs /path/to/site/public/design-system
 
 Load `tokens.css` and then `legacy.css` after existing styles. The latter maps existing site names onto semantic tokens for incremental migration. `release.json` records the version and SHA-256 hashes. Commit that snapshot with the consuming app; independent deployments do not depend on this directory, a CDN, or a sibling checkout. To upgrade, rebuild one release and sync it to each repo in separate reviewable changes. Do not hand-edit snapshots.
 
-The game and calculator integrations also install the release tarball, committed in its repository, for the React button. A future package registry can replace that file dependency without changing imports. Npm publishing is disabled; this release uses committed snapshots and tarballs.
+The game and calculator integrations also install the release tarball, committed in its repository, for their React components. A future package registry can replace that file dependency without changing imports. Npm publishing is disabled; this release uses committed snapshots and tarballs.
 
 ## Appearance
 
@@ -50,6 +50,22 @@ For the complete integration check, keep the five site checkouts under
 `npx playwright install --with-deps chromium`, then run `npm run test:browser`.
 `DESIGN_WORKSPACE` can override the common parent directory.
 
-This first release migrates public-site tokens, game/calculator buttons, and calculator selection/help controls. Finance's Streamlit replacement and TanStack editor are explicitly deferred. Additional shadcn/Base UI recipes, numeric-entry improvements, intake workflows and selected Magic UI effects remain later components; no Aceternity or Magic UI source is copied in this release. Existing public visualizations and the portfolio's 3D composition remain application-owned.
+The calculator now also uses shared NumericField, RangeField (Base UI Slider), Card, FieldGroup, Metric, DataRow, DataTable and PageHeader recipes across all six views. Version 0.1.0 consumers remain pinned until explicitly upgraded. Finance's Streamlit replacement and TanStack editor are explicitly deferred. Additional shadcn/Base UI recipes and intake workflows and selected Magic UI effects remain later components; no Aceternity or Magic UI source is copied in this release. Existing public visualizations and the portfolio's 3D composition remain application-owned.
 
 Upstream references: [shadcn installation](https://ui.shadcn.com/docs/installation), [Base UI quick start](https://base-ui.com/react/overview/quick-start). Base UI and React license notices remain in their installed packages; retain them in distributions. The font OFL notice is included in each static snapshot.
+
+
+## Calculator components (0.2.0)
+
+`NumericField` accepts application-owned `sanitize`, `parse` and `format` functions,
+so adopting its presentation does not replace financial parsing. It preserves raw
+text, announces removed characters and bounds feedback, supports read-only fields,
+affixes and arrow-key stepping. `RangeField` combines Base UI Slider with that
+numeric field; Home/End and arrow keys stay synchronized with the editable value.
+Cards, field groups, metrics, rows and the scrollable semantic table share token
+styles. `PageHeader` provides the page's primary heading.
+
+Run `npm run test:calculator` against the built adjacent calculator checkout to
+check all six routes at 320, 390 and 1440 pixels in both appearances and the real
+numeric/slider/help/navigation interactions. This remains a targeted check, not
+a complete accessibility audit.
