@@ -1,6 +1,6 @@
 # Doshi design system
 
-Version 0.3.0: shared foundations, calculator components, game counters and static index recipes. The source of truth is `src/tokens.js`; generated assets must not be edited in consuming repos.
+Version 0.4.0: shared foundations, React application components, editable tables, calculator controls, game counters and static index recipes. Tokens live in `src/tokens.js`; React recipes and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Generated assets must not be edited in consuming repos.
 
 ```sh
 npm run build
@@ -50,7 +50,7 @@ For the complete integration check, keep the five site checkouts under
 `npx playwright install --with-deps chromium`, then run `npm run test:browser`.
 `DESIGN_WORKSPACE` can override the common parent directory.
 
-The calculator now also uses shared NumericField, RangeField (Base UI Slider), Card, FieldGroup, Metric, DataRow, DataTable and PageHeader recipes across all six views. Version 0.1.0 consumers remain pinned until explicitly upgraded. Finance's Streamlit replacement and TanStack editor are explicitly deferred. Additional shadcn/Base UI recipes and intake workflows and selected Magic UI effects remain later components; no Aceternity or Magic UI source is copied in this release. Existing public visualizations and the portfolio's 3D composition remain application-owned.
+The calculator now also uses shared NumericField, RangeField (Base UI Slider), Card, FieldGroup, Metric, DataRow, DataTable and PageHeader recipes across all six views. Version 0.1.0 consumers remain pinned until explicitly upgraded. Finance can use the shared React application shell, fields, workflow, modal and TanStack table renderer. Its Python services continue to own the business rules and financial writes. Further Base UI recipes and selected Magic UI effects can be added centrally; no Aceternity or Magic UI source is copied in this release. Existing public visualizations and the portfolio's 3D composition remain application-owned.
 
 Upstream references: [shadcn installation](https://ui.shadcn.com/docs/installation), [Base UI quick start](https://base-ui.com/react/overview/quick-start). Base UI and React license notices remain in their installed packages; retain them in distributions. The font OFL notice is included in each static snapshot.
 
@@ -83,3 +83,64 @@ for semantic status, and `ds-chip-link` for related links. Native buttons and an
 retain their semantics. The application must manage `aria-expanded`,
 `aria-controls` and collapsed content's `inert` state; CSS does not add behavior.
 The experiments index demonstrates this contract with hash-addressable sections.
+
+
+## Application components (0.4.0)
+
+Import the actual React components from `@doshi-experiments/design-system/react`:
+
+```jsx
+import {
+  AppShell, Alert, Badge, Button, Card, CheckboxField, Dialog, Disclosure,
+  EmptyState, FileUpload, PageHeader, SelectField, TextField, WorkflowSteps,
+} from '@doshi-experiments/design-system/react';
+import {EditableTable} from '@doshi-experiments/design-system/table';
+import '@doshi-experiments/design-system/tokens.css';
+import '@doshi-experiments/design-system/components.css';
+
+<SelectField
+  label="Category"
+  value={categoryId}
+  onValueChange={setCategoryId}
+  options={[{value: '', label: 'Uncategorized'}, {value: 'food', label: 'Food'}]}
+/>
+<Button variant="primary" loading={saving} onClick={save}>Save</Button>
+```
+
+The token stylesheet includes the local font face. Bundlers resolve its relative
+`fonts/hanken-grotesk.ttf` URL into an application asset; no remote font request is
+needed. `AppShell` sets shared typography and surface colors inside the shell.
+Applications still reset document margins and own their business-specific layout.
+
+| Component | Contract |
+| --- | --- |
+| `AppShell` | `brand`, `navigation` (`id`, `label`, `href` or `onClick`, `active`, optional `icon`), `actions`, `footer`, `children`. Includes a skip link, navigation landmark and responsive main content. |
+| `Button` | Native/Base UI button props plus `variant` (`primary`, `secondary`, `danger`, `ghost`) and `loading`. Loading disables repeat activation. |
+| `TextField` | Native input props, `label`, `value`, `onValueChange`, `hint`, `error`, optional `hideLabel`. For number parsing use `NumericField`. |
+| `SelectField` | Native select props, `label`, `value`, `onValueChange`, `options` (`value`, `label`, `disabled`), `hint`, `error`, optional `hideLabel`. Values are strings, as in native selects. |
+| `CheckboxField` | Native checkbox props, `label`, `checked`, `onCheckedChange`, optional `hint`, `error`, `indeterminate`. Label provides the full touch target. |
+| `FileUpload` | Native file input props, `label`, `accept`, `multiple`, `onFilesChange(File[])`, `hint`, `error`, `disabled`. Applications enforce file size, content and upload policy. |
+| `Alert` / `Badge` | `tone` (`info`, `success`, `warning`, `error`), `children`. Alerts also accept `title`, `actions` and a `role` override; errors announce with `alert`, other tones with `status`. |
+| `EmptyState` | `title`, `description`, `actions`, optional `children`. |
+| `WorkflowSteps` | `steps` (`id`, `label`, optional `description` / `disabled`), current `value`, optional `onValueChange`. A navigation list with `aria-current="step"`; applications own step eligibility. |
+| `Disclosure` | `title`, `children`, optional `defaultOpen` or controlled `open`, `onToggle`. Uses native details/summary keyboard and collapsed-content behavior. |
+| `Dialog` | Controlled `open`, `onOpenChange`, `title`, `description`, `children`, `actions`, optional `closeLabel`, `initialFocus`, `finalFocus`, `dismissible`. Base UI provides modal focus trapping and dismissal; focus returns to the launching control. `dismissible={false}` blocks backdrop/Escape dismissal while keeping the explicit close action. |
+| `EditableTable` | `data`, TanStack `columns`, stable `getRowId`, `label`, optional `caption`, `emptyMessage`, `maxHeight`, `busy`, `meta`, `rowClassName`. Custom cells receive TanStack context, including `table.options.meta`. |
+
+`EditableTable` requires the additional optional peer `@tanstack/react-table`
+8.21.3 or later in version 8. Its separate `/table` export keeps that dependency
+out of consumers that only use the other React components. It renders a semantic
+HTML table with a labeled scroll region and sticky headings. Editing cells use
+shared fields through column renderers; the application owns parsing, saving,
+revision checks and error recovery. It does not claim spreadsheet keyboard-grid
+behavior or silently make every column editable.
+
+Run `npm run build && npm run test:components` after installing Chromium. This
+checks all shared application recipes at 320, 390 and 1440 pixels in light/dark,
+44px control targets, action contrast, font loading, native field callbacks,
+uploads, editable table callbacks, disclosure keyboard activation, and modal
+focus trapping, Escape, focus restoration and dismissal guards.
+
+For repeatable consumer upgrades, see [the central rollout process](docs/rollout.md).
+Changes are authored here, then versioned and adopted in each consuming repo;
+a source edit by itself does not rebuild already deployed applications.

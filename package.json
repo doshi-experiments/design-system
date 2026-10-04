@@ -1,6 +1,6 @@
 {
   "name": "@doshi-experiments/design-system",
-  "version": "0.3.0",
+  "version": "0.4.2",
   "private": true,
   "type": "module",
   "files": [
@@ -13,7 +13,8 @@
     "./theme": "./dist/theme.js",
     "./tokens.json": "./dist/tokens.json",
     "./react": "./dist/react.js",
-    "./components.css": "./dist/components.css"
+    "./components.css": "./dist/components.css",
+    "./table": "./dist/table.js"
   },
   "scripts": {
     "build": "node scripts/build.mjs",
@@ -21,13 +22,16 @@
     "preview": "python3 -m http.server 4174 --bind 127.0.0.1",
     "prepack": "npm run build",
     "test:browser": "node scripts/check-rollout.mjs && node scripts/check-interactions.mjs && node scripts/check-index.mjs",
-    "test:calculator": "node scripts/check-calculator.mjs && node scripts/check-interactions.mjs"
+    "test:calculator": "node scripts/check-calculator.mjs && node scripts/check-interactions.mjs",
+    "test:components": "node scripts/check-components.mjs",
+    "rollout": "node scripts/rollout.mjs"
   },
   "license": "UNLICENSED",
   "peerDependencies": {
     "@base-ui/react": "^1.8.0",
     "react": "^18.3.1 || ^19.0.0",
-    "react-dom": "^18.3.1 || ^19.0.0"
+    "react-dom": "^18.3.1 || ^19.0.0",
+    "@tanstack/react-table": "^8.21.3"
   },
   "peerDependenciesMeta": {
     "react": {
@@ -38,9 +42,17 @@
     },
     "@base-ui/react": {
       "optional": true
+    },
+    "@tanstack/react-table": {
+      "optional": true
     }
   },
   "devDependencies": {
-    "playwright": "^1.63.0"
+    "playwright": "^1.63.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "@base-ui/react": "^1.8.0",
+    "@tanstack/react-table": "^8.21.3",
+    "esbuild": "^0.25.12"
   }
 }

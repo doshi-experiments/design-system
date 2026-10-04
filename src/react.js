@@ -4,9 +4,10 @@ import {Popover} from '@base-ui/react/popover';
 import {Radio} from '@base-ui/react/radio';
 import {Slider} from '@base-ui/react/slider';
 import {RadioGroup} from '@base-ui/react/radio-group';
+import {Dialog as BaseDialog} from '@base-ui/react/dialog';
 // App-owned recipes over the Base UI foundation selected for shadcn components.
-export const Button = React.forwardRef(function Button({loading = false, disabled = false, children, className = '', ...props}, ref) {
-  return React.createElement(BaseButton, {...props, ref, className: `ds-button ${className}`, disabled: disabled || loading, 'aria-busy': loading || undefined}, children);
+export const Button = React.forwardRef(function Button({loading = false, disabled = false, variant, children, className = '', ...props}, ref) {
+  return React.createElement(BaseButton, {...props, ref, className: `ds-button ${className}`, 'data-variant':variant, disabled: disabled || loading, 'aria-busy': loading || undefined}, children);
 });
 export function HelpPopover({label = 'More information', title, children}) {
   const [open, setOpen] = React.useState(false);
@@ -108,4 +109,96 @@ export function NumberStepper({label, value, min = 0, max = Infinity, step = 1, 
       suffix && h('small', null, suffix)),
     h(Button, {type:'button', 'aria-label':increaseLabel || `Increase ${label}`, 'aria-describedby':id,
       disabled:value >= max, onClick:() => onValueChange(Math.min(max, value + step))}, '+'));
+}
+
+// These field recipes keep native form controls, labels and browser input behavior.
+// Business parsing, persistence and validation stay in the consuming application.
+function fieldDescription(id, hint, error) {
+  return (error || hint) && h('p', {id:`${id}-description`, className:'ds-field-hint', 'data-error':!!error || undefined, role:error ? 'alert' : undefined}, error || hint);
+}
+export const TextField = React.forwardRef(function TextField({label, value, onValueChange, hint, error, className = '', hideLabel = false, id:providedId, onChange, ...props}, ref) {
+  const generatedId = React.useId(); const id = providedId || generatedId;
+  return h('div', {className:`ds-field ${className}`},
+    h('label', {className:`ds-field-label${hideLabel ? ' ds-visually-hidden' : ''}`, htmlFor:id}, label),
+    h('input', {...props, ref, id, value, className:'ds-text-input', 'aria-invalid':error ? true : props['aria-invalid'],
+      'aria-describedby':[props['aria-describedby'], (hint || error) && `${id}-description`].filter(Boolean).join(' ') || undefined,
+      onChange:event => {onValueChange?.(event.target.value); onChange?.(event);}}), fieldDescription(id, hint, error));
+});
+export const SelectField = React.forwardRef(function SelectField({label, value, onValueChange, options = [], hint, error, className = '', hideLabel = false, id:providedId, onChange, children, ...props}, ref) {
+  const generatedId = React.useId(); const id = providedId || generatedId;
+  return h('div', {className:`ds-field ${className}`},
+    h('label', {className:`ds-field-label${hideLabel ? ' ds-visually-hidden' : ''}`, htmlFor:id}, label),
+    h('select', {...props, ref, id, value, className:'ds-select-input', 'aria-invalid':error ? true : props['aria-invalid'],
+      'aria-describedby':[props['aria-describedby'], (hint || error) && `${id}-description`].filter(Boolean).join(' ') || undefined,
+      onChange:event => {onValueChange?.(event.target.value); onChange?.(event);}},
+      children || options.map(option => h('option', {key:option.value, value:option.value, disabled:option.disabled}, option.label))), fieldDescription(id, hint, error));
+});
+export function CheckboxField({label, checked, onCheckedChange, hint, error, disabled, indeterminate = false, className = '', id:providedId, onChange, ...props}) {
+  const generatedId = React.useId(); const id = providedId || generatedId; const ref = React.useRef(null);
+  React.useEffect(() => {if (ref.current) ref.current.indeterminate = indeterminate;}, [indeterminate]);
+  return h('div', {className:`ds-checkbox-field ${className}`},
+    h('label', {className:'ds-checkbox-label', htmlFor:id, 'data-disabled':disabled || undefined},
+      h('input', {...props, ref, id, type:'checkbox', checked, disabled, 'aria-invalid':error ? true : props['aria-invalid'],
+        'aria-describedby':[props['aria-describedby'], (hint || error) && `${id}-description`].filter(Boolean).join(' ') || undefined,
+        onChange:event => {onCheckedChange?.(event.target.checked); onChange?.(event);}}), h('span', null, label)), fieldDescription(id, hint, error));
+}
+export function Alert({tone = 'info', title, children, actions, className = '', role, ...props}) {
+  return h('div', {...props, className:`ds-alert ${className}`, 'data-tone':tone, role:role || (tone === 'error' ? 'alert' : 'status')},
+    title && h('div', {className:'ds-alert-title'}, title), children && h('div', {className:'ds-alert-content'}, children), actions && h('div', {className:'ds-actions'}, actions));
+}
+export function Badge({tone, children, className = '', ...props}) {
+  return h('span', {...props, className:`ds-badge ${className}`, 'data-tone':tone}, children);
+}
+export function EmptyState({title, description, actions, children, className = ''}) {
+  return h('div', {className:`ds-empty-state ${className}`}, h('h2', null, title), description && h('p', null, description), children,
+    actions && h('div', {className:'ds-actions'}, actions));
+}
+export function WorkflowSteps({steps, value, onValueChange, label = 'Progress'}) {
+  const current = steps.findIndex(step => step.id === value);
+  return h('nav', {'aria-label':label, className:'ds-workflow'}, h('ol', null, steps.map((step, index) => h('li', {key:step.id, 'data-current':step.id === value || undefined, 'data-complete':index < current || undefined},
+    h(onValueChange ? 'button' : 'div', {className:'ds-workflow-step', ...(onValueChange ? {type:'button', disabled:step.disabled, onClick:() => onValueChange(step.id)} : {}), 'aria-current':step.id === value ? 'step' : undefined},
+      h('span', {className:'ds-workflow-number', 'aria-hidden':true}, index + 1),
+      h('span', {className:'ds-workflow-label'}, h('span', null, step.label), step.description && h('small', null, step.description)))))));
+}
+export function FileUpload({label = 'Choose files', onFilesChange, accept, multiple = false, hint, disabled = false, error, className = '', id:providedId, onChange, ...props}) {
+  const generatedId = React.useId(); const id = providedId || generatedId;
+  return h('div', {className:`ds-file-upload ${className}`, 'data-disabled':disabled || undefined},
+    h('label', {className:'ds-field-label', htmlFor:id}, label),
+    h('input', {...props, id, type:'file', accept, multiple, disabled, 'aria-invalid':!!error || undefined,
+      'aria-describedby':[props['aria-describedby'], (hint || error) && `${id}-description`].filter(Boolean).join(' ') || undefined,
+      onChange:event => {onFilesChange?.(Array.from(event.target.files || [])); onChange?.(event);}}), fieldDescription(id, hint, error));
+}
+export function Disclosure({title, children, open, defaultOpen = false, onToggle, className = '', ...props}) {
+  // Native details already provides keyboard activation and collapsed-content semantics.
+  // Only pass a controlled `open` property when supplied by the caller.
+  return h('details', {...props, className:`ds-disclosure ${className}`, ...(open === undefined ? {open:defaultOpen || undefined} : {open}), onToggle},
+    h('summary', {className:'ds-disclosure-summary'}, title), h('div', {className:'ds-disclosure-content'}, children));
+}
+export function Dialog({open, onOpenChange, title, description, children, actions, closeLabel = 'Cancel', finalFocus, initialFocus, className = '', dismissible = true}) {
+  const lastFocus = React.useRef(null);
+  // Controlled dialogs can be launched by a table row action, outside Dialog.Trigger.
+  // Preserve that origin for Escape, the close button, or application-driven close.
+  const wasOpen = React.useRef(false);
+  if (open && !wasOpen.current && typeof document !== 'undefined') lastFocus.current = document.activeElement;
+  wasOpen.current = open;
+  return h(BaseDialog.Root, {open, onOpenChange:(next, details) => {
+    if (!dismissible && !next && ['escape-key', 'outside-press'].includes(details.reason)) {details.cancel(); return;}
+    onOpenChange?.(next, details);
+  }, disablePointerDismissal:!dismissible},
+    h(BaseDialog.Portal, null, h(BaseDialog.Backdrop, {className:'ds-dialog-backdrop'}),
+      h(BaseDialog.Viewport, {className:'ds-dialog-viewport'},
+        h(BaseDialog.Popup, {className:`ds-dialog ${className}`, initialFocus, finalFocus:finalFocus ?? lastFocus},
+          h(BaseDialog.Title, {className:'ds-dialog-title'}, title), description && h(BaseDialog.Description, {className:'ds-dialog-description'}, description),
+          h('div', {className:'ds-dialog-content'}, children),
+          h('div', {className:'ds-dialog-actions'}, h(BaseDialog.Close, {className:'ds-button', 'data-variant':'secondary'}, closeLabel), actions)))));
+}
+export function AppShell({brand, navigation = [], children, footer, actions, navigationLabel = 'Main navigation', mainId = 'main-content', className = ''}) {
+  return h('div', {className:`ds-app-shell ${className}`},
+    h('a', {className:'ds-skip-link', href:`#${mainId}`, onClick:event => {event.preventDefault(); document.getElementById(mainId)?.focus();}}, 'Skip to content'),
+    h('aside', {className:'ds-app-sidebar'}, h('div', {className:'ds-app-brand'}, brand),
+      h('nav', {'aria-label':navigationLabel, className:'ds-app-navigation'}, navigation.map(item => h(item.href ? 'a' : 'button', {
+        key:item.id, href:item.href, type:item.href ? undefined : 'button', className:'ds-app-nav-item', 'aria-current':item.active ? 'page' : undefined,
+        onClick:item.onClick, disabled:item.href ? undefined : item.disabled}, item.icon && h('span', {'aria-hidden':true}, item.icon), item.label))),
+      (actions || footer) && h('div', {className:'ds-app-sidebar-bottom'}, actions && h('div', {className:'ds-app-actions'}, actions), footer && h('div', {className:'ds-app-footer'}, footer))),
+    h('main', {id:mainId, className:'ds-app-main', tabIndex:-1}, children));
 }

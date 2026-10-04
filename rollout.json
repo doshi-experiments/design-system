@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "packageName": "@doshi-experiments/design-system",
+  "consumers": [
+    {
+      "id": "portfolio-landing",
+      "directory": "portfolio-landing",
+      "snapshot": "design-system",
+      "validation": "Preview the static site and run the shared browser checks."
+    },
+    {
+      "id": "experiments-landing",
+      "directory": "experiments-landing",
+      "snapshot": "public/design-system",
+      "validation": "Preview the static site and run the shared browser checks."
+    },
+    {
+      "id": "visualizations",
+      "directory": "visualizations",
+      "snapshot": "public/design-system",
+      "validation": "Preview the static site and run the shared browser checks."
+    },
+    {
+      "id": "rent-vs-buy-calculator",
+      "directory": "rent-vs-buy-calculator",
+      "snapshot": "src/design-system",
+      "packageDirectory": ".",
+      "tarballDirectory": ".",
+      "references": ["Dockerfile"],
+      "validation": "npm ci && npm run build; run the shared calculator browser checks."
+    },
+    {
+      "id": "mr-shake",
+      "directory": "mr-shake",
+      "snapshot": "src/design-system",
+      "packageDirectory": ".",
+      "tarballDirectory": ".",
+      "validation": "npm ci && npm test && npm run build; run the shared browser checks."
+    },
+    {
+      "id": "finance",
+      "directory": "finance",
+      "packageDirectory": "ingest/frontend",
+      "tarballDirectory": "vendor",
+      "validation": "Build the frontend, run Finance's Python tests and synthetic browser checks, then rebuild its review image."
+    }
+  ]
+}

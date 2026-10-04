@@ -24,7 +24,7 @@ for (const project of Object.keys(projects)) for (const appearance of Object.key
 await writeFile(new URL('tokens.json', out), JSON.stringify(themes, null, 2) + '\n');
 console.log('Built CSS, JavaScript, JSON, and appearance adapter.');
 await copyFile(new URL('../src/legacy.css', import.meta.url), new URL('legacy.css', out));
-for (const file of ['react.js','components.css','metadata.js']) await copyFile(new URL(`../src/${file}`, import.meta.url), new URL(file, out));
+for (const file of ['react.js','table.js','components.css','metadata.js']) await copyFile(new URL(`../src/${file}`, import.meta.url), new URL(file, out));
 
 await mkdir(new URL('fonts/', out), {recursive:true});
 for (const file of ['hanken-grotesk.ttf','hanken-grotesk-OFL.txt']) await copyFile(new URL(`../src/fonts/${file}`, import.meta.url), new URL(`fonts/${file}`, out));
