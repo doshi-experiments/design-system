@@ -49,3 +49,4 @@ for (const r of results) {
 }
 console.log(`${results.length} browser layout/appearance checks passed`);
 } finally {await browser.close(); servers.forEach(s=>s.kill());}
+await import('./check-visualizations.mjs');
