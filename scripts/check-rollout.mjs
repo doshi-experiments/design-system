@@ -20,24 +20,32 @@ try {
 for (const [i,[name,,path]] of sites.entries()) {
   const page=await browser.newPage({reducedMotion:'reduce'}); const errors=[];
   page.on('pageerror',e=>errors.push(e.message));
-  for (const width of [320,390,1280]) for (const appearance of ['light','dark']) {
+  for (const width of [320,390,768,1440]) for (const appearance of ['light','dark']) {
     await page.setViewportSize({width,height:900});
     await page.goto(`http://127.0.0.1:${4180+i}${path}`,{waitUntil:'networkidle'});
-    await page.evaluate(t=>{document.documentElement.dataset.theme=t;},appearance);
-    // Trigger app theme switch where JS controls chart colors too.
+    const control = page.getByLabel('Appearance', {exact:true});
+    if (await control.count()) await control.selectOption(appearance);
+    else await page.evaluate(t=>{document.documentElement.dataset.theme=t;},appearance);
+    await page.evaluate(async()=>{await document.fonts.load('16px "Commissioner"'); await document.fonts.ready;});
     await page.waitForTimeout(100);
     const data=await page.evaluate(()=>({
       overflow:document.documentElement.scrollWidth>innerWidth,
       bg:getComputedStyle(document.documentElement).getPropertyValue('--ds-surface-page').trim(),
-      font:document.fonts.check('16px "Hanken Grotesk"'),
+      font:document.fonts.check('16px "Commissioner"'),
       shortButtons:[...document.querySelectorAll('button')].filter(e=>e.getBoundingClientRect().width>0 && e.getBoundingClientRect().height<59.5).map(e=>({text:e.textContent.slice(0,30),height:e.getBoundingClientRect().height})),
     }));
     results.push({name,width,appearance,...data,errors:[...errors]});
-    if(width===390 && appearance==='light') await page.screenshot({path:`${workspace}/design-system-rollout/screenshots/${name}.png`,fullPage:true});
+    if(width===390 || width===1440) await page.screenshot({path:`${workspace}/design-system-rollout/screenshots/${name}-${width}-${appearance}.png`,fullPage:true});
   }
   await page.close();
 }
 await writeFile(`${workspace}/design-system-rollout/browser-checks.json`,JSON.stringify(results,null,2));
-for (const r of results) {assert.equal(r.overflow, false, `${r.name}/${r.width}: overflow`); assert.deepEqual(r.errors, []); if(r.name === 'game') assert.deepEqual(r.shortButtons, []);}
+for (const r of results) {
+ assert.equal(r.overflow, false, `${r.name}/${r.width}: overflow`);
+ assert.deepEqual(r.errors, []);
+ assert.equal(r.font,true,`${r.name}: Commissioner must load`);
+ assert.equal(r.bg.toLowerCase(),r.appearance==='dark'?'#17323d':'#f1f5f7',`${r.name}: common page palette`);
+ if(r.name === 'game') assert.deepEqual(r.shortButtons, []);
+}
 console.log(`${results.length} browser layout/appearance checks passed`);
 } finally {await browser.close(); servers.forEach(s=>s.kill());}

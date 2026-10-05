@@ -1,6 +1,6 @@
 {
   "name": "@doshi-experiments/design-system",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "private": true,
   "type": "module",
   "files": [
@@ -14,7 +14,9 @@
     "./tokens.json": "./dist/tokens.json",
     "./react": "./dist/react.js",
     "./components.css": "./dist/components.css",
-    "./table": "./dist/table.js"
+    "./table": "./dist/table.js",
+    "./site": "./dist/site.js",
+    "./prepaint.js": "./dist/prepaint.js"
   },
   "scripts": {
     "build": "node scripts/build.mjs",
@@ -24,6 +26,7 @@
     "test:browser": "node scripts/check-rollout.mjs && node scripts/check-interactions.mjs && node scripts/check-index.mjs",
     "test:calculator": "node scripts/check-calculator.mjs && node scripts/check-interactions.mjs",
     "test:components": "node scripts/check-components.mjs",
+    "test:identity": "node scripts/check-identity.mjs",
     "rollout": "node scripts/rollout.mjs"
   },
   "license": "UNLICENSED",

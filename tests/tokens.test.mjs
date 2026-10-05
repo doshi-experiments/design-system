@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {projects, appearances, densities, resolveTokens} from '../src/tokens.js';
+import {foundation, projects, appearances, densities, resolveTokens} from '../src/tokens.js';
 import {installTheme} from '../src/theme.js';
 function luminance(hex) {
   const rgb = hex.slice(1).match(/../g).map(v => parseInt(v, 16) / 255).map(v => v <= .04045 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4);
@@ -43,4 +43,14 @@ test('existing pre-paint appearance wins; explicit choices persist and stop syst
   assert.equal(e.root.dataset.theme, 'light');
   e.root.dataset.project = 'game'; theme.refresh(); assert.equal(changes.at(-1).tokens['action-primary'], projects.game.light);
   theme.destroy(); assert.equal(e.callbacks.size, 0);
+});
+
+test('all projects share one palette and shape language while densities stay independent', () => {
+  for (const appearance of Object.keys(appearances)) {
+    const baseline = resolveTokens({project:'portfolio',appearance});
+    for (const project of Object.keys(projects)) assert.deepEqual(resolveTokens({project,appearance}),baseline);
+  }
+  assert.equal(foundation['radius-control'],'8px');assert.equal(foundation['radius-container'],'16px');assert.equal(foundation['radius-dialog'],'20px');
+  assert.equal(foundation['shadow-raised'],'none');assert.match(foundation['font-body'],/Commissioner/);
+  assert.equal(resolveTokens({project:'game',density:'game'})['control-target'],'60px');
 });

@@ -1,4 +1,5 @@
 import React from 'react';
+import {siteLinks, projectTitle, appearanceOptions} from './site-contract.js';
 import {Button as BaseButton} from '@base-ui/react/button';
 import {Popover} from '@base-ui/react/popover';
 import {Radio} from '@base-ui/react/radio';
@@ -201,4 +202,22 @@ export function AppShell({brand, navigation = [], children, footer, actions, nav
         onClick:item.onClick, disabled:item.href ? undefined : item.disabled}, item.icon && h('span', {'aria-hidden':true}, item.icon), item.label))),
       (actions || footer) && h('div', {className:'ds-app-sidebar-bottom'}, actions && h('div', {className:'ds-app-actions'}, actions), footer && h('div', {className:'ds-app-footer'}, footer))),
     h('main', {id:mainId, className:'ds-app-main', tabIndex:-1}, children));
+}
+
+
+// Shared global navigation; local workspace navigation stays app-owned.
+export function AppearanceControl({value = 'system', onValueChange, className = ''}) {
+  const labelId = React.useId();
+  return h('label', {className:`ds-appearance ${className}`},
+    h('span', {id:labelId, className:'ds-appearance-label'}, 'Appearance'),
+    h('select', {className:'ds-appearance-select', 'aria-labelledby':labelId, value, onChange:event => onValueChange?.(event.target.value)},
+      appearanceOptions.map(([option, label]) => h('option', {key:option, value:option}, label))));
+}
+export function SiteHeader({project = 'portfolio', appearance = 'system', onAppearanceChange, className = ''}) {
+  return h('header', {className:`ds-site-header ${className}`},
+    h('nav', {className:'ds-site-navigation', 'aria-label':'Global navigation'},
+      Object.entries(siteLinks).map(([name, link]) => h('a', {key:name, className:'ds-site-link', href:link.href,
+        'aria-current':(name === 'home' && project === 'portfolio') || (name === 'experiments' && project === 'experiments') ? 'page' : undefined}, link.label))),
+    h('span', {className:'ds-site-project'}, projectTitle(project)),
+    h(AppearanceControl, {value:appearance, onValueChange:onAppearanceChange}));
 }

@@ -6,7 +6,7 @@ import {dirname, resolve, relative, isAbsolute, basename, sep} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
-import {readRelease, sourceDirectory, writeRelease} from './sync.mjs';
+import {readRelease, sourceDirectory, writeRelease, obsoleteAssetPaths} from './sync.mjs';
 
 const execute = promisify(execFile);
 const exists = async path => {try {await lstat(path); return true;} catch (error) {if (error.code === 'ENOENT') return false; throw error;}};
@@ -134,6 +134,9 @@ export async function applyRollout(plan, options = {}) {
     // Validate every consumer and capture exact originals before the first write.
     for (const consumer of plan.plans) {
       if (consumer.snapshotPath) {
+        const obsolete = await obsoleteAssetPaths(consumer.snapshotPath, release, consumer.snapshotMetadata);
+        if (consumer.snapshotMetadata.version === plan.version && obsolete.length) throw new Error(`${consumer.id}: version ${plan.version} already exists with a different snapshot manifest. Bump the shared package version first.`);
+        for (const target of obsolete) await capture(target);
         for (const [name, bytes] of release.assets) {
           const target = await localPath(consumer.root, relative(consumer.root, resolve(consumer.snapshotPath, name)));
           if (consumer.snapshotMetadata.version === plan.version && (!(await exists(target)) || !(await readFile(target)).equals(bytes))) {
@@ -150,7 +153,7 @@ export async function applyRollout(plan, options = {}) {
     }
 
     for (const consumer of plan.plans) {
-      if (consumer.snapshotPath) await writeRelease(consumer.snapshotPath, release);
+      if (consumer.snapshotPath) await writeRelease(consumer.snapshotPath, release, consumer.snapshotMetadata);
       if (consumer.packagePath) {
         await mkdir(dirname(consumer.tarballPath), {recursive: true});
         await writeFile(consumer.tarballPath, tarball);
