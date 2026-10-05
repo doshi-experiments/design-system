@@ -79,3 +79,20 @@ for the shared dependency. `--manifest PATH` supports an alternate consumer list
 Static `scripts/sync.mjs` remains available for individual snapshot setup. The
 central rollout command and that script share the same release asset list and
 SHA-256 metadata generation.
+
+## Identity release 0.5.0
+
+This release adopts one palette and Commissioner across all six consumers. Its
+static snapshot includes `site.js`, `site-contract.js`, and `prepaint.js`, along
+with the Commissioner WOFF2, OFL notice, and source provenance. React consumers
+import `SiteHeader` and `AppearanceControl` from `/react`; static sites mount the
+same header through `/site`. Load or inject the shared prepaint script before
+styles, using the same storage key and cookie setting as the running controller.
+
+Remove obsolete Hanken font assets when adopting the snapshot. Rebuild bundled
+apps so their local font asset and inline prepaint code also advance to the new
+release. In Finance, check the nested frontend build and Docker tarball reference;
+its public navigation is shared, but its appearance preference remains private.
+Use synthetic review fixtures for browser mutations and verify deployed private
+entry points with read-only checks. [Identity decisions](identity.md) record the
+palette, typography, layout, copy rules, and treatments intentionally rejected.

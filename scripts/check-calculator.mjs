@@ -13,7 +13,7 @@ let browser;
 const results=[];
 try {
  browser=await chromium.launch({args:['--no-sandbox']});
- for(const width of [320,390,1440]) for(const appearance of ['light','dark']) {
+ for(const width of [320,390,768,1440]) for(const appearance of ['light','dark']) {
   const context=await browser.newContext({viewport:{width,height:1000},colorScheme:appearance,reducedMotion:'reduce',serviceWorkers:'block'});
   for(const route of routes) {
    const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));

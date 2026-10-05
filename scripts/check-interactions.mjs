@@ -11,10 +11,10 @@ try {
   const page=await browser.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'});
   await page.goto(`http://127.0.0.1:${4190+i}`,{waitUntil:'networkidle'});
   const before=await page.locator('html').getAttribute('data-theme');
-  await page.getByRole('switch').click();
+  await page.getByLabel('Appearance',{exact:true}).selectOption(before==='dark'?'light':'dark');
   const after=await page.locator('html').getAttribute('data-theme');assert.notEqual(before,after);
   await page.reload({waitUntil:'networkidle'});assert.equal(await page.locator('html').getAttribute('data-theme'),after);
-  const meta=await page.locator('meta[name="theme-color"]').getAttribute('content');assert.equal(meta,after==='dark'?'#131521':'#f6f7fb');
+  const meta=await page.locator('meta[name="theme-color"]').getAttribute('content');assert.equal(meta.toLowerCase(),after==='dark'?'#17323d':'#f1f5f7');
   if(name==='game') {
    const players = page.getByRole('group', {name:'Players', exact:true});
    const fewer = players.getByRole('button', {name:'Fewer players', exact:true});
@@ -75,7 +75,9 @@ try {
    assert.ok(page.url().includes('/prepayment'));
    assert.ok(await page.locator('input').count()>0);
   }
-  console.log(`${name}: theme toggle, persistence, metadata, and primary navigation passed`);
+  console.log(`${name}: labeled appearance, persistence, metadata, and primary navigation passed`);
   await page.close();
  }
 }finally{await browser.close();servers.forEach(s=>s.kill());}
+// Keep navigation/resume concealment in the normal consumer browser suite.
+await import('./check-game-privacy.mjs');
