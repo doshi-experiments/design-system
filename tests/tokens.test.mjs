@@ -17,6 +17,8 @@ for (const project of Object.keys(projects)) for (const appearance of Object.key
     }
     for (const action of ['action-primary', 'action-hover', 'action-pressed']) assert.ok(contrast(t['action-text'], t[action]) >= 4.5, action);
     for (const status of ['success', 'warning', 'error', 'info']) assert.ok(contrast(t[`${status}-text`], t[`${status}-bg`]) >= 4.5, status);
+    // Open disclosures, hovered table rows and hovered chip links paint text on the selection token.
+    for (const text of ['text', 'text-secondary', 'action-primary']) assert.ok(contrast(t[text], t.selection) >= 4.5, `${text}/selection`);
   });
 }
 test('density never shrinks the interactive target below the required minimum', () => {
