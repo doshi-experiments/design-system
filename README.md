@@ -178,3 +178,16 @@ selection only on drag controls and private game-reveal surfaces.
 For repeatable consumer upgrades, see [the central rollout process](docs/rollout.md).
 Changes are authored here, then versioned and adopted in each consuming repo;
 a source edit by itself does not rebuild already deployed applications.
+
+## Interface fixes (0.5.1)
+
+Focused slider thumbs show the focus ring. Base UI focuses the hidden range input
+inside the thumb, so the ring is drawn on `.ds-slider-thumb:has(:focus-visible)`.
+Disclosure, project-link and chip-link rings are inset and outrank the compatibility
+stylesheet's global ring, which the disclosure's overflow used to clip; triggers
+follow the section's corner radius. `.ds-button` scales to 0.96 on press when motion
+is allowed. Cards, metrics and table scrollers nested in a card use the control
+radius. Appearance changes turn transitions off until the new colors have painted,
+so a theme switch snaps instead of smearing. `npm test` also checks text, secondary
+text and the action color on the selection token, which open disclosures, hovered rows and hovered chip links paint
+behind text.
