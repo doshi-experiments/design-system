@@ -1,6 +1,6 @@
 # Doshi design system
 
-Version 0.5.0 gives the portfolio and its apps one identity: Commissioner, blue and porcelain surfaces, consistent global navigation, and a labeled System / Light / Dark appearance control. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. Generated assets must not be edited in consuming repos.
+Version 0.5.2 keeps Commissioner, consistent global navigation, and a labeled System / Light / Dark appearance control across the portfolio and its apps. The portfolio uses rust and charcoal; the apps retain blue and porcelain. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. Generated assets must not be edited in consuming repos.
 
 ```sh
 npm run build
@@ -13,7 +13,7 @@ npm run preview
 
 Set `data-project` on the document root to `portfolio`, `experiments`, `visualizations`, `calculator`, `game`, `finance`, or `household`. Set `data-theme` to `light` or `dark`, or omit it for CSS system preference. Set `data-density` to `comfortable`, `compact`, or `game`. Game targets are 60px; compact mode retains 44px targets.
 
-The generated CSS and JavaScript exports have matching concrete values. Semantic tokens cover text, surfaces, status backgrounds/text/icons, actions and their states, focus, categorical chart colors, sequential ramps, spacing, type, radius, and motion. Every project ID resolves to the same brand palette; status colors retain their meaning across apps. Density is independent of identity. The locally hosted Commissioner variable font ships with its OFL notice and pinned upstream provenance.
+The generated CSS and JavaScript exports have matching concrete values. Semantic tokens cover text, surfaces, status backgrounds/text/icons, actions and their states, focus, categorical chart colors, sequential ramps, spacing, type, radius, and motion. Application project IDs share one brand palette; `portfolio` supplies its own text, surface, border, selection, and action colors. Status colors retain their meaning across projects. Density is independent of identity. The locally hosted Commissioner variable font ships with its OFL notice and pinned upstream provenance.
 
 The base palette is porcelain `#F1F5F7`, model white `#FFFFFF`, deep ink `#17323D`, enamel blue `#1B5D8A`, glacier `#A8D7EB`, and crane yellow `#E7BD45`. Yellow belongs to the building's crane and meaningful progress, rather than general decoration. Body type uses straight terminals; headings add a modest flare through the font's `FLAR` axis. Controls use 8px corners, surfaces 16px, and dialogs 20px. Shadows belong to overlays. See [the visual and copy decisions](docs/identity.md) for the complete direction and rejected treatments.
 
@@ -44,6 +44,8 @@ The game and calculator integrations also install the release tarball, committed
 
 Load `prepaint.js` synchronously in the document head before styles or inject that same asset into a bundled application's HTML. It separates the saved preference (`data-appearance-preference`) from its resolved light/dark appearance (`data-theme`), preventing a first-paint flash and preserving System mode. `createAppearanceController` owns storage, OS changes, cross-tab changes, and fresh chart tokens. It retains public apps' existing `sheet-theme` cookie and localStorage choices; cookies use `.rishabhdoshi.com` only on that domain. Unrelated hosts use their own host cookie.
 
+Sites can set `data-appearance-default="dark"` on the root to choose the initial appearance for visitors without a saved preference. Both prepaint and the controller honor this fallback without persisting it; an explicit System, Light, or Dark preference always takes precedence. Omitting the attribute retains System as the default.
+
 ```jsx
 import {SiteHeader} from '@doshi-experiments/design-system/react';
 import {createAppearanceController} from '@doshi-experiments/design-system/theme';
@@ -66,6 +68,8 @@ const header = mountSiteHeader(document.querySelector('#family-header'), {
 // header.controller.subscribe(({preference, appearance, tokens}) => ...);
 // Call header.destroy() when removing a mounted header.
 ```
+
+Pass `showProjectTitle:false` to `mountSiteHeader` when the current-page title is redundant. The shared header then places navigation and Appearance in two columns; its default continues to show the title.
 
 For Finance, use `createAppearanceController({storageKey:'finance-appearance', cookie:false})` and set `data-appearance-storage="finance-appearance" data-appearance-cookie="false"` on the root for matching prepaint behavior. Do not copy public cookie settings to private applications. Call `destroy()` when disposing a controller and `refresh()` when changing density or project. The injectable `installTheme` adapter remains available for older consumers; it retains its existing resolved-stamp precedence.
 
@@ -191,3 +195,7 @@ radius. Appearance changes turn transitions off until the new colors have painte
 so a theme switch snaps instead of smearing. `npm test` also checks text, secondary
 text and the action color on the selection token, which open disclosures, hovered rows and hovered chip links paint
 behind text.
+
+## Portfolio presentation (0.5.2)
+
+The portfolio's dark palette combines charcoal `#252A2B`, raised slate `#343B3C`, pale stone `#F0EBE3`, secondary stone `#BEB8AE`, and rust `#D17C54`. Rust is light enough to serve as a readable link on charcoal; primary buttons use dark `#171D1E` text. The light companion pairs mineral `#EFEEE8` with burnt orange `#A84B2A`. Crane yellow and semantic statuses stay shared. Palette changes remain in the source token resolver and are released through the central rollout command; this release can be adopted by the portfolio independently.

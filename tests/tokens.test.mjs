@@ -16,6 +16,7 @@ for (const project of Object.keys(projects)) for (const appearance of Object.key
       assert.ok(contrast(t.border, t[surface]) >= 3, `border/${surface}`);
     }
     for (const action of ['action-primary', 'action-hover', 'action-pressed']) assert.ok(contrast(t['action-text'], t[action]) >= 4.5, action);
+    assert.ok(contrast(t['action-primary'], t['surface-page']) >= 4.5, 'action links/page');
     for (const status of ['success', 'warning', 'error', 'info']) assert.ok(contrast(t[`${status}-text`], t[`${status}-bg`]) >= 4.5, status);
     // Open disclosures, hovered table rows and hovered chip links paint text on the selection token.
     for (const text of ['text', 'text-secondary', 'action-primary']) assert.ok(contrast(t[text], t.selection) >= 4.5, `${text}/selection`);
@@ -47,10 +48,15 @@ test('existing pre-paint appearance wins; explicit choices persist and stop syst
   theme.destroy(); assert.equal(e.callbacks.size, 0);
 });
 
-test('all projects share one palette and shape language while densities stay independent', () => {
+test('apps retain their common palette and the portfolio retains the shared shape language', () => {
   for (const appearance of Object.keys(appearances)) {
-    const baseline = resolveTokens({project:'portfolio',appearance});
-    for (const project of Object.keys(projects)) assert.deepEqual(resolveTokens({project,appearance}),baseline);
+    const baseline = resolveTokens({project:'experiments',appearance});
+    for (const project of Object.keys(projects).filter(project=>project!=='portfolio')) assert.deepEqual(resolveTokens({project,appearance}),baseline);
+    const portfolio = resolveTokens({project:'portfolio',appearance});
+    assert.notEqual(portfolio['action-primary'],baseline['action-primary']);
+    assert.notEqual(portfolio['surface-page'],baseline['surface-page']);
+    for (const key of Object.keys(foundation)) assert.equal(portfolio[key],baseline[key],key);
+    for (const status of ['success','warning','error','info']) for (const role of ['bg','text','icon']) assert.equal(portfolio[`${status}-${role}`],baseline[`${status}-${role}`]);
   }
   assert.equal(foundation['radius-control'],'8px');assert.equal(foundation['radius-container'],'16px');assert.equal(foundation['radius-dialog'],'20px');
   assert.equal(foundation['shadow-raised'],'none');assert.match(foundation['font-body'],/Commissioner/);

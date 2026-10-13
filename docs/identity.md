@@ -1,6 +1,6 @@
 # One identity for Rishabh's portfolio and apps
 
-Decision date: 4 October 2026. Shared release: 0.5.0.
+Decision date: 4 October 2026; portfolio refinement: 6 October 2026. Shared release: 0.5.2.
 
 The portfolio is for hiring teams. The experiments demonstrate design judgment
 through things people can use. Their shared visual identity should make it easy to
@@ -31,9 +31,12 @@ The portfolio needs an open composition, not an enclosing presentation card.
 | Glacier | `#A8D7EB` | Dark actions and the light selection ramp |
 | Crane yellow | `#E7BD45` | The crane and meaningful progress |
 
-There are no separate app brand palettes. Existing project IDs remain compatible,
-but resolve to the same identity. Dark surfaces use quieter blue-gray steps to
-separate working areas. Green, amber, red, and blue status treatments communicate
+Applications continue to share this palette. The portfolio uses rust `#D17C54`
+on charcoal `#252A2B`, pale stone `#F0EBE3` text, and secondary stone `#BEB8AE`.
+Its light companion uses mineral `#EFEEE8` and burnt orange `#A84B2A`. This
+material-led variation leaves Commissioner, controls, and crane yellow shared.
+Dark application surfaces use quieter blue-gray steps to separate working areas.
+Green, amber, red, and blue status treatments communicate
 success, warning, error, and information consistently. Charts start with blue,
 then use teal, orange, and gray; purple is absent from the default palette. Custom
 colors chosen by visualization users remain their own choices.
@@ -60,7 +63,8 @@ The portfolio places left-aligned introductory copy beside the model. On mobile,
 the introduction precedes the model. The model begins partly assembled rather
 than making visitors scroll through an empty scene. Three concise process moments
 complete a roughly three-screen sequence. Reduced-motion visitors get the completed
-model and ordinary readable content. Contact links remain accessible throughout.
+model and ordinary readable content. Quiet contact links precede the experiments
+action; a centered downward scroll cue introduces the building interaction.
 
 The experiments page presents three open project rows with direct actions.
 Calculator and visualization subpages belong in native disclosures, and empty
@@ -70,13 +74,15 @@ they do not frame every heading or turn every paragraph into a card.
 Every app shows Home and Experiments through `SiteHeader`, or its equivalent
 `mountSiteHeader` static implementation. Local calculator, visualization, and
 Finance navigation stays distinct beneath that global return path. Public
-navigation never advertises private Finance.
+navigation never advertises private Finance. The portfolio omits the redundant
+current-page title while retaining Home, Experiments, and Appearance.
 
 Appearance uses one visible native control with System, Light, and Dark options.
 Saved preference and resolved appearance are separate. Shared prepaint code runs
 before styles, and System follows OS changes. Public preferences keep the existing
 domain cookie and localStorage; Finance uses its private storage key without a
-public cookie.
+public cookie. The portfolio defaults to Dark for visitors without a saved choice;
+an explicit System, Light, or Dark preference still takes precedence.
 
 Text selection is normal on headings, copy, labels, and values. Only actual drag
 controls and private game-reveal surfaces suppress it. Hidden portfolio panels
@@ -121,6 +127,6 @@ calculations and backend behavior remain outside this redesign. Representative
 screenshots are reviewed alongside these checks.
 
 Make future identity changes here, version them, and use the central rollout
-command for all six consumers. Snapshots and tarballs are immutable. An upgrade
+command for the affected consumers. Snapshots and tarballs are immutable. An upgrade
 reaches a running app when its consumer change is merged and deployed, allowing
 independent releases and reversions without a mutable shared CDN.
