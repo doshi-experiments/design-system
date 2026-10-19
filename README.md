@@ -1,6 +1,6 @@
 # Doshi design system
 
-Version 0.5.2 keeps Commissioner, consistent global navigation, and a labeled System / Light / Dark appearance control across the portfolio and its apps. The portfolio uses rust and charcoal; the apps retain blue and porcelain. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. Generated assets must not be edited in consuming repos.
+Version 0.6.0, Felt, gives the portfolio and every app one identity: Host Grotesk, warm grey wool in light, charcoal in dark, and one coral signal, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation and the labeled System / Light / Dark appearance control are unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. Generated assets must not be edited in consuming repos.
 
 ```sh
 npm run build
@@ -13,9 +13,9 @@ npm run preview
 
 Set `data-project` on the document root to `portfolio`, `experiments`, `visualizations`, `calculator`, `game`, `finance`, or `household`. Set `data-theme` to `light` or `dark`, or omit it for CSS system preference. Set `data-density` to `comfortable`, `compact`, or `game`. Game targets are 60px; compact mode retains 44px targets.
 
-The generated CSS and JavaScript exports have matching concrete values. Semantic tokens cover text, surfaces, status backgrounds/text/icons, actions and their states, focus, categorical chart colors, sequential ramps, spacing, type, radius, and motion. Application project IDs share one brand palette; `portfolio` supplies its own text, surface, border, selection, and action colors. Status colors retain their meaning across projects. Density is independent of identity. The locally hosted Commissioner variable font ships with its OFL notice and pinned upstream provenance.
+The generated CSS and JavaScript exports have matching concrete values. Semantic tokens cover text, surfaces, status backgrounds/text/icons, actions and their states, focus, categorical chart colors, sequential ramps, spacing, type, radius, and motion. Every project ID resolves to the same palette. `action-primary` is the coral fill, with `action-text` ink on it; text in the signal colour uses `action-link`, which is also the focus colour. `surface-inset` colours fields and tracks, `stitch` the dashed inner seams, and `shadow-raised` / `shadow-pressed` the felt depth. Status colors retain their meaning across projects. Density is independent of identity. The locally hosted Host Grotesk variable font ships with its OFL notice and provenance.
 
-The base palette is porcelain `#F1F5F7`, model white `#FFFFFF`, deep ink `#17323D`, enamel blue `#1B5D8A`, glacier `#A8D7EB`, and crane yellow `#E7BD45`. Yellow belongs to the building's crane and meaningful progress, rather than general decoration. Body type uses straight terminals; headings add a modest flare through the font's `FLAR` axis. Controls use 8px corners, surfaces 16px, and dialogs 20px. Shadows belong to overlays. See [the visual and copy decisions](docs/identity.md) for the complete direction and rejected treatments.
+Light is wool `#E7E4DE` with raised `#F1EEE9`, inset `#DAD6CE` and ink `#262624`; dark is charcoal `#33322F` with raised `#3E3D39`, inset `#2B2A27` and chalk `#ECE9E3`. The signal is coral `#FF5E7C`, with `#A1263F` (light) or `#FF7F96` (dark) for signal-coloured text. Buttons, keys and segments are pills; fields are 14px, surfaces 24px, dialogs 30px. Each page blends a fibre tile into its background; set `data-texture="off"` on the root to remove it. Local app navigation uses `.ds-tabs` / `.ds-tab` underline tabs. See [the visual and copy decisions](docs/identity.md) for the complete direction and rejected treatments.
 
 ## Consumers
 
@@ -199,3 +199,29 @@ behind text.
 ## Portfolio presentation (0.5.2)
 
 The portfolio's dark palette combines charcoal `#252A2B`, raised slate `#343B3C`, pale stone `#F0EBE3`, secondary stone `#BEB8AE`, and rust `#D17C54`. Rust is light enough to serve as a readable link on charcoal; primary buttons use dark `#171D1E` text. The light companion pairs mineral `#EFEEE8` with burnt orange `#A84B2A`. Crane yellow and semantic statuses stay shared. Palette changes remain in the source token resolver and are released through the central rollout command; this release can be adopted by the portfolio independently.
+
+## Felt (0.6.0)
+
+One identity for the portfolio and every app, adopted from the portfolio's "made with
+an AI in the room" face. Host Grotesk replaces Commissioner. Light is wool and dark is
+charcoal; the coral `#FF5E7C` is the single signal, used as a fill under ink. Because
+coral fails as text on wool, the new `action-link` token carries signal-coloured text and
+focus rings (`#A1263F` light, `#FF7F96` dark), and `npm test` checks it on every surface
+and on the selection colour. New tokens: `surface-inset`, `stitch`, `shadow-pressed`,
+`radius-pill`, `ease-spring`; `shadow-raised` now carries the felt depth, and
+`shadow-overlay` moves into each appearance. `projectAppearanceOverrides` is empty:
+every project resolves to the same palette.
+
+Components follow: buttons and segments are raised pills that press in; a segmented
+control is a recessed track with a raised key; fields, selects, file inputs and slider
+tracks are pressed into the page; cards, tables, disclosures and project links are
+raised, with a stitch on cards and project links; metrics sit under a stitched rule
+instead of a box, so results never read as fields. The global header is a raised pill
+whose current page carries a coral dot. `.ds-tabs` / `.ds-tab` add underline tabs for
+local navigation. Each page blends a fibre tile into its background, multiplied in
+light and overlaid in dark; `data-texture="off"` removes it. The release ships
+`felt/fibre-light.svg` and `felt/fibre-dark.svg` beside the fonts, and the rollout
+removes the Commissioner files from every snapshot.
+
+Consumers that coloured text with `--ds-action-primary` move that text to
+`--ds-action-link`; fills keep `--ds-action-primary` with `--ds-action-text`.

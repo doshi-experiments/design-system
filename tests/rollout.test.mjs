@@ -31,10 +31,11 @@ async function fixture(t) {
   const source = resolve(root, 'source'), workspace = resolve(root, 'workspace');
   await mkdir(resolve(source, 'scripts'), {recursive: true});
   await mkdir(resolve(source, 'dist/fonts'), {recursive: true});
+  await mkdir(resolve(source, 'dist/felt'), {recursive: true});
   await writeFile(resolve(source, 'scripts/build.mjs'), '// Fixture build: assets already generated.\n');
   const pkg = {name: packageName, version: '0.1.0', private: true, files: ['dist']};
   await json(resolve(source, 'package.json'), pkg);
-  for (const name of ['components.css', 'tokens.css', 'tokens.js', 'tokens.json', 'theme.js', 'legacy.css', 'metadata.js', 'site.js', 'site-contract.js', 'prepaint.js', 'fonts/commissioner-variable.woff2', 'fonts/commissioner-OFL.txt', 'fonts/commissioner-source.txt']) await writeFile(resolve(source, 'dist', name), `old ${name}`);
+  for (const name of ['components.css', 'tokens.css', 'tokens.js', 'tokens.json', 'theme.js', 'legacy.css', 'metadata.js', 'site.js', 'site-contract.js', 'prepaint.js', 'fonts/host-grotesk-latin.woff2', 'fonts/host-grotesk-latin-ext.woff2', 'fonts/host-grotesk-OFL.txt', 'fonts/host-grotesk-source.txt', 'felt/fibre-light.svg', 'felt/fibre-dark.svg']) await writeFile(resolve(source, 'dist', name), `old ${name}`);
   const snapshotRoot = resolve(workspace, 'static-app');
   const appRoot = resolve(workspace, 'react-app');
   const appPackage = resolve(appRoot, 'ingest/frontend');

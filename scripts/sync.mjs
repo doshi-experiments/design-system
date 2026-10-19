@@ -6,7 +6,7 @@ import {dirname, resolve, relative, isAbsolute, sep} from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 
 export const sourceDirectory = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const assetNames = ['components.css', 'tokens.css', 'tokens.js', 'tokens.json', 'theme.js', 'legacy.css', 'metadata.js', 'site.js', 'site-contract.js', 'prepaint.js', 'fonts/commissioner-variable.woff2', 'fonts/commissioner-OFL.txt', 'fonts/commissioner-source.txt'];
+const assetNames = ['components.css', 'tokens.css', 'tokens.js', 'tokens.json', 'theme.js', 'legacy.css', 'metadata.js', 'site.js', 'site-contract.js', 'prepaint.js', 'fonts/host-grotesk-latin.woff2', 'fonts/host-grotesk-latin-ext.woff2', 'fonts/host-grotesk-OFL.txt', 'fonts/host-grotesk-source.txt', 'felt/fibre-light.svg', 'felt/fibre-dark.svg'];
 
 export async function readRelease(directory = sourceDirectory) {
   const {name, version} = JSON.parse(await readFile(resolve(directory, 'package.json'), 'utf8'));
