@@ -14,6 +14,13 @@
 .ds-segmented {display:inline-flex; flex-wrap:wrap; gap:6px; max-width:100%; padding:5px; border-radius:calc(var(--ds-control-target) / 2 + 5px); background:var(--ds-surface-inset); box-shadow:var(--ds-shadow-pressed)}
 .ds-segment {display:inline-flex; align-items:center; justify-content:center; min-height:var(--ds-control-target); padding:8px 16px; font:600 .875rem var(--ds-font-body); border:1px solid transparent; border-radius:var(--ds-radius-pill); color:var(--ds-text-secondary); background:transparent; cursor:pointer}
 .ds-segment:hover:not([data-checked]) {color:var(--ds-text)}
+/* Small size (0.7.1): a shorter pill for dense app layouts. The visible control is
+   control-compact-height; an invisible hit area keeps the full control-target. */
+.ds-button[data-size="small"],.ds-segmented[data-size="small"] .ds-segment {position:relative; min-height:var(--ds-control-compact-height); line-height:1.25}
+.ds-button[data-size="small"] {padding:6px 16px}
+.ds-segmented[data-size="small"] {border-radius:calc(var(--ds-control-compact-height) / 2 + 5px)}
+.ds-segmented[data-size="small"] .ds-segment {padding:6px 14px}
+.ds-button[data-size="small"]::after,.ds-segmented[data-size="small"] .ds-segment::after {content:""; position:absolute; inset:50% 0 auto; height:max(100%, var(--ds-control-target)); translate:0 -50%}
 .ds-segment[data-checked] {color:var(--ds-text); background:var(--ds-surface-raised); box-shadow:var(--ds-shadow-raised)}
 
 /* Shared application surfaces and input recipes. */

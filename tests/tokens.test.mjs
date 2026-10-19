@@ -27,6 +27,12 @@ for (const project of Object.keys(projects)) for (const appearance of Object.key
 }
 test('density never shrinks the interactive target below the required minimum', () => {
   for (const [name,t] of Object.entries(densities)) assert.ok(parseInt(t['control-target']) >= (name === 'game' ? 60 : 44));
+  // small controls look shorter but never at game density, and never below 32px to the eye
+  for (const [name,t] of Object.entries(densities)) {
+    const compact = parseInt(t['control-compact-height']);
+    assert.ok(compact >= 32 && compact <= parseInt(t['control-height']), name);
+    if (name === 'game') assert.equal(t['control-compact-height'], t['control-height']);
+  }
 });
 test('invalid dimensions fail explicitly', () => {
   for (const key of ['project', 'appearance', 'density']) assert.throws(() => resolveTokens({[key]: '__proto__'}), RangeError);

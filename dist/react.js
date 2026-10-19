@@ -7,8 +7,8 @@ import {Slider} from '@base-ui/react/slider';
 import {RadioGroup} from '@base-ui/react/radio-group';
 import {Dialog as BaseDialog} from '@base-ui/react/dialog';
 // App-owned recipes over the Base UI foundation selected for shadcn components.
-export const Button = React.forwardRef(function Button({loading = false, disabled = false, variant, children, className = '', ...props}, ref) {
-  return React.createElement(BaseButton, {...props, ref, className: `ds-button ${className}`, 'data-variant':variant, disabled: disabled || loading, 'aria-busy': loading || undefined}, children);
+export const Button = React.forwardRef(function Button({loading = false, disabled = false, variant, size, children, className = '', ...props}, ref) {
+  return React.createElement(BaseButton, {...props, ref, className: `ds-button ${className}`, 'data-variant':variant, 'data-size':size, disabled: disabled || loading, 'aria-busy': loading || undefined}, children);
 });
 export function HelpPopover({label = 'More information', title, children}) {
   const [open, setOpen] = React.useState(false);
@@ -22,9 +22,9 @@ export function HelpPopover({label = 'More information', title, children}) {
           React.createElement(Popover.Description, {className:'ds-popover-description'}, children),
           React.createElement(Popover.Close, {className:'ds-button'}, 'Close')))));
 }
-export function SegmentedControl({options, value, onValueChange, label}) {
+export function SegmentedControl({options, value, onValueChange, label, size}) {
   return React.createElement(RadioGroup, {
-    className:'ds-segmented', 'aria-label':label || `Choose: ${options.map(([,text]) => text).join(', ')}`,
+    className:'ds-segmented', 'data-size':size, 'aria-label':label || `Choose: ${options.map(([,text]) => text).join(', ')}`,
     value:String(options.findIndex(([v]) => v === value)),
     onValueChange:index => {const option = options[Number(index)]; if (option) onValueChange(option[0]);},
   }, options.map(([,text], index) => React.createElement(Radio.Root, {key:index, value:String(index), className:'ds-segment'}, text)));
