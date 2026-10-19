@@ -63,8 +63,20 @@ test('one look for everything: every project resolves to the same felt palette a
   assert.equal(resolveTokens({appearance:'dark'})['surface-page'],'#33322F');
   for (const appearance of Object.keys(appearances)) {
     const t = resolveTokens({appearance});
-    assert.equal(t['action-primary'],'#FF5E7C');assert.equal(t['action-text'],'#262624');assert.equal(t.focus,t['action-link']);
-    assert.notEqual(t['error-text'],t['action-primary'],'error never reads as the brand coral');
+    assert.equal(t['action-primary'],'#CD354D');assert.equal(t['action-text'],'#FFFFFF');assert.equal(t.focus,t['action-link']);
+    assert.notEqual(t['error-text'],t['action-primary'],'error never reads as the brand signal');
   }
   assert.equal(resolveTokens({project:'game',density:'game'})['control-target'],'60px');
 });
+
+test('0.7 signal: every stop of every gradient state keeps white text at 4.5:1', () => {
+  const t = resolveTokens();
+  for (const key of ['action-gradient', 'action-gradient-hover', 'action-gradient-pressed']) {
+    const stops = t[key].match(/#[0-9A-F]{6}/gi);
+    assert.equal(stops.length, 2, key);
+    for (const stop of stops) assert.ok(contrast(t['action-text'], stop) >= 4.5, `${key} ${stop}`);
+  }
+  // The solid midpoint stands in for the gradient on dots, accent-color and chart fills.
+  for (const appearance of Object.keys(appearances)) assert.ok(contrast(resolveTokens({appearance})['action-primary'], resolveTokens({appearance})['surface-page']) >= (appearance === 'light' ? 3 : 2.5), appearance);
+});
+
