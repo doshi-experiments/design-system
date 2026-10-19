@@ -1,6 +1,6 @@
 # Doshi design system
 
-Version 0.7.1 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation and the labeled System / Light / Dark appearance control are unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. Generated assets must not be edited in consuming repos.
+Version 0.8.0 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation and the labeled System / Light / Dark appearance control are unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. Generated assets must not be edited in consuming repos.
 
 ```sh
 npm run build
@@ -166,6 +166,13 @@ Applications still reset document margins and own their business-specific layout
 | `AppShell` | `brand`, `navigation` (`id`, `label`, `href` or `onClick`, `active`, optional `icon`), `actions`, `footer`, `children`. Includes a skip link, navigation landmark and responsive main content. |
 | `Button` | Native/Base UI button props plus `variant` (`primary`, `secondary`, `danger`, `ghost`), `loading` and `size` (`"small"` for dense layouts, 0.7.1). Loading disables repeat activation. Static markup uses `data-size="small"`. |
 | `TextField` | Native input props, `label`, `value`, `onValueChange`, `hint`, `error`, optional `hideLabel`. For number parsing use `NumericField`. |
+| `Select` | Styled listbox (Base UI Select) for when a native sheet would break the look: `label`, `value`, `onValueChange`, `options` (`{value, label, disabled}` or `[value, label]`), optional `groups` (`{label, options}` or `[label, options]`, shown after the options under a stitched rule), `hint`, `disabled`, `layout` (`stacked`, `inline` label to the left, or `hidden` for screen readers only), `variant` (`field` pressed in, or `quiet` flat until hovered, for editing in a table), `size` (`"small"`), `className`, `triggerClassName`. Values are strings. An inline picker is at least 128px wide; set `--ds-picker-min-width` on a wrapper to keep a changing value from resizing it. 0.8.0. |
+| `DateField` | Calendar popover: `label`, `value` (`YYYY-MM-DD` or `''`), `onValueChange`, optional `min`, `max`, `hint`, `placeholder` (`No date`), `clearable`, `layout`, `size`, `format`, `todayLabel`, `clearLabel`. Monday-first grid; arrows move a day or a week, Page Up/Down a month, Home/End the week, Enter picks; focus stays within `min`..`max`. `formatDate(iso)` gives its `Wed 21 Oct 2026` form. 0.8.0. |
+| `TimeField` | `Select` of times of day: `step` minutes (30), `allowEmpty` with `emptyLabel` (`No time`), `format` (12-hour clock); values are `HH:MM` or `''`, and an off-grid value is kept. Other props pass to `Select`. 0.8.0. |
+| `MenuButton` | A button that opens a menu of actions: `label`, `items` (`{label, onSelect, disabled}` or `'separator'`), `variant`, `size`, `align` (`end`), `disabled`, `loading`. 0.8.0. |
+| `ToggleButton` | Pressed/unpressed status (Base UI Toggle, `aria-pressed`): `pressed`, `onPressedChange`, `tone` (`error`, `warning`, `success`, `info`; untoned is pressed in), `size`, `loading`, `children`. Off is quiet; on carries the tone's tinted background. Always pass words such as “Alarm on” / “Alarm off”; a tone is never shown as bare colour. 0.8.0. |
+| `IconButton` | Round icon-only button: `label` (required, becomes `aria-label`), `size` (`"small"` draws 32px over the full target), children. 0.8.0. |
+| `ToastProvider` / `toast` | Mount `ToastProvider` once around the app; `toast(title, description?, {tone, timeout})` (tone `success` by default, timeout 4000ms) shows a confirmation that outlives the page that raised it. Bottom right, full width on phones, three at a time; error toasts carry the error tint and announce assertively. 0.8.0. |
 | `SelectField` | Native select props, `label`, `value`, `onValueChange`, `options` (`value`, `label`, `disabled`), `hint`, `error`, optional `hideLabel`. Values are strings, as in native selects. |
 | `CheckboxField` | Native checkbox props, `label`, `checked`, `onCheckedChange`, optional `hint`, `error`, `indeterminate`. Label provides the full touch target. |
 | `FileUpload` | Native file input props, `label`, `accept`, `multiple`, `onFilesChange(File[])`, `hint`, `error`, `disabled`. Applications enforce file size, content and upload policy. |
@@ -263,3 +270,30 @@ game controls never shrink) with tighter padding, while an invisible hit area ke
 full `control-target` height, so the 44px target minimum still holds. The default size is
 unchanged. `npm test` checks that the compact height stays between 32px and the control
 height, and equals it at game density.
+
+## Pickers, menus, toggles and toasts (0.8.0)
+
+Pieces the household Tasks app built for itself move here, so apps stop styling their
+own. `Select`, `DateField` and `TimeField` open one raised felt popup instead of the
+operating system's sheet; their fields are pressed in like the other inputs and take
+`size="small"` and an inline or hidden label for toolbars and tables. `Select` takes
+grouped options and a `quiet` variant for in-place editing. `DateField` is a
+keyboard-driven month grid with `min`/`max`, Today and Clear; `TimeField` lists the day
+in half-hour steps. `MenuButton` puts a list of actions behind one pill, and
+`.ds-menu` / `.ds-menu-item` / `.ds-menu-separator` are the shared popup classes for
+Base UI menus an app builds itself. `ToggleButton` shows a status that switches, with
+the tone's tinted background and words when on, never bare colour; the error tone keeps
+error red apart from the signal. `ToastProvider` and `toast()` give app-wide
+confirmations. `IconButton` is the round icon-only control the calendar and toasts use.
+Picker and menu popups sit above dialogs (z-index 210, dialogs 200), so a `DateField`
+inside a `Dialog` opens over it; toasts stay beneath dialogs at 180.
+
+Every target keeps `control-target` (44px; 60px at game density). Options, menu items
+and calendar days are full targets, and a day's tile is drawn inset so neighbours never
+overlap. Small pickers, toggles and icon buttons draw shorter over an invisible
+full-size hit area, as 0.7.1 small buttons do. Picker fields are now 44px tall, the same
+as `TextField`. `npm run test:components` covers the new components in both appearances
+at all four widths: their hit areas, grouped and keyboard selection, the time slots,
+calendar keyboard movement within `min`, Clear, the menu, the toggle's error tint and
+dismissing a toast, and a calendar opened inside a dialog.
+

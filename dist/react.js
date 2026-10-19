@@ -6,6 +6,10 @@ import {Radio} from '@base-ui/react/radio';
 import {Slider} from '@base-ui/react/slider';
 import {RadioGroup} from '@base-ui/react/radio-group';
 import {Dialog as BaseDialog} from '@base-ui/react/dialog';
+import {Select as BaseSelect} from '@base-ui/react/select';
+import {Menu} from '@base-ui/react/menu';
+import {Toast} from '@base-ui/react/toast';
+import {Toggle} from '@base-ui/react/toggle';
 // App-owned recipes over the Base UI foundation selected for shadcn components.
 export const Button = React.forwardRef(function Button({loading = false, disabled = false, variant, size, children, className = '', ...props}, ref) {
   return React.createElement(BaseButton, {...props, ref, className: `ds-button ${className}`, 'data-variant':variant, 'data-size':size, disabled: disabled || loading, 'aria-busy': loading || undefined}, children);
@@ -220,4 +224,166 @@ export function SiteHeader({project = 'portfolio', appearance = 'system', onAppe
         'aria-current':(name === 'home' && project === 'portfolio') || (name === 'experiments' && project === 'experiments') ? 'page' : undefined}, link.label))),
     h('span', {className:'ds-site-project'}, projectTitle(project)),
     h(AppearanceControl, {value:appearance, onValueChange:onAppearanceChange}));
+}
+
+// Pickers, menus, toggles and toasts (0.8.0). Select, DateField and TimeField open one
+// felt popup instead of the operating system's sheet; values are strings, like native
+// inputs. Every target keeps control-target; size="small" draws shorter over the same hit area.
+const stroke = {fill:'none', stroke:'currentColor', strokeWidth:2, strokeLinecap:'round', strokeLinejoin:'round'};
+const icon = (className, size, ...paths) => h('svg', {className, viewBox:'0 0 16 16', width:size, height:size, 'aria-hidden':true}, ...paths);
+const chevronIcon = className => icon(className, 14, h('path', {d:'M3.5 6l4.5 4.5L12.5 6', ...stroke}));
+const checkIcon = className => icon(className, 14, h('path', {d:'M3 8.5l3.2 3L13 4.5', ...stroke, strokeWidth:2.2}));
+const calendarIcon = () => icon('ds-picker-icon', 15, h('rect', {x:2, y:3.5, width:12, height:10.5, rx:2.5, ...stroke, strokeWidth:1.6}),
+  h('path', {d:'M2.5 7h11M5.5 2v3M10.5 2v3', ...stroke, strokeWidth:1.6}));
+const optionOf = option => Array.isArray(option) ? {value:option[0], label:option[1]} : option;
+const groupOf = group => Array.isArray(group) ? {label:group[0], options:group[1].map(optionOf)} : {...group, options:group.options.map(optionOf)};
+
+export const IconButton = React.forwardRef(function IconButton({label, size, className = '', children, ...props}, ref) {
+  return h('button', {type:'button', ...props, ref, className:`ds-icon-button ${className}`, 'data-size':size, 'aria-label':label}, children);
+});
+
+// Label above (stacked), to the left (inline) or for screen readers only (hidden), and a hint below.
+function PickerField({label, id, hint, layout, className, children}) {
+  return h('div', {className:`ds-field ds-picker-field ${className}`, 'data-layout':layout},
+    h('span', {id:`${id}-label`, className:`ds-field-label${layout === 'hidden' ? ' ds-visually-hidden' : ''}`}, label),
+    children, hint && h('p', {id:`${id}-hint`, className:'ds-field-hint'}, hint));
+}
+
+export function Select({label, value, onValueChange, options = [], groups = [], hint, disabled, layout = 'stacked',
+  variant = 'field', size, className = '', triggerClassName = ''}) {
+  const id = React.useId();
+  const flat = options.map(optionOf), sets = groups.map(groupOf);
+  const all = [...flat, ...sets.flatMap(group => group.options)];
+  const labelOf = current => all.find(option => String(option.value) === String(current))?.label ?? '';
+  const item = option => h(BaseSelect.Item, {key:String(option.value), value:String(option.value), disabled:option.disabled, className:'ds-option'},
+    h(BaseSelect.ItemText, null, option.label), h(BaseSelect.ItemIndicator, {className:'ds-option-check'}, checkIcon()));
+  return h(PickerField, {label, id, hint, layout, className},
+    h(BaseSelect.Root, {value:String(value ?? ''), onValueChange:next => onValueChange?.(next), disabled},
+      h(BaseSelect.Trigger, {className:`ds-picker ${triggerClassName}`, 'data-variant':variant, 'data-size':size,
+        'aria-labelledby':`${id}-label`, 'aria-describedby':hint ? `${id}-hint` : undefined},
+        h(BaseSelect.Value, {className:'ds-picker-value'}, current => labelOf(current)), chevronIcon('ds-picker-icon')),
+      h(BaseSelect.Portal, null,
+        h(BaseSelect.Positioner, {className:'ds-menu-positioner', sideOffset:6, align:'start', alignItemWithTrigger:false},
+          h(BaseSelect.Popup, {className:'ds-menu ds-select-popup'},
+            h(BaseSelect.List, null, ...flat.map(item), ...sets.map(group => h(BaseSelect.Group, {key:group.label, className:'ds-option-group'},
+              h(BaseSelect.GroupLabel, {className:'ds-option-group-label'}, group.label), ...group.options.map(item)))))))));
+}
+
+const pad2 = number => String(number).padStart(2, '0');
+const clockTime = hhmm => {const [hour, minute] = hhmm.split(':').map(Number); return `${((hour + 11) % 12) + 1}:${pad2(minute)} ${hour < 12 ? 'AM' : 'PM'}`;};
+// Times of day in `step`-minute slots (plus the current value if it is off the grid); '' is no time.
+export function TimeField({value, step = 30, allowEmpty = true, emptyLabel = 'No time', format = clockTime, ...props}) {
+  const slots = Array.from({length:Math.ceil(1440 / step)}, (_, index) => `${pad2(Math.floor(index * step / 60))}:${pad2(index * step % 60)}`);
+  if (value && !slots.includes(value)) {slots.push(value); slots.sort();}
+  return h(Select, {...props, value:value || '', options:[...(allowEmpty ? [{value:'', label:emptyLabel}] : []), ...slots.map(slot => ({value:slot, label:format(slot)}))]});
+}
+
+const isoOf = date => `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
+const dateOf = iso => new Date(`${iso}T12:00:00`);
+const addDays = (iso, days) => {const date = dateOf(iso); date.setDate(date.getDate() + days); return isoOf(date);};
+const addMonths = (iso, months) => {const date = dateOf(iso); const day = date.getDate(); date.setDate(1); date.setMonth(date.getMonth() + months);
+  date.setDate(Math.min(day, new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate())); return isoOf(date);};
+const todayIso = () => isoOf(new Date());
+const weekdayIndex = iso => (dateOf(iso).getDay() + 6) % 7;   // Monday-first
+const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+// "Wed 21 Oct 2026"
+export const formatDate = iso => {const date = dateOf(iso);
+  return `${date.toLocaleDateString('en', {weekday:'short'})} ${date.getDate()} ${date.toLocaleDateString('en', {month:'short'})} ${date.getFullYear()}`;};
+
+// A month grid. Arrow keys move a day or a week, Page Up/Down a month, Home/End the week; Enter picks.
+// Focus stays inside min..max, so it never lands on a disabled day.
+function Calendar({value, min, max, format, onPick}) {
+  const today = todayIso();
+  const clamp = iso => (min && iso < min ? min : max && iso > max ? max : iso);
+  const [focus, setFocus] = React.useState(() => clamp(value || today));
+  const grid = React.useRef(null);
+  const first = dateOf(focus.slice(0, 8) + '01');
+  const cells = Array.from({length:42}, (_, index) => addDays(isoOf(first), index - weekdayIndex(isoOf(first))));
+  React.useEffect(() => {grid.current?.querySelector(`[data-date="${focus}"]`)?.focus();}, [focus]);
+  const go = next => setFocus(clamp(next));
+  const onKeyDown = event => {
+    const step = {ArrowLeft:-1, ArrowRight:1, ArrowUp:-7, ArrowDown:7}[event.key];
+    if (step) go(addDays(focus, step));
+    else if (event.key === 'PageUp') go(addMonths(focus, -1));
+    else if (event.key === 'PageDown') go(addMonths(focus, 1));
+    else if (event.key === 'Home') go(addDays(focus, -weekdayIndex(focus)));
+    else if (event.key === 'End') go(addDays(focus, 6 - weekdayIndex(focus)));
+    else return;
+    event.preventDefault();
+  };
+  return h('div', {className:'ds-calendar'},
+    h('div', {className:'ds-calendar-head'},
+      h(IconButton, {label:'Previous month', size:'small', onClick:() => go(addMonths(focus, -1))}, icon(undefined, 14, h('path', {d:'M10 3.5 5.5 8l4.5 4.5', ...stroke}))),
+      h('span', {className:'ds-calendar-title', 'aria-live':'polite'}, first.toLocaleDateString(undefined, {month:'long', year:'numeric'})),
+      h(IconButton, {label:'Next month', size:'small', onClick:() => go(addMonths(focus, 1))}, icon(undefined, 14, h('path', {d:'M6 3.5 10.5 8 6 12.5', ...stroke})))),
+    h('table', {ref:grid, className:'ds-calendar-grid', role:'grid', onKeyDown},
+      h('thead', null, h('tr', null, WEEKDAYS.map(day => h('th', {key:day, scope:'col', abbr:day}, day.slice(0, 2))))),
+      h('tbody', null, Array.from({length:6}, (_, week) => h('tr', {key:week}, cells.slice(week * 7, week * 7 + 7).map(iso =>
+        h('td', {key:iso, role:'gridcell', 'aria-selected':iso === value},
+          h('button', {type:'button', className:'ds-day', 'data-date':iso, tabIndex:iso === focus ? 0 : -1,
+            disabled:(min && iso < min) || (max && iso > max) || undefined,
+            'data-outside':dateOf(iso).getMonth() !== first.getMonth() || undefined, 'data-today':iso === today || undefined, 'data-selected':iso === value || undefined,
+            'aria-label':format(iso), 'aria-current':iso === today ? 'date' : undefined, onClick:() => onPick(iso)}, dateOf(iso).getDate()))))))));
+}
+
+// A date field that opens the calendar. value: YYYY-MM-DD or ''.
+export function DateField({label, value, onValueChange, hint, min, max, placeholder = 'No date', clearable = true, layout = 'stacked',
+  size, format = formatDate, todayLabel = 'Today', clearLabel = 'Clear', className = '', triggerClassName = ''}) {
+  const id = React.useId();
+  const [open, setOpen] = React.useState(false);
+  const pick = iso => {onValueChange?.(iso); setOpen(false);};
+  const today = todayIso();
+  return h(PickerField, {label, id, hint, layout, className},
+    h(Popover.Root, {open, onOpenChange:setOpen},
+      h(Popover.Trigger, {className:`ds-picker ${triggerClassName}`, 'data-variant':'field', 'data-size':size,
+        'aria-labelledby':`${id}-label ${id}-value`, 'aria-describedby':hint ? `${id}-hint` : undefined},
+        h('span', {id:`${id}-value`, className:'ds-picker-value', 'data-empty':!value || undefined}, value ? format(value) : placeholder), calendarIcon()),
+      h(Popover.Portal, null,
+        h(Popover.Positioner, {className:'ds-menu-positioner', sideOffset:6, align:'start'},
+          h(Popover.Popup, {className:'ds-menu ds-date-popup', 'aria-label':typeof label === 'string' ? `Choose ${label.toLowerCase()}` : undefined},
+            h(Calendar, {value, min, max, format, onPick:pick}),
+            h('div', {className:'ds-calendar-foot'},
+              (!min || today >= min) && (!max || today <= max) && h(Button, {type:'button', variant:'ghost', size:'small', onClick:() => pick(today)}, todayLabel),
+              clearable && value && h(Button, {type:'button', variant:'ghost', size:'small', onClick:() => pick('')}, clearLabel)))))));
+}
+
+// A button that opens a menu of actions. items: {label, onSelect, disabled} or 'separator'.
+export function MenuButton({label, items = [], variant, size, align = 'end', disabled = false, loading = false, className = ''}) {
+  return h(Menu.Root, null,
+    h(Menu.Trigger, {className:`ds-button ds-menu-trigger ${className}`, 'data-variant':variant, 'data-size':size,
+      disabled:disabled || loading, 'aria-busy':loading || undefined}, label, chevronIcon()),
+    h(Menu.Portal, null,
+      h(Menu.Positioner, {className:'ds-menu-positioner', sideOffset:6, align},
+        h(Menu.Popup, {className:'ds-menu'}, items.map((item, index) => item === 'separator'
+          ? h(Menu.Separator, {key:`separator-${index}`, className:'ds-menu-separator'})
+          : h(Menu.Item, {key:item.key ?? index, className:'ds-menu-item', disabled:item.disabled, onClick:item.onSelect}, item.label))))));
+}
+
+// A pressed/unpressed status, such as "Alarm on" / "Alarm off". Off is quiet; on carries
+// its tone's tinted background. Always pass words: a tone is never shown as bare colour.
+export const ToggleButton = React.forwardRef(function ToggleButton({pressed, onPressedChange, tone, size, loading = false, disabled = false, className = '', children, ...props}, ref) {
+  return h(Toggle, {...props, ref, pressed, onPressedChange:next => onPressedChange?.(next), className:`ds-toggle ${className}`,
+    'data-tone':tone, 'data-size':size, disabled:disabled || loading, 'aria-busy':loading || undefined}, children);
+});
+
+// Toasts: confirmations that outlive the page that raised them. Mount ToastProvider once,
+// then call toast(title, description?, {tone, timeout}) from anywhere.
+const toastManager = Toast.createToastManager();
+export const toast = (title, description, {tone = 'success', timeout = 4000} = {}) =>
+  toastManager.add({title, description, timeout, type:tone, priority:tone === 'error' ? 'high' : 'low'});
+const toneIcon = tone => tone === 'success'
+  ? checkIcon('ds-toast-icon')
+  : icon('ds-toast-icon', 16, h('circle', {cx:8, cy:8, r:6.25, ...stroke, strokeWidth:1.5}),
+    h('path', {d:tone === 'info' ? 'M8 7.4v3.8' : 'M8 4.8v3.8', ...stroke, strokeWidth:1.6}), h('circle', {cx:8, cy:tone === 'info' ? 4.9 : 11.2, r:0.95, fill:'currentColor'}));
+function ToastList() {
+  const {toasts} = Toast.useToastManager();
+  return toasts.map(item => h(Toast.Root, {key:item.id, toast:item, className:'ds-toast', 'data-tone':item.type || 'success'},
+    toneIcon(item.type || 'success'),
+    h('div', {className:'ds-toast-text'}, h(Toast.Title, {className:'ds-toast-title'}), item.description && h(Toast.Description, {className:'ds-toast-description'})),
+    h(Toast.Close, {className:'ds-icon-button ds-toast-close', 'data-size':'small', 'aria-label':'Dismiss'},
+      icon(undefined, 14, h('path', {d:'M4 4l8 8M12 4l-8 8', ...stroke})))));
+}
+export function ToastProvider({children, limit = 3}) {
+  return h(Toast.Provider, {toastManager, limit}, children,
+    h(Toast.Portal, null, h(Toast.Viewport, {className:'ds-toast-viewport'}, h(ToastList))));
 }

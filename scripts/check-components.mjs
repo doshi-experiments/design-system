@@ -11,10 +11,21 @@ const fixture = await mkdtemp(join(tmpdir(), 'ds-components-'));
 const entry = `
 import React from 'react';
 import {createRoot} from 'react-dom/client';
-import {AppShell,Button,Card,TextField,SelectField,CheckboxField,Alert,FileUpload,WorkflowSteps,Disclosure,Dialog,PageHeader,EmptyState,SiteHeader} from './src/react.js';
+import {AppShell,Button,Card,TextField,SelectField,CheckboxField,Alert,FileUpload,WorkflowSteps,Disclosure,Dialog,PageHeader,EmptyState,SiteHeader,Select,DateField,TimeField,MenuButton,ToggleButton,ToastProvider,toast} from './src/react.js';
 import {EditableTable} from './src/table.js';
 import {createAppearanceController} from './src/theme.js';
 const h = React.createElement;
+function Pickers(){
+ const [colour,setColour]=React.useState('red'); const [size,setSize]=React.useState('m'); const [date,setDate]=React.useState(''); const [time,setTime]=React.useState(''); const [later,setLater]=React.useState(''); const [alarm,setAlarm]=React.useState(false);
+ const today=new Date(); const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+ return h(Card,null,h(Select,{label:'Colour',value:colour,onValueChange:setColour,options:[['red','Red'],['blue','Blue']],groups:[['More',[['green','Green']]]],hint:'Pick one.'}),
+ h(Select,{label:'Size',layout:'hidden',variant:'quiet',size:'small',value:size,onValueChange:setSize,options:[{value:'s',label:'Small'},{value:'m',label:'Medium'}]}),
+ h(DateField,{label:'Due date',value:date,onValueChange:setDate,min:iso(today)}),h(TimeField,{label:'Time',value:time,onValueChange:setTime}),
+ h('div',{className:'ds-actions'},h(MenuButton,{label:'Snooze',size:'small',items:[{label:'Tomorrow',onSelect:()=>setLater('tomorrow')},'separator',{label:'Next week',onSelect:()=>setLater('week')}]}),
+  h(ToggleButton,{pressed:alarm,onPressedChange:setAlarm,tone:'error',size:'small','aria-label':'Alarm for the sample'},alarm?'Alarm on':'Alarm off'),
+  h(Button,{size:'small',onClick:()=>toast('Saved: sample note','It stays in this preview.')},'Save note')),
+ h('p',{id:'pickers',hidden:true},JSON.stringify({colour,size,date,time,later,alarm})));
+}
 function Example(){
  const [controller]=React.useState(()=>createAppearanceController()); const [appearance,setAppearance]=React.useState(controller.getPreference()); React.useEffect(()=>controller.subscribe(({preference})=>setAppearance(preference)),[controller]);
  const [name,setName]=React.useState('Coffee'); const [category,setCategory]=React.useState('food'); const [ack,setAck]=React.useState(false);
@@ -27,15 +38,16 @@ function Example(){
  h(WorkflowSteps,{steps:[{id:'edit',label:'Categorize'},{id:'confirm',label:'Confirm'}],value:step,onValueChange:setStep}),
  h(Card,null,h(TextField,{label:'Description',value:name,onValueChange:setName,hint:'Keep bank details unchanged.'}),h(SelectField,{label:'Default category',value:category,onValueChange:setCategory,options}),h(CheckboxField,{label:'I reviewed the changes',checked:ack,onCheckedChange:setAck}),
  h(FileUpload,{label:'Upload statements',accept:'.csv',multiple:true,onFilesChange:setFiles,hint:'CSV files only.'}),h('p',{id:'state',hidden:true},JSON.stringify({name,category,ack,step,files:files.map(file=>file.name)}))),
+ h(Pickers),
  h(Alert,{tone:'warning',title:'Review before saving'},'Confirm uncategorized items explicitly.'),
  h(EditableTable,{data:rows,columns,getRowId:row=>row.id,label:'Review items',caption:'Editable categories',meta:{update:(id,value)=>setRows(current=>current.map(row=>row.id===id?{...row,category:value}:row))}}),
  h('p',{id:'rows',hidden:true},JSON.stringify(rows)),
  h(Disclosure,{title:'Technical details'},h('p',null,'The source columns are preserved.')),
  h(Button,{variant:'primary',onClick:()=>{setLocked(false);setOpen(true)}},'Open confirmation'),h(Button,{onClick:()=>{setLocked(true);setOpen(true)}},'Open required confirmation'),h(Button,{loading:true},'Saving'),
- h(Dialog,{open,onOpenChange:setOpen,title:'Save these decisions?',description:'Only the explicit save action submits the changes.',dismissible:!locked,actions:h(Button,{variant:'primary',onClick:()=>setOpen(false)},'Save decisions')},h(TextField,{label:'Note',value:name,onValueChange:setName})),
+ h(Dialog,{open,onOpenChange:setOpen,title:'Save these decisions?',description:'Only the explicit save action submits the changes.',dismissible:!locked,actions:h(Button,{variant:'primary',onClick:()=>setOpen(false)},'Save decisions')},h(TextField,{label:'Note',value:name,onValueChange:setName}),h(DateField,{label:'Review on',value:'',onValueChange:()=>{}})),
  h(EmptyState,{title:'All caught up',description:'No other items need review.'})));
 }
-createRoot(document.getElementById('root')).render(h(Example));
+createRoot(document.getElementById('root')).render(h(ToastProvider,null,h(Example)));
 `;
 await build({stdin:{contents:entry,resolveDir:root,sourcefile:'component-lab.js',loader:'js'},outfile:join(fixture,'app.js'),bundle:true,format:'esm',define:{'process.env.NODE_ENV':'"development"'}});
 const server = createServer(async (req,res) => {
@@ -66,7 +78,7 @@ try {
  for(const theme of ['light','dark']) for(const width of [320,390,768,1440]){
   await page.setViewportSize({width,height:1000});await page.getByLabel('Appearance',{exact:true}).selectOption(theme);
   await page.evaluate(()=>document.fonts.ready);
-  const layout=await page.evaluate(()=>({overflow:document.documentElement.scrollWidth>innerWidth,font:document.fonts.check('16px "Host Grotesk"'),small:[...document.querySelectorAll('.ds-site-link,.ds-appearance-select,button,.ds-select-input,.ds-text-input,.ds-checkbox-label,.ds-disclosure-summary,.ds-app-nav-item')].filter(el=>el.getBoundingClientRect().height<44).map(el=>el.textContent||el.tagName)}));
+  const layout=await page.evaluate(()=>({overflow:document.documentElement.scrollWidth>innerWidth,font:document.fonts.check('16px "Host Grotesk"'),small:[...document.querySelectorAll('.ds-site-link,.ds-appearance-select,button,.ds-select-input,.ds-text-input,.ds-checkbox-label,.ds-disclosure-summary,.ds-app-nav-item,.ds-picker,.ds-toggle')].filter(el=>{const after=getComputedStyle(el,'::after');return Math.max(el.getBoundingClientRect().height,after.content==='none'?0:parseFloat(after.height)||0)<44;}).map(el=>el.textContent||el.tagName)}));
   assert.equal(layout.overflow,false,theme+' '+width+' overflow');assert.equal(layout.font,true,'font loaded');assert.deepEqual(layout.small,[],theme+' '+width+' targets');checks+=3;
   const contrast=await page.getByRole('button',{name:'Open confirmation',exact:true}).evaluate(el=>{
    const s=getComputedStyle(el);const lum=color=>{const c=color.match(/[\d.]+/g).slice(0,3).map(Number).map(v=>v/255).map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4);return c[0]*.2126+c[1]*.7152+c[2]*.0722;};const a=lum(s.color),b=lum(s.backgroundColor);return(Math.max(a,b)+.05)/(Math.min(a,b)+.05);
@@ -81,12 +93,36 @@ try {
  await page.getByLabel('Category for Market').selectOption('travel');const rows=JSON.parse(await page.locator('#rows').textContent());assert.deepEqual(rows.map(row=>row.category),['travel','travel']);checks++;
  const details=page.getByText('Technical details',{exact:true});await details.focus();await page.keyboard.press('Enter');await page.getByText('The source columns are preserved.').waitFor();await page.keyboard.press('Enter');assert.equal(await page.getByText('The source columns are preserved.').isVisible(),false);checks++;
  assert.equal(await page.getByRole('button',{name:'Saving'}).isDisabled(),true);checks++;
+ const picked=async()=>JSON.parse(await page.locator('#pickers').textContent());
+ const hits=async selector=>page.$$eval(selector,els=>els.map(el=>{const r=el.getBoundingClientRect();const a=getComputedStyle(el,'::after');const on=a.content!=='none';return Math.min(Math.max(r.width,on?parseFloat(a.width)||0:0),Math.max(r.height,on?parseFloat(a.height)||0:0));}));
+ await page.getByRole('combobox',{name:'Colour'}).click();const listbox=page.getByRole('listbox');await listbox.waitFor();
+ assert.equal(await listbox.getByText('More',{exact:true}).isVisible(),true);assert.ok((await hits('.ds-option')).every(size=>size>=44),'option targets');checks+=2;
+ await page.getByRole('option',{name:'Green'}).click();await listbox.waitFor({state:'hidden'});assert.equal((await picked()).colour,'green');assert.equal(await page.getByRole('combobox',{name:'Colour'}).textContent(),'Green');checks+=2;
+ await page.getByRole('combobox',{name:'Colour'}).focus();await page.keyboard.press('Enter');await listbox.waitFor();await page.keyboard.press('Escape');await listbox.waitFor({state:'hidden'});assert.equal((await picked()).colour,'green');checks++;
+ await page.getByRole('combobox',{name:'Size'}).click();await page.getByRole('option',{name:'Small'}).click();assert.equal((await picked()).size,'s');checks++;
+ await page.getByRole('combobox',{name:'Time'}).click();const times=page.getByRole('listbox');await times.waitFor();await page.getByRole('option',{name:'11:30 PM'}).waitFor({state:'attached'});assert.equal(await times.locator('.ds-option').count(),49);await page.getByRole('option',{name:'5:30 PM'}).click();assert.equal((await picked()).time,'17:30');checks+=2;
+ const tomorrow=await page.evaluate(()=>{const d=new Date();d.setDate(d.getDate()+1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');});
+ await page.getByRole('button',{name:/^Due date/}).click();const grid=page.getByRole('grid');await grid.waitFor();
+ assert.ok((await hits('.ds-day,.ds-date-popup .ds-icon-button,.ds-calendar-foot .ds-button')).every(size=>size>=44),'calendar targets');checks++;
+ await page.waitForFunction(()=>document.activeElement?.classList.contains('ds-day')&&document.activeElement.hasAttribute('data-today'));
+ await page.keyboard.press('ArrowLeft');assert.equal(await page.evaluate(()=>document.activeElement.hasAttribute('data-today')),true,'focus stays at min');
+ await page.keyboard.press('ArrowRight');await page.keyboard.press('Enter');await grid.waitFor({state:'hidden'});assert.equal((await picked()).date,tomorrow);checks+=2;
+ await page.getByRole('button',{name:/^Due date/}).click();await grid.waitFor();await page.getByRole('button',{name:'Clear',exact:true}).click();assert.equal((await picked()).date,'');checks++;
+ await page.getByRole('button',{name:'Snooze'}).click();await page.getByRole('menu').waitFor();assert.ok((await hits('.ds-menu-item')).every(size=>size>=44),'menu targets');
+ await page.getByRole('menuitem',{name:'Next week'}).click();assert.equal((await picked()).later,'week');checks+=2;
+ const alarm=page.getByRole('button',{name:'Alarm for the sample'});assert.equal(await alarm.getAttribute('aria-pressed'),'false');await alarm.click();assert.equal(await alarm.getAttribute('aria-pressed'),'true');assert.equal(await alarm.textContent(),'Alarm on');
+ assert.equal(await alarm.evaluate(el=>getComputedStyle(el).backgroundColor),await page.evaluate(()=>{const probe=document.createElement('i');probe.style.background='var(--ds-error-bg)';document.body.append(probe);const c=getComputedStyle(probe).backgroundColor;probe.remove();return c;}),'pressed error tone is tinted');assert.equal((await picked()).alarm,true);checks+=3;
+ await page.getByRole('button',{name:'Save note'}).click();const note=page.getByText('Saved: sample note',{exact:true});await note.waitFor();assert.ok((await hits('.ds-toast-close')).every(size=>size>=44),'toast close target');
+ await page.locator('.ds-toast-close').click();await note.waitFor({state:'hidden'});checks+=2;
  for (const theme of ['light','dark']){
   await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);await page.getByRole('button',{name:'Open confirmation',exact:true}).click();const dialog=page.getByRole('dialog',{name:'Save these decisions?'});await dialog.waitFor();
   assert.equal(await dialog.getByLabel('Note').isVisible(),true);await page.waitForFunction(()=>document.querySelector('[role="dialog"]')?.contains(document.activeElement));checks++;
   for(let index=0;index<6;index++){await page.keyboard.press('Tab');await page.waitForFunction(()=>document.querySelector('[role="dialog"]')?.contains(document.activeElement));}checks++;
   await page.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});await page.waitForFunction(()=>document.activeElement?.textContent==='Open confirmation');checks++;
  }
+ await page.getByRole('button',{name:'Open confirmation',exact:true}).click();await page.getByRole('dialog',{name:'Save these decisions?'}).waitFor();await page.getByRole('button',{name:/^Review on/}).click();await page.getByRole('grid').waitFor();
+ assert.equal(await page.evaluate(()=>{const day=document.querySelector('.ds-day[tabindex="0"]');const r=day.getBoundingClientRect();return document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.closest('.ds-day')===day;}),true,'calendar opens above a dialog');checks++;
+ await page.keyboard.press('Escape');await page.getByRole('grid').waitFor({state:'hidden'});await page.keyboard.press('Escape');await page.getByRole('dialog').waitFor({state:'hidden'});
  await page.getByRole('button',{name:'Open required confirmation'}).click();await page.getByRole('dialog').waitFor();await page.keyboard.press('Escape');assert.equal(await page.getByRole('dialog').isVisible(),true);await page.getByRole('button',{name:'Cancel',exact:true}).click();await page.getByRole('dialog').waitFor({state:'hidden'});checks++;
  await page.goto('http://127.0.0.1:'+server.address().port+'/static');await page.getByLabel('Appearance',{exact:true}).waitFor();assert.equal(await page.getByLabel('Appearance',{exact:true}).inputValue(),'dark');checks++;
  await page.getByLabel('Appearance',{exact:true}).selectOption('system');await page.reload();await page.getByLabel('Appearance',{exact:true}).waitFor();assert.equal(await page.getByLabel('Appearance',{exact:true}).inputValue(),'system');assert.equal(await page.evaluate(()=>document.documentElement.dataset.theme),'dark');checks+=2;
@@ -94,5 +130,5 @@ try {
  for(const width of [320,390,768,1440]){await page.setViewportSize({width,height:1000});assert.equal(await page.getByRole('link',{name:'Home',exact:true}).isVisible(),true);assert.equal(await page.getByRole('link',{name:'Experiments',exact:true}).isVisible(),true);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);checks+=3;}
  await page.evaluate(()=>window.header.destroy());assert.equal(await page.getByLabel('Appearance',{exact:true}).count(),0);checks++;
  assert.deepEqual(failures,[]);checks++;
- console.log(JSON.stringify({checks,status:'passed',coverage:'8 responsive appearance layouts; equivalent React/static global headers; visible preference persistence and System OS changes; actual mouse text selection; native form values; upload; editable category persistence callback; disclosure keyboard; loading lock; modal focus, Escape, restoration and dismissal guard'},null,2));
+ console.log(JSON.stringify({checks,status:'passed',coverage:'8 responsive appearance layouts; equivalent React/static global headers; visible preference persistence and System OS changes; actual mouse text selection; native form values; upload; editable category persistence callback; disclosure keyboard; loading lock; modal focus, Escape, restoration and dismissal guard; Select groups and keyboard; TimeField slots; DateField keyboard, min and clear; menu button; toggle tone; toast and dismiss; small hit areas'},null,2));
 } finally {await browser?.close();await new Promise(resolve=>server.close(resolve));await rm(fixture,{recursive:true,force:true});}
