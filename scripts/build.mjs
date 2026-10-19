@@ -3,7 +3,10 @@ import {resolveTokens, projects, appearances, densities} from '../src/tokens.js'
 const out = new URL('../dist/', import.meta.url);
 await mkdir(out, {recursive: true});
 const declarations = tokens => Object.entries(tokens).map(([key, value]) => `  --ds-${key}: ${value};`).join('\n');
-let css = '/* Generated from src/tokens.js. Do not edit. */\n@font-face {font-family:"Commissioner";src:url("./fonts/commissioner-variable.woff2") format("woff2");font-style:normal;font-weight:100 900;font-display:swap;}\n';
+const latin = 'U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD';
+const latinExt = 'U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF';
+const face = (file, range) => `@font-face {font-family:"Host Grotesk";src:url("./fonts/${file}") format("woff2");font-style:normal;font-weight:300 800;font-display:swap;unicode-range:${range};}\n`;
+let css = '/* Generated from src/tokens.js. Do not edit. */\n' + face('host-grotesk-latin-ext.woff2', latinExt) + face('host-grotesk-latin.woff2', latin);
 css += `:root {\n${declarations(resolveTokens())}\n  font-family:var(--ds-font-body);\n  font-variation-settings:var(--ds-font-body-variation);\n  line-height:var(--ds-line-body);\n}\n`;
 // Each combination is explicit so consumers and canvas charts use identical values.
 for (const project of Object.keys(projects)) {
@@ -27,6 +30,9 @@ await copyFile(new URL('../src/legacy.css', import.meta.url), new URL('legacy.cs
 for (const file of ['react.js','table.js','components.css','metadata.js','site.js','site-contract.js','prepaint.js']) await copyFile(new URL(`../src/${file}`, import.meta.url), new URL(file, out));
 
 await mkdir(new URL('fonts/', out), {recursive:true});
-for (const file of ['commissioner-variable.woff2','commissioner-OFL.txt','commissioner-source.txt']) await copyFile(new URL(`../src/fonts/${file}`, import.meta.url), new URL(`fonts/${file}`, out));
-
-for (const file of ['hanken-grotesk.ttf','hanken-grotesk-OFL.txt']) await rm(new URL(`fonts/${file}`,out),{force:true});
+for (const file of ['host-grotesk-latin.woff2','host-grotesk-latin-ext.woff2','host-grotesk-OFL.txt','host-grotesk-source.txt']) await copyFile(new URL(`../src/fonts/${file}`, import.meta.url), new URL(`fonts/${file}`, out));
+// Earlier releases' fonts never ship again.
+for (const file of ['commissioner-variable.woff2','commissioner-OFL.txt','commissioner-source.txt','hanken-grotesk.ttf','hanken-grotesk-OFL.txt']) await rm(new URL(`fonts/${file}`,out),{force:true});
+// The felt texture: one small tile, multiplied (light) or overlaid (dark) behind every page.
+await mkdir(new URL('felt/', out), {recursive:true});
+for (const file of ['fibre-light.svg','fibre-dark.svg']) await copyFile(new URL(`../src/felt/${file}`, import.meta.url), new URL(`felt/${file}`, out));

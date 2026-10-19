@@ -26,12 +26,12 @@ for (const [i,[name,,path]] of sites.entries()) {
     const control = page.getByLabel('Appearance', {exact:true});
     if (await control.count()) await control.selectOption(appearance);
     else await page.evaluate(t=>{document.documentElement.dataset.theme=t;},appearance);
-    await page.evaluate(async()=>{await document.fonts.load('16px "Commissioner"'); await document.fonts.ready;});
+    await page.evaluate(async()=>{await document.fonts.load('16px "Host Grotesk"'); await document.fonts.ready;});
     await page.waitForTimeout(100);
     const data=await page.evaluate(()=>({
       overflow:document.documentElement.scrollWidth>innerWidth,
       bg:getComputedStyle(document.documentElement).getPropertyValue('--ds-surface-page').trim(),
-      font:document.fonts.check('16px "Commissioner"'),
+      font:document.fonts.check('16px "Host Grotesk"'),
       shortButtons:[...document.querySelectorAll('button')].filter(e=>e.getBoundingClientRect().width>0 && e.getBoundingClientRect().height<59.5).map(e=>({text:e.textContent.slice(0,30),height:e.getBoundingClientRect().height})),
     }));
     results.push({name,width,appearance,...data,errors:[...errors]});
@@ -43,8 +43,8 @@ await writeFile(`${workspace}/design-system-rollout/browser-checks.json`,JSON.st
 for (const r of results) {
  assert.equal(r.overflow, false, `${r.name}/${r.width}: overflow`);
  assert.deepEqual(r.errors, []);
- assert.equal(r.font,true,`${r.name}: Commissioner must load`);
- assert.equal(r.bg.toLowerCase(),r.appearance==='dark'?'#17323d':'#f1f5f7',`${r.name}: common page palette`);
+ assert.equal(r.font,true,`${r.name}: Host Grotesk must load`);
+ assert.equal(r.bg.toLowerCase(),r.appearance==='dark'?'#33322f':'#e7e4de',`${r.name}: felt page palette`);
  if(r.name === 'game') assert.deepEqual(r.shortButtons, []);
 }
 console.log(`${results.length} browser layout/appearance checks passed`);

@@ -16,10 +16,13 @@ for (const project of Object.keys(projects)) for (const appearance of Object.key
       assert.ok(contrast(t.border, t[surface]) >= 3, `border/${surface}`);
     }
     for (const action of ['action-primary', 'action-hover', 'action-pressed']) assert.ok(contrast(t['action-text'], t[action]) >= 4.5, action);
-    assert.ok(contrast(t['action-primary'], t['surface-page']) >= 4.5, 'action links/page');
+    // Coral is a fill under ink; text in the signal colour uses the deeper action-link.
+    for (const surface of ['surface-page', 'surface-raised', 'surface-overlay']) assert.ok(contrast(t['action-link'], t[surface]) >= 4.5, `action-link/${surface}`);
+    for (const surface of ['surface-page', 'surface-raised', 'surface-inset']) for (const n of [1, 2, 3, 4]) assert.ok(contrast(t[`chart-${n}`], t[surface]) >= 3, `chart-${n}/${surface}`);
+    for (const text of ['text', 'text-secondary']) assert.ok(contrast(t[text], t['surface-inset']) >= 4.5, `${text}/inset`);
     for (const status of ['success', 'warning', 'error', 'info']) assert.ok(contrast(t[`${status}-text`], t[`${status}-bg`]) >= 4.5, status);
     // Open disclosures, hovered table rows and hovered chip links paint text on the selection token.
-    for (const text of ['text', 'text-secondary', 'action-primary']) assert.ok(contrast(t[text], t.selection) >= 4.5, `${text}/selection`);
+    for (const text of ['text', 'text-secondary', 'action-link']) assert.ok(contrast(t[text], t.selection) >= 4.5, `${text}/selection`);
   });
 }
 test('density never shrinks the interactive target below the required minimum', () => {
@@ -48,17 +51,20 @@ test('existing pre-paint appearance wins; explicit choices persist and stop syst
   theme.destroy(); assert.equal(e.callbacks.size, 0);
 });
 
-test('apps retain their common palette and the portfolio retains the shared shape language', () => {
+test('one look for everything: every project resolves to the same felt palette and shape', () => {
   for (const appearance of Object.keys(appearances)) {
     const baseline = resolveTokens({project:'experiments',appearance});
-    for (const project of Object.keys(projects).filter(project=>project!=='portfolio')) assert.deepEqual(resolveTokens({project,appearance}),baseline);
-    const portfolio = resolveTokens({project:'portfolio',appearance});
-    assert.notEqual(portfolio['action-primary'],baseline['action-primary']);
-    assert.notEqual(portfolio['surface-page'],baseline['surface-page']);
-    for (const key of Object.keys(foundation)) assert.equal(portfolio[key],baseline[key],key);
-    for (const status of ['success','warning','error','info']) for (const role of ['bg','text','icon']) assert.equal(portfolio[`${status}-${role}`],baseline[`${status}-${role}`]);
+    for (const project of Object.keys(projects)) assert.deepEqual(resolveTokens({project,appearance}),baseline,project);
   }
-  assert.equal(foundation['radius-control'],'8px');assert.equal(foundation['radius-container'],'16px');assert.equal(foundation['radius-dialog'],'20px');
-  assert.equal(foundation['shadow-raised'],'none');assert.match(foundation['font-body'],/Commissioner/);
+  assert.equal(foundation['radius-pill'],'999px');assert.equal(foundation['radius-control'],'14px');
+  assert.equal(foundation['radius-container'],'24px');assert.equal(foundation['radius-dialog'],'30px');
+  assert.match(foundation['font-body'],/Host Grotesk/);
+  assert.equal(resolveTokens({appearance:'light'})['surface-page'],'#E7E4DE');
+  assert.equal(resolveTokens({appearance:'dark'})['surface-page'],'#33322F');
+  for (const appearance of Object.keys(appearances)) {
+    const t = resolveTokens({appearance});
+    assert.equal(t['action-primary'],'#FF5E7C');assert.equal(t['action-text'],'#262624');assert.equal(t.focus,t['action-link']);
+    assert.notEqual(t['error-text'],t['action-primary'],'error never reads as the brand coral');
+  }
   assert.equal(resolveTokens({project:'game',density:'game'})['control-target'],'60px');
 });

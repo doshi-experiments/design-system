@@ -50,7 +50,7 @@ try {
   assert.equal(await page.locator('html').getAttribute('data-theme'),'light');
   for(const width of [320,390,768,1440])for(const mode of ['light','dark']) {
    await page.setViewportSize({width,height:1000});await appearance.selectOption(mode);
-   await page.evaluate(async()=>{await document.fonts.load('16px "Commissioner"');await document.fonts.ready;window.scrollTo(0,0);});
+   await page.evaluate(async()=>{await document.fonts.load('16px "Host Grotesk"');await document.fonts.ready;window.scrollTo(0,0);});
    const heading=page.locator('h1').first();await heading.scrollIntoViewIfNeeded();
    const rect=await heading.evaluate(element=>{
     const walker=document.createTreeWalker(element,NodeFilter.SHOW_TEXT);

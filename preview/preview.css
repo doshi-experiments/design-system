@@ -1,29 +1,31 @@
 * {box-sizing: border-box}
 html {color-scheme: light dark; scroll-padding-top: 24px}
-body {margin:0; background:var(--ds-surface-page); color:var(--ds-text); font:1rem/1.55 var(--ds-font-body)}
+body {margin:0; background-color:var(--ds-surface-page); color:var(--ds-text); font:1rem/1.55 var(--ds-font-body)}
 main, footer {width:min(var(--ds-page-width), calc(100% - 40px)); margin:auto}
 footer {display:flex; justify-content:space-between; align-items:center; gap:16px; padding-block:24px}
 .small, footer {font-size:var(--ds-text-caption); color:var(--ds-text-secondary)}
 .hero {padding:64px 0 36px}
-h1 {font-size:var(--ds-text-display); letter-spacing:-.025em; line-height:1.12; margin:16px 0 24px; max-width:20ch}
-h1,h2 {font-weight:700;font-variation-settings:var(--ds-font-display-variation)}
-h2 {font-size:var(--ds-text-section); line-height:1.25; letter-spacing:-.015em; margin:8px 0}
+h1 {font-size:var(--ds-text-display); letter-spacing:-.04em; line-height:1.05; margin:16px 0 24px; max-width:20ch}
+h1,h2 {font-weight:500;font-variation-settings:var(--ds-font-display-variation)}
+h2 {font-size:var(--ds-text-section); line-height:1.2; letter-spacing:-.025em; margin:8px 0}
 h3 {font-size:1rem; margin-top:24px}
 p {margin:8px 0; color:var(--ds-text-secondary)}
 .lede {max-width:64ch; font-size:1.125rem}
 .controls {display:flex; flex-wrap:wrap; gap:16px; margin-bottom:32px}
 .card label,.control-field {display:grid; gap:6px; font-size:.875rem; font-weight:600; min-width:0}
 .controls .control-field {flex:1 1 180px}
-.controls select,.card input,.card button,.card .button {font:inherit; min-height:var(--ds-control-height); min-width:var(--ds-control-target); padding:10px 16px; border-radius:var(--ds-radius-control); border:1px solid var(--ds-border); background:var(--ds-surface-raised); color:var(--ds-text); max-width:100%}
+.controls select,.card input {font:inherit; min-height:var(--ds-control-height); min-width:var(--ds-control-target); padding:10px 14px; border-radius:var(--ds-radius-control); border:1px solid var(--ds-border); background:var(--ds-surface-inset); box-shadow:var(--ds-shadow-pressed); color:var(--ds-text); max-width:100%}
+.card button,.card .button {font:inherit; font-weight:600; min-height:var(--ds-control-height); min-width:var(--ds-control-target); padding:10px 20px; border-radius:var(--ds-radius-pill); border:0; background:var(--ds-surface-raised); box-shadow:var(--ds-shadow-raised); color:var(--ds-text); max-width:100%}
 .controls select,.card button {cursor:pointer}
 .grid {display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px}
-.card {display:flex; flex-direction:column; gap:12px; min-width:0; padding:var(--ds-panel-padding); border:1px solid var(--ds-border); border-radius:var(--ds-radius-container); background:var(--ds-surface-raised); box-shadow:var(--ds-shadow-raised)}
+.card {position:relative; display:flex; flex-direction:column; gap:12px; min-width:0; padding:var(--ds-panel-padding); border:0; border-radius:var(--ds-radius-container); background:var(--ds-surface-raised); box-shadow:var(--ds-shadow-raised)}
+.card::after {content:""; position:absolute; inset:7px; border-radius:calc(var(--ds-radius-container) - 6px); border:1.5px dashed var(--ds-stitch); pointer-events:none}
 .actions {margin-top:auto; padding-top:24px}
-.card .button {display:inline-flex; gap:16px; align-items:center; justify-content:center; text-decoration:none; background:var(--ds-action-primary); color:var(--ds-action-text); border-color:transparent; font-weight:600}
+.card .button {display:inline-flex; gap:16px; align-items:center; justify-content:center; text-decoration:none; background:var(--ds-action-primary); color:var(--ds-action-text); border-color:transparent; font-weight:600; box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 8px 14px -8px rgba(38,38,36,.55)}
 .card .button:hover {background:var(--ds-action-hover)}
 .card .button:active {background:var(--ds-action-pressed)}
-button:disabled {cursor:not-allowed; color:var(--ds-text-disabled)}
-.stat {font-size:2.8rem; font-weight:750; font-variant-numeric:tabular-nums; letter-spacing:-.04em}
+button:disabled {cursor:not-allowed; color:var(--ds-text-disabled); background:var(--ds-surface-inset)!important; box-shadow:none!important}
+.stat {font-size:2.8rem; font-weight:500; font-variant-numeric:tabular-nums; letter-spacing:-.04em}
 .notice {padding:10px 14px; border-radius:var(--ds-radius-control); font-size:.875rem}
 .success {background:var(--ds-success-bg); color:var(--ds-success-text)}
 .warning {background:var(--ds-warning-bg); color:var(--ds-warning-text)}
@@ -33,13 +35,13 @@ summary {cursor:pointer; min-height:var(--ds-control-height); padding-block:12px
 .palette {margin-top:24px}
 .statuses, .swatches {display:flex; flex-wrap:wrap; gap:12px}
 .swatches > div {flex:1 1 120px}
-.swatches span {display:block; height:54px; border:1px solid var(--ds-border); border-radius:12px}
+.swatches span {display:block; height:54px; border-radius:14px; box-shadow:inset 0 0 0 1px var(--ds-stitch)}
 .swatches small {font-family:var(--ds-font-mono)}
 :focus-visible {outline:3px solid var(--ds-focus); outline-offset:4px}
 ::selection {background:var(--ds-selection)}
 .skip {position:fixed; left:16px; top:-120px; background:var(--ds-surface-overlay); color:var(--ds-text); padding:12px; z-index:10}
 .skip:focus {top:16px}
-footer {margin-top:40px; border-top:1px solid var(--ds-border)}
+footer {margin-top:40px; border-top:1.5px dashed var(--ds-stitch)}
 @media(max-width:950px) {.grid {grid-template-columns:1fr 1fr}.featured {grid-column:1/-1}}
 @media(max-width:620px) {.grid {grid-template-columns:1fr} .hero {padding-top:40px} footer {align-items:flex-start; flex-direction:column}}
 @media(prefers-reduced-motion:reduce) {*, *::before, *::after {animation:none!important; transition:none!important; scroll-behavior:auto!important}}

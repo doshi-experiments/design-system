@@ -14,7 +14,7 @@ try {
   await page.getByLabel('Appearance',{exact:true}).selectOption(before==='dark'?'light':'dark');
   const after=await page.locator('html').getAttribute('data-theme');assert.notEqual(before,after);
   await page.reload({waitUntil:'networkidle'});assert.equal(await page.locator('html').getAttribute('data-theme'),after);
-  const meta=await page.locator('meta[name="theme-color"]').getAttribute('content');assert.equal(meta.toLowerCase(),after==='dark'?'#17323d':'#f1f5f7');
+  const meta=await page.locator('meta[name="theme-color"]').getAttribute('content');assert.equal(meta.toLowerCase(),after==='dark'?'#33322f':'#e7e4de');
   if(name==='game') {
    const players = page.getByRole('group', {name:'Players', exact:true});
    const fewer = players.getByRole('button', {name:'Fewer players', exact:true});

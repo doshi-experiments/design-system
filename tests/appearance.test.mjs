@@ -19,7 +19,7 @@ test('resolved prepaint appearance never replaces a saved System preference', ()
   const c=createAppearanceController({root:e.root,onChange:value=>events.push(value)});
   assert.equal(c.getPreference(),'system');assert.equal(c.getAppearance(),'dark');
   e.media.matches=false;e.mediaListeners.forEach(fn=>fn());assert.equal(c.getAppearance(),'light');
-  assert.equal(events.at(-1).preference,'system');assert.equal(events.at(-1).tokens['surface-page'],'#F1F5F7');
+  assert.equal(events.at(-1).preference,'system');assert.equal(events.at(-1).tokens['surface-page'],'#E7E4DE');
   c.setPreference('dark');const count=events.length;e.mediaListeners.forEach(fn=>fn());assert.equal(events.length,count);
   assert.equal(e.storage['sheet-theme'],'dark');assert.match(e.writes[0],/Domain=\.rishabhdoshi\.com/);
   c.destroy();assert.equal(e.mediaListeners.size,0);assert.equal(e.storageListeners.size,0);

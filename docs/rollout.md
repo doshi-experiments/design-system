@@ -96,3 +96,14 @@ its public navigation is shared, but its appearance preference remains private.
 Use synthetic review fixtures for browser mutations and verify deployed private
 entry points with read-only checks. [Identity decisions](identity.md) record the
 palette, typography, layout, copy rules, and treatments intentionally rejected.
+
+## Felt release 0.6.0
+
+This release moves all six consumers onto Felt. The static snapshot replaces the
+Commissioner files with `fonts/host-grotesk-latin.woff2`, `fonts/host-grotesk-latin-ext.woff2`,
+the OFL notice and provenance, and adds `felt/fibre-light.svg` and `felt/fibre-dark.svg`;
+the previous release manifest marks the Commissioner files for removal. In each consumer,
+move text coloured with `--ds-action-primary` to `--ds-action-link`, keep fills on
+`--ds-action-primary` with `--ds-action-text`, and check that the page's body background
+still uses `--ds-surface-page` so the fibre tile can blend into it. Bundled apps rebuild so
+their font and texture assets advance with the tarball.
