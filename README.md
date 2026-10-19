@@ -30,11 +30,15 @@ import '@doshi-experiments/design-system/components.css';
 
 React consumers also install React, React DOM and `@base-ui/react`. They are optional peer dependencies so static consumers need none of them. `Button` preserves native disabled semantics and locks during loading. `HelpPopover` uses Base UI focus/dismissal behavior and a portaled, fixed positioner. These are app-owned initial recipes over the Base UI foundation selected for shadcn; this release does not claim to contain the full shadcn component catalogue.
 
-For existing static sites, sync an immutable release snapshot:
+Static sites and the React apps' snapshots are upgraded centrally. With clean checkouts of every consumer in a rollout workspace (named as in `rollout.json`), prepare and then apply an upgrade:
 
 ```sh
-node scripts/sync.mjs /path/to/site/public/design-system
+npm run rollout -- --workspace /path/to/design-system-rollout
+npm run rollout -- --workspace /path/to/design-system-rollout --apply
+# Narrow it: --only portfolio-landing,mr-shake
 ```
+
+The command writes each consumer's snapshot (`scripts/sync.mjs` underneath) and tarball, and changes nothing else; commit each consumer as its own pull request. It does not commit, push or deploy.
 
 Load `tokens.css`, optional `legacy.css`, and then `components.css`. The compatibility layer maps existing site names onto semantic tokens; it does not resize every button, select, or arbitrary surface. Shared component classes own their dimensions and states. `release.json` records the version and SHA-256 hashes. Commit that snapshot with the consuming app; independent deployments do not depend on this directory, a CDN, or a sibling checkout. To upgrade, rebuild one release and sync it to each repo in separate reviewable changes. Do not hand-edit snapshots.
 
@@ -76,18 +80,28 @@ For Finance, use `createAppearanceController({storageKey:'finance-appearance', c
 ## Validation and remaining work
 
 `npm test` checks text/action/status contrast in every project appearance, target-size minima, bad input rejection, and preference behavior. This is not a complete screen accessibility audit. The public-site browser report lives in the adjacent rollout directory.
-For the complete integration check, keep the five site checkouts under
-`../design-system-rollout/`, build the two React apps, install Chromium with
-`npx playwright install --with-deps chromium`, then run `npm run test:browser`.
-`DESIGN_WORKSPACE` can override the common parent directory.
+For the complete integration check, set `DESIGN_WORKSPACE` to a folder that holds
+this repository as `design-system/` and the six consumer checkouts under
+`design-system-rollout/`, build the two React apps, install Chromium with
+`npx playwright install --with-deps chromium`, then run `npm run test:browser`
+and `npm run test:calculator`. Without `DESIGN_WORKSPACE` the parent of this
+repository is used. The checks start their own servers on ports 4180 to 4220;
+stop any stale `http.server` on those ports first, or they serve directory
+listings and every check fails. The portfolio checks read `/versions/`, the only
+portfolio page that loads the design system.
 `npm run test:identity` checks all six apps' common navigation, appearance,
 text selection, and responsive header behavior. Finance needs a running synthetic
 preview; set `FINANCE_PREVIEW_URL` to its URL before running that check.
 
-The calculator uses shared NumericField, RangeField (Base UI Slider), Card, FieldGroup, Metric, DataRow, DataTable and PageHeader components across all six views. Finance uses the shared application shell, fields, workflow, modal and TanStack table renderer; its Python services continue to own the business rules and financial writes. Mr. Shake keeps its game state and secrecy behavior in the app. Existing public visualizations and the portfolio's building engine remain application-owned. No Aceternity or Magic UI source is copied in this release.
+The calculator uses shared NumericField, RangeField (Base UI Slider), Card, FieldGroup, Metric, DataRow, DataTable and PageHeader components across all six views. Finance uses the shared application shell, fields, workflow, modal and TanStack table renderer; its Python services continue to own the business rules and financial writes. Mr. Shake keeps its game state and secrecy behavior in the app. Existing public visualizations remain application-owned. The portfolio's home page and case studies are hand-built and mirror the signal tokens in their own stylesheet. No Aceternity or Magic UI source is copied in this release.
 
 Upstream references: [shadcn installation](https://ui.shadcn.com/docs/installation), [Base UI quick start](https://base-ui.com/react/overview/quick-start). Base UI and React license notices remain in their installed packages; retain them in distributions. The font OFL notice is included in each static snapshot.
 
+
+## Release history
+
+The sections below record each release in order. The current palette and type are
+in [docs/identity.md](docs/identity.md); the newest release is at the end.
 
 ## Calculator components (0.2.0)
 
@@ -143,7 +157,7 @@ import '@doshi-experiments/design-system/components.css';
 ```
 
 The token stylesheet includes the local font face. Bundlers resolve its relative
-`fonts/commissioner-variable.woff2` URL into an application asset; no remote font request is
+`fonts/host-grotesk-latin.woff2` and `fonts/host-grotesk-latin-ext.woff2` URLs into application assets; no remote font request is
 needed. `AppShell` sets shared typography and surface colors inside the shell.
 Applications still reset document margins and own their business-specific layout.
 
