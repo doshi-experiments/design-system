@@ -202,9 +202,9 @@ button.ds-workflow-step:disabled {cursor:not-allowed;color:var(--ds-text-disable
 .ds-site-header--without-title {grid-template-columns:minmax(0,1fr) auto}
 .ds-site-navigation {display:flex;align-items:center;gap:16px;min-width:0}
 .ds-site-link {position:relative;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;color:var(--ds-text-secondary);font:500 1rem/1.55 var(--ds-font-body);text-decoration:none;white-space:nowrap}
-.ds-site-link::after {content:"";position:absolute;left:50%;bottom:4px;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--ds-action-primary);transform:scale(0);transition:transform var(--ds-duration-base) var(--ds-ease-spring)}
+.ds-site-link::after {content:"";position:absolute;left:0;right:0;bottom:6px;height:2px;border-radius:1px;background:var(--ds-action-primary);transform:scaleX(0);transition:transform var(--ds-duration-base) var(--ds-ease-spring)}
 .ds-site-link:hover,.ds-site-link[aria-current="page"] {color:var(--ds-text)}
-.ds-site-link:hover::after,.ds-site-link[aria-current="page"]::after {transform:scale(1)}
+.ds-site-link:hover::after,.ds-site-link[aria-current="page"]::after {transform:none}
 .ds-site-project {min-width:0;padding-inline:8px;color:var(--ds-text-secondary);font:400 .875rem/1.55 var(--ds-font-body);overflow-wrap:anywhere}
 .ds-appearance {box-sizing:border-box;display:flex;align-items:center;gap:10px;width:auto;min-width:0;max-width:100%;margin:0;color:var(--ds-text-secondary);font:400 .875rem/1.55 var(--ds-font-body);text-transform:none;letter-spacing:normal}
 .ds-appearance-label {display:block;white-space:nowrap}

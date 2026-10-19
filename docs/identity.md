@@ -96,8 +96,8 @@ categories stay hidden. Raised surfaces group actual working information; they d
 not frame every heading or turn every paragraph into a card.
 
 Every app shows Home and Experiments through `SiteHeader`, or its equivalent
-`mountSiteHeader` static implementation: a raised pill whose current page is marked
-with a coral dot. Local calculator, visualization, and Finance navigation stays
+`mountSiteHeader` static implementation: a raised pill whose current page is
+underlined in the signal. Local calculator, visualization, and Finance navigation stays
 distinct beneath that global return path. Public navigation never advertises private
 Finance.
 

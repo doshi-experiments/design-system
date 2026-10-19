@@ -1,6 +1,6 @@
 # Doshi design system
 
-Version 0.8.0 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation and the labeled System / Light / Dark appearance control are unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. Generated assets must not be edited in consuming repos.
+Version 0.8.1 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation underlines the current page; the labeled System / Light / Dark appearance control is unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. Generated assets must not be edited in consuming repos.
 
 ```sh
 npm run build
@@ -238,7 +238,7 @@ control is a recessed track with a raised key; fields, selects, file inputs and 
 tracks are pressed into the page; cards, tables, disclosures and project links are
 raised, with a stitch on cards and project links; metrics sit under a stitched rule
 instead of a box, so results never read as fields. The global header is a raised pill
-whose current page carries a coral dot. `.ds-tabs` / `.ds-tab` add underline tabs for
+whose current page is underlined in the signal (a coral dot until 0.8.1). `.ds-tabs` / `.ds-tab` add underline tabs for
 local navigation. Each page blends a fibre tile into its background, multiplied in
 light and overlaid in dark; `data-texture="off"` removes it. The release ships
 `felt/fibre-light.svg` and `felt/fibre-dark.svg` beside the fonts, and the rollout
@@ -297,3 +297,10 @@ at all four widths: their hit areas, grouped and keyboard selection, the time sl
 calendar keyboard movement within `min`, Clear, the menu, the toggle's error tint and
 dismissing a toast, and a calendar opened inside a dialog.
 
+## Underlined global navigation (0.8.1)
+
+The global header marks its current page, and a link under the pointer, with a 2px
+underline in `action-primary` across the link's text instead of a 5px dot, so the
+current page reads as a selected tab. The line grows from its centre on hover with the
+usual spring and holds still with reduced motion. Nothing else changes: link targets
+stay 44px, and the header's markup and `mountSiteHeader` options are the same.
