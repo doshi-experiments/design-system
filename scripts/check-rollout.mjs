@@ -6,7 +6,7 @@ import {spawn} from 'node:child_process';
 import {mkdir, writeFile} from 'node:fs/promises';
 const sites = [
  ['preview',`${workspace}/design-system`,'/preview/'],
- ['portfolio',`${workspace}/design-system-rollout/portfolio-landing`,'/'],
+ ['portfolio',`${workspace}/design-system-rollout/portfolio-landing`,'/versions/'],
  ['experiments',`${workspace}/design-system-rollout/experiments-landing/public`,'/'],
  ['visualizations',`${workspace}/design-system-rollout/visualizations/public`,'/'],
  ['calculator',`${workspace}/design-system-rollout/rent-vs-buy-calculator/dist`,'/'],

@@ -12,7 +12,9 @@ const sites=[
  ['game','mr-shake','dist'],
 ];
 const servers=sites.map(([,repo,dir],i)=>spawn('python3',['-m','http.server',String(4210+i),'--bind','127.0.0.1','--directory',`${workspace}/design-system-rollout/${repo}/${dir}`],{stdio:'ignore'}));
-const targets=sites.map(([name],i)=>[name,`http://127.0.0.1:${4210+i}/`]);
+// The portfolio's home and case studies are hand-built and carry no shared header; the
+// version timeline is the portfolio page that loads the design system.
+const targets=sites.map(([name],i)=>[name,`http://127.0.0.1:${4210+i}/${name==='portfolio'?'versions/':''}`]);
 targets.push(['finance',process.env.FINANCE_PREVIEW_URL || 'http://127.0.0.1:8513/']);
 const output=`${workspace}/design-system-rollout/identity-review`;
 await mkdir(output,{recursive:true});
@@ -50,7 +52,7 @@ try {
   assert.equal(await page.locator('html').getAttribute('data-theme'),'light');
   for(const width of [320,390,768,1440])for(const mode of ['light','dark']) {
    await page.setViewportSize({width,height:1000});await appearance.selectOption(mode);
-   await page.evaluate(async()=>{await document.fonts.load('16px "Host Grotesk"');await document.fonts.ready;window.scrollTo(0,0);});
+   await page.evaluate(async()=>{await document.fonts.load('16px "Host Grotesk"');await document.fonts.ready;window.scrollTo(0,0);getSelection().removeAllRanges();});
    const heading=page.locator('h1').first();await heading.scrollIntoViewIfNeeded();
    const rect=await heading.evaluate(element=>{
     const walker=document.createTreeWalker(element,NodeFilter.SHOW_TEXT);
