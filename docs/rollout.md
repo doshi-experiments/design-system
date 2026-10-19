@@ -107,3 +107,12 @@ move text coloured with `--ds-action-primary` to `--ds-action-link`, keep fills 
 `--ds-action-primary` with `--ds-action-text`, and check that the page's body background
 still uses `--ds-surface-page` so the fibre tile can blend into it. Bundled apps rebuild so
 their font and texture assets advance with the tarball.
+
+## Signal red release 0.7.0
+
+Tokens, components and docs change; the contract does not. After `npm run rollout -- --apply`,
+check each consumer for text drawn on `action-primary`, `--accent` or `--on-accent`: it is now
+white. Text on role or status fills, such as Mr. Shake's undercover and pack colours, must not
+borrow `action-text`. Service workers that precache font or texture files need their lists
+checked whenever those files change.
+

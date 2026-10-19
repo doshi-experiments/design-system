@@ -1,6 +1,6 @@
 # Doshi design system
 
-Version 0.6.0, Felt, gives the portfolio and every app one identity: Host Grotesk, warm grey wool in light, charcoal in dark, and one coral signal, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation and the labeled System / Light / Dark appearance control are unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. Generated assets must not be edited in consuming repos.
+Version 0.7.0 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation and the labeled System / Light / Dark appearance control are unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. Generated assets must not be edited in consuming repos.
 
 ```sh
 npm run build
@@ -13,9 +13,9 @@ npm run preview
 
 Set `data-project` on the document root to `portfolio`, `experiments`, `visualizations`, `calculator`, `game`, `finance`, or `household`. Set `data-theme` to `light` or `dark`, or omit it for CSS system preference. Set `data-density` to `comfortable`, `compact`, or `game`. Game targets are 60px; compact mode retains 44px targets.
 
-The generated CSS and JavaScript exports have matching concrete values. Semantic tokens cover text, surfaces, status backgrounds/text/icons, actions and their states, focus, categorical chart colors, sequential ramps, spacing, type, radius, and motion. Every project ID resolves to the same palette. `action-primary` is the coral fill, with `action-text` ink on it; text in the signal colour uses `action-link`, which is also the focus colour. `surface-inset` colours fields and tracks, `stitch` the dashed inner seams, and `shadow-raised` / `shadow-pressed` the felt depth. Status colors retain their meaning across projects. Density is independent of identity. The locally hosted Host Grotesk variable font ships with its OFL notice and provenance.
+The generated CSS and JavaScript exports have matching concrete values. Semantic tokens cover text, surfaces, status backgrounds/text/icons, actions and their states, focus, categorical chart colors, sequential ramps, spacing, type, radius, and motion. Every project ID resolves to the same palette. `action-gradient` is the signal fill, with white `action-text` on it, and `action-primary` is its solid midpoint for places a gradient cannot go; text in the signal colour uses `action-link`, which is also the focus colour. `surface-inset` colours fields and tracks, `stitch` the dashed inner seams, and `shadow-raised` / `shadow-pressed` the felt depth. Status colors retain their meaning across projects. Density is independent of identity. The locally hosted Host Grotesk variable font ships with its OFL notice and provenance.
 
-Light is wool `#E7E4DE` with raised `#F1EEE9`, inset `#DAD6CE` and ink `#262624`; dark is charcoal `#33322F` with raised `#3E3D39`, inset `#2B2A27` and chalk `#ECE9E3`. The signal is coral `#FF5E7C`, with `#A1263F` (light) or `#FF7F96` (dark) for signal-coloured text. Buttons, keys and segments are pills; fields are 14px, surfaces 24px, dialogs 30px. Each page blends a fibre tile into its background; set `data-texture="off"` on the root to remove it. Local app navigation uses `.ds-tabs` / `.ds-tab` underline tabs. See [the visual and copy decisions](docs/identity.md) for the complete direction and rejected treatments.
+Light is wool `#E7E4DE` with raised `#F1EEE9`, inset `#DAD6CE` and ink `#262624`; dark is charcoal `#33322F` with raised `#3E3D39`, inset `#2B2A27` and chalk `#ECE9E3`. The signal is the gradient `#D2386B` to `#C8312F` (solid `#CD354D`), with `#A22826` (light) or `#E89D9C` (dark) for signal-coloured text. Buttons, keys and segments are pills; fields are 14px, surfaces 24px, dialogs 30px. Each page blends a fibre tile into its background; set `data-texture="off"` on the root to remove it. Local app navigation uses `.ds-tabs` / `.ds-tab` underline tabs. See [the visual and copy decisions](docs/identity.md) for the complete direction and rejected treatments.
 
 ## Consumers
 
@@ -225,3 +225,18 @@ removes the Commissioner files from every snapshot.
 
 Consumers that coloured text with `--ds-action-primary` move that text to
 `--ds-action-link`; fills keep `--ds-action-primary` with `--ds-action-text`.
+
+## Signal red (0.7.0)
+
+The signal moves from coral `#FF5E7C` under ink to a subtle raspberry-to-brick gradient,
+`action-gradient` (`#D2386B` to `#C8312F`), under white `action-text`. Both ends keep white
+at 4.5:1 or better, and `npm test` checks every stop of the rest, hover and pressed
+gradients. Hover and press deepen rather than lighten. `action-primary` becomes the solid
+midpoint `#CD354D` for dots, `accent-color` and chart fills. `action-link` and `focus`
+follow the new hue (`#A22826` light, `#E89D9C` dark), as do `selection`, `chart-2` and the
+ramps. The slider thumb becomes the signal with a white rim, so it reads on wool and on
+charcoal; it was a raised disc that nearly vanished on its track.
+
+Consumers that paint text on `action-primary` or `--on-accent` now get white. Any fill
+that is not the signal needs its own text colour.
+

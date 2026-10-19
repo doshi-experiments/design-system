@@ -11,8 +11,10 @@ is recognisable in every app without turning any app into a portfolio presentati
 
 Felt: as little design as possible, made of soft things. It began as the
 "made with an AI in the room" face of the portfolio and became the family identity:
-one grotesk, warm grey wool in light, charcoal in dark, and one signal, the coral
-#FF5E7C, which is the 2025 hand-made site's own accent. Surfaces are raised felt with a
+one grotesk, warm grey wool in light, charcoal in dark, and one signal: a subtle
+raspberry-to-brick gradient (`#D2386B` to `#C8312F`) under white text. It began as the
+2025 hand-made site's coral `#FF5E7C` and was deepened in 0.7 to read redder and to carry
+white labels. Surfaces are raised felt with a
 stitch; fields and tracks are pressed in; controls press when they are used.
 
 The look is the same for every project. Project IDs remain so `data-project` keeps its
@@ -33,13 +35,16 @@ quiet fibre grain, never an image or pattern.
 | Text | `#262624` | `#ECE9E3` | 11.9:1 and 10.6:1 on the page |
 | Secondary | `#55524C` | `#B9B4AA` | 6.1:1 and 6.2:1 |
 | Border | `#77716A` | `#8E897F` | field and control edges, 3.8:1 and 3.7:1 |
-| Signal | `#FF5E7C` | `#FF5E7C` | `action-primary`: primary fills, with ink `#262624` on top (5.2:1) |
-| Signal text | `#A1263F` | `#FF7F96` | `action-link` and `focus`: links, eyebrows, focus rings |
-| Selection | `#F5D9DE` | `#4A3438` | hovered rows, open disclosures |
+| Signal | `#D2386B` → `#C8312F` | same | `action-gradient`: primary buttons, chosen chips, slider fills, with white on top (4.65:1 and 5.34:1) |
+| Signal, solid | `#CD354D` | `#CD354D` | `action-primary`: the gradient's midpoint for dots, `accent-color` and chart fills |
+| Signal text | `#A22826` | `#E89D9C` | `action-link` and `focus`: links, eyebrows, focus rings |
+| Selection | `#EAC9CA` | `#553C3C` | hovered rows, open disclosures |
 
-Coral is a fill. On wool it fails as text (2.1:1), so text in the signal colour always
-uses `action-link`. Status colours keep their meaning across apps, and error stays a
-deeper red than the coral so a failure never reads as the brand:
+The signal is a fill. Hover and press deepen it (`action-gradient-hover`,
+`action-gradient-pressed`); lightening it would drop white text below 4.5:1. Text in the
+signal colour always uses `action-link`. Status colours keep their meaning across apps.
+Error stays a darker, browner red than the signal, and is always paired with its tinted
+background and words, so a failure never reads as the brand:
 
 | Status | Light text on background | Dark text on background |
 | --- | --- | --- |
@@ -48,10 +53,10 @@ deeper red than the coral so a failure never reads as the brand:
 | Error | `#962620` on `#F3D2CE` | `#F4B3AC` on `#55302C` |
 | Info | `#2B5876` on `#D5E0E7` | `#AFCDE3` on `#2F4250` |
 
-Charts use ink, coral, teal and mustard (`#262624`, `#C93A58`, `#3B7069`, `#8C6A22`;
-in dark `#ECE9E3`, `#FF7F96`, `#7FC1B8`, `#E2C27A`), each at least 3:1 on the page,
-raised and inset surfaces. Rent vs. buy draws renting in ink and buying in coral, as the
-portfolio's illustrations do. Sequential ramps run from a coral tint to a deep wine.
+Charts use ink, signal red, teal and mustard (`#262624`, `#C8312F`, `#3B7069`, `#8C6A22`;
+in dark `#ECE9E3`, `#E89D9C`, `#7FC1B8`, `#E2C27A`), each at least 3:1 on the page,
+raised and inset surfaces. Rent vs. buy draws renting in ink and buying in signal red, as
+the portfolio's illustrations do. Sequential ramps run from a red tint to a deep wine.
 Custom colours chosen by visualization users remain their own. Crane yellow is retired;
 the `crane` token remains as a mustard alias for older consumers.
 
