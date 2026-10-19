@@ -1,6 +1,6 @@
 # Doshi design system
 
-Version 0.7.0 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation and the labeled System / Light / Dark appearance control are unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. Generated assets must not be edited in consuming repos.
+Version 0.7.1 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation and the labeled System / Light / Dark appearance control are unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. Generated assets must not be edited in consuming repos.
 
 ```sh
 npm run build
@@ -164,7 +164,7 @@ Applications still reset document margins and own their business-specific layout
 | Component | Contract |
 | --- | --- |
 | `AppShell` | `brand`, `navigation` (`id`, `label`, `href` or `onClick`, `active`, optional `icon`), `actions`, `footer`, `children`. Includes a skip link, navigation landmark and responsive main content. |
-| `Button` | Native/Base UI button props plus `variant` (`primary`, `secondary`, `danger`, `ghost`) and `loading`. Loading disables repeat activation. |
+| `Button` | Native/Base UI button props plus `variant` (`primary`, `secondary`, `danger`, `ghost`), `loading` and `size` (`"small"` for dense layouts, 0.7.1). Loading disables repeat activation. Static markup uses `data-size="small"`. |
 | `TextField` | Native input props, `label`, `value`, `onValueChange`, `hint`, `error`, optional `hideLabel`. For number parsing use `NumericField`. |
 | `SelectField` | Native select props, `label`, `value`, `onValueChange`, `options` (`value`, `label`, `disabled`), `hint`, `error`, optional `hideLabel`. Values are strings, as in native selects. |
 | `CheckboxField` | Native checkbox props, `label`, `checked`, `onCheckedChange`, optional `hint`, `error`, `indeterminate`. Label provides the full touch target. |
@@ -254,3 +254,12 @@ charcoal; it was a raised disc that nearly vanished on its track.
 Consumers that paint text on `action-primary` or `--on-accent` now get white. Any fill
 that is not the signal needs its own text colour.
 
+## Small controls (0.7.1)
+
+`Button` and `SegmentedControl` take `size="small"` (static markup: `data-size="small"` on
+`.ds-button` or `.ds-segmented`) for dense app layouts such as boards and tables. The pill
+is drawn at the new density token `control-compact-height` (36px; 60px at game density, so
+game controls never shrink) with tighter padding, while an invisible hit area keeps the
+full `control-target` height, so the 44px target minimum still holds. The default size is
+unchanged. `npm test` checks that the compact height stays between 32px and the control
+height, and equals it at game density.
