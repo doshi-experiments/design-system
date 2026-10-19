@@ -4,6 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 `@doshi-experiments/design-system` is the source of truth for shared UI across Rishabh Doshi's sites: tokens, React components, the static site header, theming and the Felt identity. `README.md` is authoritative for the contract and release history; `docs/identity.md` holds the palette, type, shape and **copy rules**; `docs/rollout.md` covers releases. Author commits as `doshi-experiments <311927837+doshi-experiments@users.noreply.github.com>`; GitHub rejects pushes that carry a private email.
 
+## Never publish PII or sensitive information
+
+Nothing personal or sensitive goes to GitHub, under any circumstances, without Rishabh's direct approval of that specific content. That covers commits, branches, pull requests, issues, comments, release notes, screenshots and test fixtures, and it applies even when the repository is private.
+
+- Personal data: names other than Rishabh's public name, email addresses, phone numbers, home addresses, dates of birth.
+- Financial data: account or card numbers, balances, real transactions, statements, payees, anything from bank exports or Actual Budget.
+- Secrets and infrastructure: `.env` contents, API keys, tokens, passwords, private hostnames and IP addresses, Tailscale names.
+- Anything copied from a real export, inbox, database or log.
+
+Use synthetic fixtures instead. Before every commit and push, check the staged diff and any new untracked files for this kind of content. If something looks sensitive, or you are unsure, stop and ask; do not commit it, push it or open a pull request with it. Earlier approval of a different change does not cover this one.
+
 ## Commands
 
 ```sh
