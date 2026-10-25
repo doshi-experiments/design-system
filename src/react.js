@@ -367,10 +367,17 @@ export const ToggleButton = React.forwardRef(function ToggleButton({pressed, onP
 });
 
 // Toasts: confirmations that outlive the page that raised them. Mount ToastProvider once,
-// then call toast(title, description?, {tone, timeout}) from anywhere.
+// then call toast(title, description?, {tone, timeout, action}) from anywhere. It returns the
+// toast's id for toast.close(id). action: {label, onAction} adds one small button, such as
+// Undo, that closes the toast and runs onAction; a toast with one stays up 8 s instead of 4.
 const toastManager = Toast.createToastManager();
-export const toast = (title, description, {tone = 'success', timeout = 4000} = {}) =>
-  toastManager.add({title, description, timeout, type:tone, priority:tone === 'error' ? 'high' : 'low'});
+let toastCount = 0;
+export const toast = (title, description, {tone = 'success', timeout, action} = {}) => {
+  const id = `ds-toast-${++toastCount}`;
+  return toastManager.add({id, title, description, timeout:timeout ?? (action ? 8000 : 4000), type:tone, priority:tone === 'error' ? 'high' : 'low',
+    actionProps:action && {children:action.label, onClick:event => {toastManager.close(id); action.onAction?.(event);}}});
+};
+toast.close = id => toastManager.close(id);
 const toneIcon = tone => tone === 'success'
   ? checkIcon('ds-toast-icon')
   : icon('ds-toast-icon', 16, h('circle', {cx:8, cy:8, r:6.25, ...stroke, strokeWidth:1.5}),
@@ -380,6 +387,7 @@ function ToastList() {
   return toasts.map(item => h(Toast.Root, {key:item.id, toast:item, className:'ds-toast', 'data-tone':item.type || 'success'},
     toneIcon(item.type || 'success'),
     h('div', {className:'ds-toast-text'}, h(Toast.Title, {className:'ds-toast-title'}), item.description && h(Toast.Description, {className:'ds-toast-description'})),
+    item.actionProps && h(Toast.Action, {className:'ds-button ds-toast-action', 'data-size':'small'}),
     h(Toast.Close, {className:'ds-icon-button ds-toast-close', 'data-size':'small', 'aria-label':'Dismiss'},
       icon(undefined, 14, h('path', {d:'M4 4l8 8M12 4l-8 8', ...stroke})))));
 }

@@ -23,7 +23,8 @@ function Pickers(){
  h(DateField,{label:'Due date',value:date,onValueChange:setDate,min:iso(today)}),h(TimeField,{label:'Time',value:time,onValueChange:setTime}),
  h('div',{className:'ds-actions'},h(MenuButton,{label:'Snooze',size:'small',items:[{label:'Tomorrow',onSelect:()=>setLater('tomorrow')},'separator',{label:'Next week',onSelect:()=>setLater('week')}]}),
   h(ToggleButton,{pressed:alarm,onPressedChange:setAlarm,tone:'error',size:'small','aria-label':'Alarm for the sample'},alarm?'Alarm on':'Alarm off'),
-  h(Button,{size:'small',onClick:()=>toast('Saved: sample note','It stays in this preview.')},'Save note')),
+  h(Button,{size:'small',onClick:()=>toast('Saved: sample note','It stays in this preview.')},'Save note'),
+  h(Button,{size:'small',onClick:()=>toast('Archived: sample note',undefined,{action:{label:'Undo',onAction:()=>setLater('undone')}})},'Archive note')),
  h('p',{id:'pickers',hidden:true},JSON.stringify({colour,size,date,time,later,alarm})));
 }
 function Example(){
@@ -114,6 +115,8 @@ try {
  assert.equal(await alarm.evaluate(el=>getComputedStyle(el).backgroundColor),await page.evaluate(()=>{const probe=document.createElement('i');probe.style.background='var(--ds-error-bg)';document.body.append(probe);const c=getComputedStyle(probe).backgroundColor;probe.remove();return c;}),'pressed error tone is tinted');assert.equal((await picked()).alarm,true);checks+=3;
  await page.getByRole('button',{name:'Save note'}).click();const note=page.getByText('Saved: sample note',{exact:true});await note.waitFor();assert.ok((await hits('.ds-toast-close')).every(size=>size>=44),'toast close target');
  await page.locator('.ds-toast-close').click();await note.waitFor({state:'hidden'});checks+=2;
+ await page.getByRole('button',{name:'Archive note'}).click();const archived=page.getByText('Archived: sample note',{exact:true});await archived.waitFor();assert.ok((await hits('.ds-toast-action')).every(size=>size>=44),'toast action target');
+ await page.locator('.ds-toast-action').click();await archived.waitFor({state:'hidden'});assert.equal((await picked()).later,'undone','toast action runs and closes');checks+=3;
  for (const theme of ['light','dark']){
   await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);await page.getByRole('button',{name:'Open confirmation',exact:true}).click();const dialog=page.getByRole('dialog',{name:'Save these decisions?'});await dialog.waitFor();
   assert.equal(await dialog.getByLabel('Note').isVisible(),true);await page.waitForFunction(()=>document.querySelector('[role="dialog"]')?.contains(document.activeElement));checks++;
@@ -130,5 +133,5 @@ try {
  for(const width of [320,390,768,1440]){await page.setViewportSize({width,height:1000});assert.equal(await page.getByRole('link',{name:'Home',exact:true}).isVisible(),true);assert.equal(await page.getByRole('link',{name:'Experiments',exact:true}).isVisible(),true);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);checks+=3;}
  await page.evaluate(()=>window.header.destroy());assert.equal(await page.getByLabel('Appearance',{exact:true}).count(),0);checks++;
  assert.deepEqual(failures,[]);checks++;
- console.log(JSON.stringify({checks,status:'passed',coverage:'8 responsive appearance layouts; equivalent React/static global headers; visible preference persistence and System OS changes; actual mouse text selection; native form values; upload; editable category persistence callback; disclosure keyboard; loading lock; modal focus, Escape, restoration and dismissal guard; Select groups and keyboard; TimeField slots; DateField keyboard, min and clear; menu button; toggle tone; toast and dismiss; small hit areas'},null,2));
+ console.log(JSON.stringify({checks,status:'passed',coverage:'8 responsive appearance layouts; equivalent React/static global headers; visible preference persistence and System OS changes; actual mouse text selection; native form values; upload; editable category persistence callback; disclosure keyboard; loading lock; modal focus, Escape, restoration and dismissal guard; Select groups and keyboard; TimeField slots; DateField keyboard, min and clear; menu button; toggle tone; toast, dismiss and action; small hit areas'},null,2));
 } finally {await browser?.close();await new Promise(resolve=>server.close(resolve));await rm(fixture,{recursive:true,force:true});}
