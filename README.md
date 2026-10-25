@@ -1,6 +1,6 @@
 # Doshi design system
 
-Version 0.8.1 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation underlines the current page; the labeled System / Light / Dark appearance control is unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. Generated assets must not be edited in consuming repos.
+Version 0.9.0 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation underlines the current page; the labeled System / Light / Dark appearance control is unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. Generated assets must not be edited in consuming repos.
 
 ```sh
 npm run build
@@ -304,3 +304,13 @@ underline in `action-primary` across the link's text instead of a 5px dot, so th
 current page reads as a selected tab. The line grows from its centre on hover with the
 usual spring and holds still with reduced motion. Nothing else changes: link targets
 stay 44px, and the header's markup and `mountSiteHeader` options are the same.
+
+## Toast actions (0.9.0)
+
+`toast()` takes an `action: {label, onAction}` option that adds one small raised button
+to the toast, for a reversible step such as Undo. Pressing it closes the toast, then runs
+`onAction`. A toast with an action stays up 8 seconds instead of 4 (an explicit
+`timeout` still wins), so there is time to reach it. `toast()` now returns the toast's
+id, and `toast.close(id)` closes it early. Toasts without an action are unchanged. The
+button keeps the 44px target over a shorter pill, like other small controls, and
+`npm run test:components` checks its hit area and that it runs and closes.
