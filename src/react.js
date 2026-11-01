@@ -138,14 +138,14 @@ export const SelectField = React.forwardRef(function SelectField({label, value, 
       onChange:event => {onValueChange?.(event.target.value); onChange?.(event);}},
       children || options.map(option => h('option', {key:option.value, value:option.value, disabled:option.disabled}, option.label))), fieldDescription(id, hint, error));
 });
-export function CheckboxField({label, checked, onCheckedChange, hint, error, disabled, indeterminate = false, className = '', id:providedId, onChange, ...props}) {
+export function CheckboxField({label, checked, onCheckedChange, hint, error, disabled, indeterminate = false, hideLabel = false, className = '', id:providedId, onChange, ...props}) {
   const generatedId = React.useId(); const id = providedId || generatedId; const ref = React.useRef(null);
   React.useEffect(() => {if (ref.current) ref.current.indeterminate = indeterminate;}, [indeterminate]);
   return h('div', {className:`ds-checkbox-field ${className}`},
-    h('label', {className:'ds-checkbox-label', htmlFor:id, 'data-disabled':disabled || undefined},
+    h('label', {className:'ds-checkbox-label', htmlFor:id, 'data-disabled':disabled || undefined, 'data-hide-label':hideLabel || undefined},
       h('input', {...props, ref, id, type:'checkbox', checked, disabled, 'aria-invalid':error ? true : props['aria-invalid'],
         'aria-describedby':[props['aria-describedby'], (hint || error) && `${id}-description`].filter(Boolean).join(' ') || undefined,
-        onChange:event => {onCheckedChange?.(event.target.checked); onChange?.(event);}}), h('span', null, label)), fieldDescription(id, hint, error));
+        onChange:event => {onCheckedChange?.(event.target.checked); onChange?.(event);}}), h('span', {className:hideLabel ? 'ds-visually-hidden' : undefined}, label)), fieldDescription(id, hint, error));
 }
 export function Alert({tone = 'info', title, children, actions, className = '', role, ...props}) {
   return h('div', {...props, className:`ds-alert ${className}`, 'data-tone':tone, role:role || (tone === 'error' ? 'alert' : 'status')},

@@ -76,6 +76,8 @@
 .ds-table {width:100%; border-collapse:collapse; font:400 .875rem/1.5 var(--ds-font-body); font-variant-numeric:tabular-nums}
 .ds-table th {position:sticky; top:0; background:var(--ds-surface-raised); font-weight:600; color:var(--ds-text-secondary); text-align:left}
 .ds-table :is(th,td) {padding:12px 16px; border-bottom:1.5px dashed var(--ds-stitch); white-space:nowrap}
+/* Cells stay on one line; a column of long text opts into wrapping (0.9.1). */
+.ds-table .ds-table-wrap {white-space:normal; overflow-wrap:break-word}
 .ds-table tbody tr:hover {background:var(--ds-selection)}
 .ds-card :is(.ds-card,.ds-table-scroll) {border-radius:var(--ds-radius-control)}
 @media(max-width:380px) {.ds-field-grid {grid-template-columns:minmax(0,1fr)} .ds-card {padding:18px}}
@@ -102,6 +104,7 @@
 
 /* Application shell and form controls (0.4). */
 .ds-visually-hidden {position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.ds-line-clamp {display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:var(--ds-lines,2); line-clamp:var(--ds-lines,2); overflow:hidden}
 .ds-button[data-variant="primary"] {background:var(--ds-action-gradient);color:var(--ds-action-text);border-color:transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 8px 14px -8px rgba(38,38,36,.55)}
 .ds-button[data-variant="primary"]:hover:not(:disabled):not([data-disabled]) {background:var(--ds-action-gradient-hover)}
 .ds-button[data-variant="primary"]:active:not(:disabled):not([data-disabled]) {background:var(--ds-action-gradient-pressed);box-shadow:inset 0 2px 4px rgba(38,38,36,.35)}
@@ -118,9 +121,10 @@
 .ds-text-input[aria-invalid="true"],.ds-select-input[aria-invalid="true"] {border-color:var(--ds-error-text)}
 .ds-text-input:disabled,.ds-select-input:disabled {cursor:not-allowed;color:var(--ds-text-disabled)}
 .ds-field-hint[data-error] {color:var(--ds-error-text)}
-.ds-checkbox-label {display:flex;align-items:center;gap:12px;min-height:var(--ds-control-target);width:fit-content;max-width:100%;color:var(--ds-text);font:500 .9375rem/1.5 var(--ds-font-body);cursor:pointer}
+.ds-checkbox-label {position:relative;display:flex;align-items:center;gap:12px;min-height:var(--ds-control-target);width:fit-content;max-width:100%;color:var(--ds-text);font:500 .9375rem/1.5 var(--ds-font-body);cursor:pointer}
 .ds-checkbox-label input {width:20px;height:20px;flex-shrink:0;margin:0;accent-color:var(--ds-action-primary);cursor:inherit}
 .ds-checkbox-label[data-disabled] {color:var(--ds-text-disabled);cursor:not-allowed}
+.ds-checkbox-label[data-hide-label] {min-width:var(--ds-control-target);justify-content:center}
 .ds-checkbox-field .ds-field-hint {margin:0 0 0 32px}
 .ds-file-upload {box-sizing:border-box;padding:24px;border:1.5px dashed var(--ds-border);border-radius:var(--ds-radius-container);background:var(--ds-surface-inset);box-shadow:var(--ds-shadow-pressed)}
 .ds-file-upload input {box-sizing:border-box;width:100%;min-width:0;max-width:100%;min-height:44px;font:400 .875rem/1.5 var(--ds-font-body);color:var(--ds-text)}

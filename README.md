@@ -1,6 +1,6 @@
 # Doshi design system
 
-Version 0.9.0 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation underlines the current page; the labeled System / Light / Dark appearance control is unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. Generated assets must not be edited in consuming repos.
+Version 0.9.1 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation underlines the current page; the labeled System / Light / Dark appearance control is unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. Generated assets must not be edited in consuming repos.
 
 ```sh
 npm run build
@@ -174,14 +174,14 @@ Applications still reset document margins and own their business-specific layout
 | `IconButton` | Round icon-only button: `label` (required, becomes `aria-label`), `size` (`"small"` draws 32px over the full target), children. 0.8.0. |
 | `ToastProvider` / `toast` | Mount `ToastProvider` once around the app; `toast(title, description?, {tone, timeout})` (tone `success` by default, timeout 4000ms) shows a confirmation that outlives the page that raised it. Bottom right, full width on phones, three at a time; error toasts carry the error tint and announce assertively. 0.8.0. |
 | `SelectField` | Native select props, `label`, `value`, `onValueChange`, `options` (`value`, `label`, `disabled`), `hint`, `error`, optional `hideLabel`. Values are strings, as in native selects. |
-| `CheckboxField` | Native checkbox props, `label`, `checked`, `onCheckedChange`, optional `hint`, `error`, `indeterminate`. Label provides the full touch target. |
+| `CheckboxField` | Native checkbox props, `label`, `checked`, `onCheckedChange`, optional `hint`, `error`, `indeterminate`, `hideLabel`. Label provides the full touch target; with `hideLabel` (0.9.1) the label is for screen readers only and the box keeps a 44px square target, for a column of checkboxes in a table. |
 | `FileUpload` | Native file input props, `label`, `accept`, `multiple`, `onFilesChange(File[])`, `hint`, `error`, `disabled`. Applications enforce file size, content and upload policy. |
 | `Alert` / `Badge` | `tone` (`info`, `success`, `warning`, `error`), `children`. Alerts also accept `title`, `actions` and a `role` override; errors announce with `alert`, other tones with `status`. |
 | `EmptyState` | `title`, `description`, `actions`, optional `children`. |
 | `WorkflowSteps` | `steps` (`id`, `label`, optional `description` / `disabled`), current `value`, optional `onValueChange`. A navigation list with `aria-current="step"`; applications own step eligibility. |
 | `Disclosure` | `title`, `children`, optional `defaultOpen` or controlled `open`, `onToggle`. Uses native details/summary keyboard and collapsed-content behavior. |
 | `Dialog` | Controlled `open`, `onOpenChange`, `title`, `description`, `children`, `actions`, optional `closeLabel`, `initialFocus`, `finalFocus`, `dismissible`. Base UI provides modal focus trapping and dismissal; focus returns to the launching control. `dismissible={false}` blocks backdrop/Escape dismissal while keeping the explicit close action. |
-| `EditableTable` | `data`, TanStack `columns`, stable `getRowId`, `label`, optional `caption`, `emptyMessage`, `maxHeight`, `busy`, `meta`, `rowClassName`. Custom cells receive TanStack context, including `table.options.meta`. |
+| `EditableTable` | `data`, TanStack `columns`, stable `getRowId`, `label`, optional `caption`, `emptyMessage`, `maxHeight`, `busy`, `meta`, `rowClassName`. Custom cells receive TanStack context, including `table.options.meta`. A column's `meta.className` and `meta.style` go on its heading and cells. Cells stay on one line; give a column of long text `meta:{className:'ds-table-wrap'}` and a width so it wraps (0.9.1). |
 
 `EditableTable` requires the additional optional peer `@tanstack/react-table`
 8.21.3 or later in version 8. Its separate `/table` export keeps that dependency
@@ -314,3 +314,20 @@ to the toast, for a reversible step such as Undo. Pressing it closes the toast, 
 id, and `toast.close(id)` closes it early. Toasts without an action are unchanged. The
 button keeps the 44px target over a shorter pill, like other small controls, and
 `npm run test:components` checks its hit area and that it runs and closes.
+
+## Wrapping table cells and hidden checkbox labels (0.9.1)
+
+Table cells stay on one line, which suits dates, amounts and controls but let long
+text spill across the next columns once an app capped the column's width. A cell or
+heading with `.ds-table-wrap` now wraps inside its column, breaking a long word only
+when it would overflow; the app still sets the column's width. `.ds-line-clamp` shows
+at most two lines of any block (set `--ds-lines` for another count) and ends with an
+ellipsis, so a long description doesn't make every row tall. Put the full text in a
+`title` when it is clamped.
+
+`CheckboxField` takes `hideLabel`, as `TextField` and `SelectField` already do. The
+label stays the checkbox's accessible name but is hidden on screen, and the label
+draws a 44px square target around the box, for a column of checkboxes in a table
+under a heading such as "Skip". `npm run test:components` checks the hidden-label
+target, that the box still toggles, and that a wrapping, clamped cell keeps its text
+inside its column at two lines.
