@@ -42,7 +42,7 @@ The command writes each consumer's snapshot (`scripts/sync.mjs` underneath) and 
 
 Load `tokens.css`, optional `legacy.css`, and then `components.css`. The compatibility layer maps existing site names onto semantic tokens; it does not resize every button, select, or arbitrary surface. Shared component classes own their dimensions and states. `release.json` records the version and SHA-256 hashes. Commit that snapshot with the consuming app; independent deployments do not depend on this directory, a CDN, or a sibling checkout. To upgrade, rebuild one release and sync it to each repo in separate reviewable changes. Do not hand-edit snapshots.
 
-The game and calculator integrations also install the release tarball, committed in its repository, for their React components. A future package registry can replace that file dependency without changing imports. Npm publishing is disabled; this release uses committed snapshots and tarballs.
+The game, calculator and Finance integrations also install the release tarball, committed in each repository, for their React components. The household Tasks app is not in `rollout.json`; it builds the tarball into its own `frontend/vendor/` and does not commit it. A future package registry can replace that file dependency without changing imports. Npm publishing is disabled; this release uses committed snapshots and tarballs.
 
 ## Appearance
 
