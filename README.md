@@ -1,6 +1,6 @@
 # Doshi design system
 
-Version 0.9.1 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation underlines the current page; the labeled System / Light / Dark appearance control is unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. Generated assets must not be edited in consuming repos.
+Version 0.9.2 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation underlines the current page; the labeled System / Light / Dark appearance control is unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. Generated assets must not be edited in consuming repos.
 
 ```sh
 npm run build
@@ -331,3 +331,19 @@ draws a 44px square target around the box, for a column of checkboxes in a table
 under a heading such as "Skip". `npm run test:components` checks the hidden-label
 target, that the box still toggles, and that a wrapping, clamped cell keeps its text
 inside its column at two lines.
+
+## Aligned numeric fields and one focus ring (0.9.2)
+
+A `NumericField` inside a `.ds-field-grid` (which `FieldGroup` renders) now shares
+the grid's rows through CSS subgrid: label, input and hint each take one row, so
+inputs side by side line up even when one label wraps to three lines and its
+neighbour to one, or their hints wrap differently. Labels sit at the bottom of the
+label row, next to their input, and a help button or badge aligns with the label's
+last line. An app's own grid of fields can opt in by adding the `ds-field-grid`
+class; the app's column rules still win when they load later. Every child of the
+grid should be a field, because each one spans three rows.
+
+A focused numeric field showed two rings: the rounded one on the field and a square
+one on the input inside it, from `legacy.css`'s global `:focus-visible`. Only the
+field's ring remains. The help button in a field label, metric label or data row
+no longer carries the raised button's shadow, which drew a circle over the label.

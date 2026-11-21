@@ -36,11 +36,16 @@
 .ds-group-description p {margin:0}
 .ds-field-grid {display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px 12px}
 .ds-field {position:relative;min-width:0; font-family:var(--ds-font-body)}
-.ds-field-heading {display:flex; flex-wrap:wrap; align-items:center; gap:4px; min-height:32px; margin-bottom:6px; color:var(--ds-text-secondary); font-size:.8125rem; font-weight:600}
+/* Fields in a grid share its rows, so inputs line up whatever their labels and hints wrap to. */
+.ds-field-grid > .ds-field {display:grid; grid-template-rows:subgrid; grid-row:span 3; row-gap:0}
+.ds-field-grid > .ds-field > .ds-field-heading {align-self:end}
+.ds-field-heading {display:flex; flex-wrap:wrap; align-items:flex-end; gap:4px; min-height:32px; margin-bottom:6px; color:var(--ds-text-secondary); font-size:.8125rem; font-weight:600}
 .ds-field-heading label {flex:1; min-width:0}
-.ds-field-heading .ds-help {width:44px; height:44px; border:0; background:transparent; margin-block:-6px}
+.ds-field-heading .ds-help {width:44px; height:44px; border:0; background:transparent; box-shadow:none; margin-block:-6px}
 .ds-input-wrap {display:flex; align-items:center; gap:6px; min-height:48px; padding:0 14px; border:1px solid var(--ds-border); border-radius:var(--ds-radius-control); background:var(--ds-surface-inset); box-shadow:var(--ds-shadow-pressed); transition:border-color var(--ds-duration-fast) var(--ds-ease),box-shadow var(--ds-duration-fast) var(--ds-ease)}
 .ds-input-wrap:focus-within {outline:3px solid var(--ds-focus); outline-offset:2px}
+/* The wrapper draws the ring; legacy.css's global :focus-visible would add a second, square one on the input. */
+.ds-input-wrap input:focus-visible,:root[data-project] .ds-input-wrap input:focus-visible {outline:0}
 .ds-input-wrap input {display:block; width:100%; min-width:0; min-height:46px; padding:8px 0; border:0; outline:0; background:transparent; color:var(--ds-text); font:400 1rem/1.55 var(--ds-font-body); font-variant-numeric:tabular-nums}
 .ds-input-wrap[data-readonly] {border-style:dashed; background:transparent}
 .ds-input-wrap[data-readonly] input {color:var(--ds-text-secondary)}
@@ -64,12 +69,12 @@
 .ds-field-compact .ds-field-heading {position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); margin:0}
 .ds-metric {min-width:0; border:0; border-top:1.5px dashed var(--ds-stitch); border-radius:0; padding:16px 0 4px; background:transparent}
 .ds-metric-label {display:flex; gap:8px; align-items:center; justify-content:space-between; min-height:32px; font:600 .8125rem/1.4 var(--ds-font-body); color:var(--ds-text-secondary)}
-.ds-metric-label .ds-help {border:0; background:transparent; margin:-8px}
+.ds-metric-label .ds-help {border:0; background:transparent; box-shadow:none; margin:-8px}
 .ds-metric-value {font:500 clamp(1.5rem,2.5vw,2.25rem)/1.2 var(--ds-font-body); letter-spacing:-.03em; font-variant-numeric:tabular-nums; color:var(--ds-metric-accent,var(--ds-text)); margin-top:8px; overflow-wrap:anywhere}
 .ds-metric-note {font:400 .8125rem/1.5 var(--ds-font-body); color:var(--ds-text-secondary); margin:8px 0 0}
 .ds-data-row {display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px 16px; padding:12px 0; border-bottom:1.5px dashed var(--ds-stitch); font:400 .875rem/1.5 var(--ds-font-body)}
 .ds-data-label {display:flex; align-items:center; gap:6px; color:var(--ds-text-secondary); min-width:0; flex:1}
-.ds-data-label .ds-help {border:0; background:transparent; margin-block:-10px}
+.ds-data-label .ds-help {border:0; background:transparent; box-shadow:none; margin-block:-10px}
 .ds-data-value {font-family:var(--ds-font-body); font-variant-numeric:tabular-nums; text-align:right; overflow-wrap:anywhere}
 .ds-data-row-strong {font-weight:600}
 .ds-table-scroll {max-width:100%; overflow:auto; border:0; border-radius:var(--ds-radius-container); background:var(--ds-surface-raised); box-shadow:var(--ds-shadow-raised)}
