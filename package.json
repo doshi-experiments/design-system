@@ -29,7 +29,7 @@
     "test:identity": "node scripts/check-identity.mjs",
     "rollout": "node scripts/rollout.mjs"
   },
-  "license": "UNLICENSED",
+  "license": "MIT",
   "peerDependencies": {
     "@base-ui/react": "^1.8.0",
     "react": "^18.3.1 || ^19.0.0",

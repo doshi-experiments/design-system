@@ -98,6 +98,10 @@ The calculator uses shared NumericField, RangeField (Base UI Slider), Card, Fiel
 Upstream references: [shadcn installation](https://ui.shadcn.com/docs/installation), [Base UI quick start](https://base-ui.com/react/overview/quick-start). Base UI and React license notices remain in their installed packages; retain them in distributions. The font OFL notice is included in each static snapshot.
 
 
+## Licence
+
+MIT, see [LICENSE](LICENSE). The exception: the Host Grotesk font files in `src/fonts/` and `dist/fonts/` are under the SIL Open Font License 1.1 (`host-grotesk-OFL.txt` beside them).
+
 ## Release history
 
 The sections below record each release in order. The current palette and type are
