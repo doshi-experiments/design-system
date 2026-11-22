@@ -6,7 +6,7 @@ import {fileURLToPath} from 'node:url';
 import {chromium} from 'playwright';
 
 const workspace=process.env.DESIGN_WORKSPACE || fileURLToPath(new URL('../../',import.meta.url)).replace(/\/$/,'');
-const root=resolve(workspace,'design-system-rollout/visualizations/public');
+const root=resolve(workspace,'design-system-rollout/visualizations/dist');
 const output=resolve(workspace,'design-system-rollout/screenshots/visualizations');
 const types={'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.css':'text/css','.json':'application/json','.woff2':'font/woff2'};
 const server=createServer(async(req,res)=>{
@@ -62,9 +62,9 @@ try{
  for(const appearance of['light','dark']){
   const page=await browser.newPage({viewport:{width:1100,height:720},colorScheme:appearance,reducedMotion:'reduce'});
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
-  await page.goto(url,{waitUntil:'networkidle'});await page.getByLabel('Appearance',{exact:true}).selectOption(appearance);
+  await page.goto(url+'?debug',{waitUntil:'networkidle'});await page.getByLabel('Appearance',{exact:true}).selectOption(appearance);
   await page.getByRole('tab',{name:'Silk',exact:true}).click();await page.waitForTimeout(150);
-  const safe=await page.evaluate(async()=>{const{safeRect}=await import('/js/shell.js');return safeRect(innerWidth,innerHeight);});
+  const safe=await page.evaluate(async()=>{return window.__e03.safeRect(innerWidth,innerHeight);});
   const x=safe.x+safe.w*.2,y=safe.y+safe.h*.45;
   await page.mouse.move(x,y);await page.mouse.down();
   for(let i=1;i<=25;i++)await page.mouse.move(x+i*7,y+Math.sin(i*.2)*40);
@@ -75,7 +75,7 @@ try{
   await page.getByLabel('Appearance',{exact:true}).selectOption(appearance);
   await page.getByRole('tab',{name:'Growth Cage',exact:true}).click();await page.waitForTimeout(150);
   await page.getByLabel('Render',{exact:true}).selectOption('metaball');
-  const cage=await page.evaluate(async()=>{const{safeRect}=await import('/js/shell.js');return safeRect(innerWidth,innerHeight);});
+  const cage=await page.evaluate(async()=>{return window.__e03.safeRect(innerWidth,innerHeight);});
   await page.mouse.click(cage.x+cage.w/2,cage.y+cage.h/2);await waitStats(page,/Balls\s+[1-9]/);
   await page.screenshot({path:`${output}/GrowthCage-metaball-${appearance}.png`});
   await page.getByLabel('Render',{exact:true}).selectOption('glow');await page.waitForTimeout(250);

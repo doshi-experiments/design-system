@@ -7,8 +7,8 @@ import {mkdir, writeFile} from 'node:fs/promises';
 const sites = [
  ['preview',`${workspace}/design-system`,'/preview/'],
  ['portfolio',`${workspace}/design-system-rollout/portfolio-landing`,'/versions/'],
- ['experiments',`${workspace}/design-system-rollout/experiments-landing/public`,'/'],
- ['visualizations',`${workspace}/design-system-rollout/visualizations/public`,'/'],
+ ['experiments',`${workspace}/design-system-rollout/experiments-landing/dist`,'/'],
+ ['visualizations',`${workspace}/design-system-rollout/visualizations/dist`,'/'],
  ['calculator',`${workspace}/design-system-rollout/rent-vs-buy-calculator/dist`,'/'],
  ['game',`${workspace}/design-system-rollout/mr-shake/dist`,'/'],
 ];

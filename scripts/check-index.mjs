@@ -4,7 +4,7 @@ import {chromium} from 'playwright';
 import {spawn} from 'node:child_process';
 import {mkdir} from 'node:fs/promises';
 const workspace = process.env.DESIGN_WORKSPACE || fileURLToPath(new URL('../../', import.meta.url)).replace(/\/$/, '');
-const server=spawn('python3',['-m','http.server','4196','--bind','127.0.0.1','--directory',`${workspace}/design-system-rollout/experiments-landing/public`],{stdio:'ignore'});
+const server=spawn('python3',['-m','http.server','4196','--bind','127.0.0.1','--directory',`${workspace}/design-system-rollout/experiments-landing/dist`],{stdio:'ignore'});
 const browser=await chromium.launch({args:['--no-sandbox']});
 await mkdir(`${workspace}/design-system-rollout/screenshots`,{recursive:true});
 try {

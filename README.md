@@ -55,7 +55,7 @@ export default defineConfig({plugins: [tailwindcss(), prepaint()]});
 
 `node scripts/ds-usage.mjs <checkout>…` counts the `ds-*` classes and `/react` imports an app still has; each migration PR reports it. `/ui` components need React 18.3 or 19 and `@base-ui/react`; `tailwindcss` 4.3 is an optional peer dependency.
 
-Static sites and the React apps' snapshots are upgraded centrally. With clean checkouts of every consumer in a rollout workspace (named as in `rollout.json`), prepare and then apply an upgrade:
+Every consumer is upgraded centrally. With clean checkouts of every consumer in a rollout workspace (named as in `rollout.json`), prepare and then apply an upgrade:
 
 ```sh
 npm run rollout -- --workspace /path/to/design-system-rollout
@@ -63,11 +63,11 @@ npm run rollout -- --workspace /path/to/design-system-rollout --apply
 # Narrow it: --only portfolio-landing,mr-shake
 ```
 
-The command writes each consumer's snapshot (`scripts/sync.mjs` underneath) and tarball, and changes nothing else; commit each consumer as its own pull request. It does not commit, push or deploy.
+The command writes each consumer's tarball and lockfile entry, and for the portfolio's `/versions/`, the one consumer that still commits a snapshot, the snapshot through `scripts/sync.mjs`. It changes nothing else; commit each consumer as its own pull request. It does not commit, push or deploy.
 
 Load `tokens.css`, optional `legacy.css`, and then `components.css`. The compatibility layer maps existing site names onto semantic tokens; it does not resize every button, select, or arbitrary surface. Shared component classes own their dimensions and states. `release.json` records the version and SHA-256 hashes. Commit that snapshot with the consuming app; independent deployments do not depend on this directory, a CDN, or a sibling checkout. To upgrade, rebuild one release and sync it to each repo in separate reviewable changes. Do not hand-edit snapshots.
 
-The game, calculator and Finance integrations also install the release tarball, committed in each repository, for their React components. The household Tasks app is not in `rollout.json`; it builds the tarball into its own `frontend/vendor/` and does not commit it. A future package registry can replace that file dependency without changing imports. Npm publishing is disabled; this release uses committed snapshots and tarballs.
+From the Tailwind migration on, a consumer with a build step installs only the committed tarball, which `npm ci` checks against its lockfile, and takes fonts, fibre tiles and `prepaint.js` from it: the calculator, Mr. Shake, experiments-landing and visualizations do, and the others follow as they migrate. Finance also installs only the tarball. The household Tasks app is not in `rollout.json`; it builds the tarball into its own `frontend/vendor/` and does not commit it. A future package registry can replace that file dependency without changing imports. Npm publishing is disabled; this release uses committed snapshots and tarballs.
 
 ## Appearance
 
