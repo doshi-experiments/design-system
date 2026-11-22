@@ -1,6 +1,6 @@
 {
   "name": "@doshi-experiments/design-system",
-  "version": "0.9.2",
+  "version": "0.10.0",
   "private": true,
   "type": "module",
   "files": [
@@ -13,7 +13,12 @@
     "./theme": "./dist/theme.js",
     "./tokens.json": "./dist/tokens.json",
     "./react": "./dist/react.js",
+    "./ui": "./dist/ui.js",
     "./components.css": "./dist/components.css",
+    "./tailwind.css": {
+      "style": "./dist/tailwind.css",
+      "default": "./dist/tailwind.css"
+    },
     "./table": "./dist/table.js",
     "./site": "./dist/site.js",
     "./prepaint.js": "./dist/prepaint.js"
@@ -21,20 +26,26 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "test": "node --test",
-    "preview": "python3 -m http.server 4174 --bind 127.0.0.1",
+    "preview": "node scripts/preview-tailwind.mjs && python3 -m http.server 4174 --bind 127.0.0.1",
     "prepack": "npm run build",
     "test:browser": "node scripts/check-rollout.mjs && node scripts/check-interactions.mjs && node scripts/check-index.mjs",
     "test:calculator": "node scripts/check-calculator.mjs && node scripts/check-interactions.mjs",
-    "test:components": "node scripts/check-components.mjs",
+    "test:components": "node scripts/check-components.mjs && node scripts/check-tailwind.mjs",
     "test:identity": "node scripts/check-identity.mjs",
     "rollout": "node scripts/rollout.mjs"
   },
   "license": "MIT",
+  "dependencies": {
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.7.1"
+  },
   "peerDependencies": {
     "@base-ui/react": "^1.8.0",
+    "@tanstack/react-table": "^8.21.3",
     "react": "^18.3.1 || ^19.0.0",
     "react-dom": "^18.3.1 || ^19.0.0",
-    "@tanstack/react-table": "^8.21.3"
+    "tailwindcss": "^4.3.0"
   },
   "peerDependenciesMeta": {
     "react": {
@@ -48,14 +59,19 @@
     },
     "@tanstack/react-table": {
       "optional": true
+    },
+    "tailwindcss": {
+      "optional": true
     }
   },
   "devDependencies": {
+    "@base-ui/react": "^1.8.0",
+    "@tailwindcss/cli": "^4.3.5",
+    "@tanstack/react-table": "^8.21.3",
+    "esbuild": "^0.25.12",
     "playwright": "^1.63.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "@base-ui/react": "^1.8.0",
-    "@tanstack/react-table": "^8.21.3",
-    "esbuild": "^0.25.12"
+    "tailwindcss": "^4.3.5"
   }
 }

@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en" data-project="portfolio" data-density="comfortable" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Button comparison</title>
+<script>
+  // The parent page picks the appearance and density for each frame.
+  const params = new URLSearchParams(location.search)
+  for (const key of ['theme', 'density']) if (params.get(key)) document.documentElement.dataset[key] = params.get(key)
+</script>
+<link rel="stylesheet" href="build/tailwind.css"><link rel="stylesheet" href="tailwind-frame.css">
+<script type="module" src="build/tailwind-app.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script>
+  // Tell the parent page how tall this frame is, so it never scrolls inside.
+  new ResizeObserver(() => parent.postMessage({frame: params.get('theme'), height: document.body.offsetHeight}, location.origin)).observe(document.body)
+</script>
+</body>
+</html>

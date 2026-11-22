@@ -1,5 +1,7 @@
 import {mkdir, writeFile, copyFile, rm} from 'node:fs/promises';
+import {build} from 'esbuild';
 import {resolveTokens, projects, appearances, densities} from '../src/tokens.js';
+import {tailwindCss} from './tailwind.mjs';
 const out = new URL('../dist/', import.meta.url);
 await mkdir(out, {recursive: true});
 const declarations = tokens => Object.entries(tokens).map(([key, value]) => `  --ds-${key}: ${value};`).join('\n');
@@ -28,6 +30,10 @@ await writeFile(new URL('tokens.json', out), JSON.stringify(themes, null, 2) + '
 console.log('Built CSS, JavaScript, JSON, and appearance adapter.');
 await copyFile(new URL('../src/legacy.css', import.meta.url), new URL('legacy.css', out));
 for (const file of ['react.js','table.js','components.css','metadata.js','site.js','site-contract.js','prepaint.js']) await copyFile(new URL(`../src/${file}`, import.meta.url), new URL(file, out));
+// 0.10: Felt for Tailwind CSS v4, and the components in shadcn's shape that use it.
+await writeFile(new URL('tailwind.css', out), tailwindCss());
+await build({absWorkingDir:new URL('../', import.meta.url).pathname, entryPoints:[new URL('../src/ui/index.js', import.meta.url).pathname], outfile:new URL('ui.js', out).pathname, bundle:true, format:'esm', jsx:'automatic', target:'es2020',
+  external:['react','react/jsx-runtime','@base-ui/react','@base-ui/react/*','class-variance-authority','clsx','tailwind-merge'], legalComments:'none', logLevel:'warning'});
 
 await mkdir(new URL('fonts/', out), {recursive:true});
 for (const file of ['host-grotesk-latin.woff2','host-grotesk-latin-ext.woff2','host-grotesk-OFL.txt','host-grotesk-source.txt']) await copyFile(new URL(`../src/fonts/${file}`, import.meta.url), new URL(`fonts/${file}`, out));

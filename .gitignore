@@ -1,2 +1,4 @@
 node_modules/
 *.tgz
+preview/build/
+test-results/

@@ -1,6 +1,6 @@
 # Doshi design system
 
-Version 0.9.2 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation underlines the current page; the labeled System / Light / Dark appearance control is unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. Generated assets must not be edited in consuming repos.
+Version 0.10.0 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation underlines the current page; the labeled System / Light / Dark appearance control is unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. From 0.10.0 the same identity also ships for Tailwind CSS v4 (`tailwind.css`, generated from `src/tailwind-theme.js`) with components in shadcn's structure on Base UI (`src/ui/`, exported as `/ui`); see [the migration plan](docs/tailwind-migration.md). Generated assets must not be edited in consuming repos.
 
 ```sh
 npm run build
@@ -29,6 +29,24 @@ import '@doshi-experiments/design-system/components.css';
 ```
 
 React consumers also install React, React DOM and `@base-ui/react`. They are optional peer dependencies so static consumers need none of them. `Button` preserves native disabled semantics and locks during loading. `HelpPopover` uses Base UI focus/dismissal behavior and a portaled, fixed positioner. These are app-owned initial recipes over the Base UI foundation selected for shadcn; this release does not claim to contain the full shadcn component catalogue.
+
+### Tailwind CSS v4 (0.10.0)
+
+An app with a Tailwind CSS v4 build imports Felt's theme after Tailwind, and keeps `components.css` in a layer while it still uses `ds-*` classes, so utilities can override them:
+
+```css
+@import "tailwindcss";
+@import "@doshi-experiments/design-system/tailwind.css";
+@import "@doshi-experiments/design-system/components.css" layer(components);
+```
+
+```js
+import {Button, cn} from '@doshi-experiments/design-system/ui';
+```
+
+`tailwind.css` brings `tokens.css` with it and declares `@source "./ui.js"`, so the shared components' classes are generated without any app config. Its theme points every utility at the `--ds-*` tokens (`bg-raised`, `text-ink`, `text-caption`, `rounded-pill`, `shadow-raised`, `min-h-target`, `p-panel`, `max-w-measure`), so colours switch with `data-theme` and sizes with `data-density` without a `dark:` variant. Tailwind's default palette, type sizes, radii and shadows are cleared: shadcn's `bg-primary` or `text-sm` generate nothing. Felt's surfaces are utilities: `raised`, `pressed`, `stitched` (on a positioned element), `stitch-rule`, `fibre`, the `signal` fill (with `hover:signal-hover` and `active:signal-pressed`), `signal-solid`, `accent-signal`, `action-link` for signal-coloured text, and `tone-success|warning|error|info` pairs. There is deliberately no signal or status text colour. Variants: `dark:` (for what differs by more than colour, such as the fibre) and `comfortable:`, `compact:` and `game:` for the root's density. `cn()` merges classes with tailwind-merge taught Felt's names.
+
+Vite's Tailwind plugin rebases the package's `url()`s for fonts and the fibre. The Tailwind CLI keeps them as written (`./fonts/…`, `./felt/…`), so an app built with the CLI copies `dist/fonts/` and `dist/felt/` beside its compiled CSS. `/ui` components need React 18.3 or 19 and `@base-ui/react`; `tailwindcss` 4.3 is an optional peer dependency.
 
 Static sites and the React apps' snapshots are upgraded centrally. With clean checkouts of every consumer in a rollout workspace (named as in `rollout.json`), prepare and then apply an upgrade:
 
@@ -351,3 +369,35 @@ A focused numeric field showed two rings: the rounded one on the field and a squ
 one on the input inside it, from `legacy.css`'s global `:focus-visible`. Only the
 field's ring remains. The help button in a field label, metric label or data row
 no longer carries the raised button's shadow, which drew a circle over the label.
+
+## Tailwind CSS v4 and the first shadcn component (0.10.0)
+
+The foundation for moving every app to Tailwind CSS v4 and shadcn's components on
+Base UI, without changing how anything looks. Nothing changes for an app that doesn't
+import the new entry points; `ds-*` classes, `components.css` and `/react` work as
+before. The plan, the order of migration and the retirement of `ds-*` are in
+[docs/tailwind-migration.md](docs/tailwind-migration.md).
+
+- `tailwind.css` (new export, with a `style` condition) is Felt's Tailwind v4 theme,
+  variants and utilities, generated from `src/tailwind-theme.js` and `src/tokens.js`.
+- `/ui` (new export) holds components in shadcn's shape: a `cva` recipe over a Base UI
+  primitive, `data-slot`, and `cn()`. The first is `Button`, brought in with
+  `shadcn add button` and restyled to Felt. It takes the same `variant` (`primary`,
+  `danger`, `ghost`), `size` (`small`), `disabled` and `loading` as `/react`'s
+  `Button`, and keeps `forwardRef` for React 18.
+- `shadow-signal` and `shadow-signal-pressed` are new tokens for the primary key's
+  shadows, which `components.css` previously wrote out; the drawn result is unchanged.
+- The type scale gains a line height and tracking for each step in the Tailwind theme,
+  tightening from -.02em at 25px to -.045em at 61px as `identity.md` describes.
+- `npm run test:components` adds a parity check: the new `Button` on a Tailwind page
+  against `.ds-button` on a page without Tailwind, at rest, hovered, pressed and
+  focused, in light and dark, at 390px and 1440px, at comfortable and game density, by
+  computed style and by pixel. It also checks that `.ds-button` is unchanged in
+  `layer(components)` beside Tailwind. Screenshots land in `test-results/`.
+- `preview/tailwind.html` shows the two buttons side by side in light and dark, with a
+  density switch; `npm run preview` builds it. The preview's stale "Release 0.8.0" is
+  corrected.
+- New dependencies: `class-variance-authority`, `clsx` and `tailwind-merge`.
+
+One behaviour differs by design: Tailwind v4's `hover:` applies only on devices that can
+hover, so a tapped button on a phone no longer keeps its hover colour.

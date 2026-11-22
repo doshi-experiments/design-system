@@ -1,0 +1,7 @@
+/* Layout for the comparison frame. Plain CSS on --ds-* tokens, so the 0.9 page (no Tailwind)
+   and the 0.10 page give the buttons the same surroundings. */
+body {margin:0; padding:16px; background-color:var(--ds-surface-page); color:var(--ds-text)}
+.comparison table {width:100%; border-collapse:collapse}
+.comparison :is(th,td) {padding:12px 8px; text-align:left; vertical-align:middle; border-bottom:1.5px dashed var(--ds-stitch)}
+.comparison thead th {color:var(--ds-text-secondary); font-size:var(--ds-text-caption); font-weight:600}
+.comparison tbody th {color:var(--ds-text-secondary); font-size:var(--ds-text-caption); font-weight:500; width:28%}
