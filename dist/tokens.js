@@ -27,6 +27,9 @@ export const foundation = {
   'action-gradient': 'linear-gradient(120deg, #D2386B 0%, #C8312F 100%)',
   'action-gradient-hover': 'linear-gradient(120deg, #C13462 0%, #B82D2B 100%)',
   'action-gradient-pressed': 'linear-gradient(120deg, #B5305C 0%, #AC2A28 100%)',
+  // The signal's own key shadows (0.10): a light top edge and a darker drop at rest, inward when pressed.
+  'shadow-signal': 'inset 0 1px 0 rgba(255,255,255,.25), 0 8px 14px -8px rgba(38,38,36,.55)',
+  'shadow-signal-pressed': 'inset 0 2px 4px rgba(38,38,36,.35)',
 };
 export const appearances = {
   light: {

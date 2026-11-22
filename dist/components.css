@@ -110,9 +110,9 @@
 /* Application shell and form controls (0.4). */
 .ds-visually-hidden {position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 .ds-line-clamp {display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:var(--ds-lines,2); line-clamp:var(--ds-lines,2); overflow:hidden}
-.ds-button[data-variant="primary"] {background:var(--ds-action-gradient);color:var(--ds-action-text);border-color:transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 8px 14px -8px rgba(38,38,36,.55)}
+.ds-button[data-variant="primary"] {background:var(--ds-action-gradient);color:var(--ds-action-text);border-color:transparent;box-shadow:var(--ds-shadow-signal)}
 .ds-button[data-variant="primary"]:hover:not(:disabled):not([data-disabled]) {background:var(--ds-action-gradient-hover)}
-.ds-button[data-variant="primary"]:active:not(:disabled):not([data-disabled]) {background:var(--ds-action-gradient-pressed);box-shadow:inset 0 2px 4px rgba(38,38,36,.35)}
+.ds-button[data-variant="primary"]:active:not(:disabled):not([data-disabled]) {background:var(--ds-action-gradient-pressed);box-shadow:var(--ds-shadow-signal-pressed)}
 .ds-button[data-variant="danger"] {background:var(--ds-error-bg);color:var(--ds-error-text);border-color:var(--ds-error-text);box-shadow:none}
 .ds-button[data-variant="ghost"] {background:transparent;border-color:transparent;color:var(--ds-action-link);box-shadow:none}
 .ds-button[data-variant]:is(:disabled,[data-disabled]),.ds-button:is(:disabled,[data-disabled]) {background:var(--ds-surface-inset);color:var(--ds-text-disabled);border-color:transparent;box-shadow:none}

@@ -26,7 +26,8 @@ npm run build              # writes dist/ (committed)
 npm test                   # node --test: tokens, appearance, rollout
 node --test tests/tokens.test.mjs
 npm run test:components    # Playwright; needs `npx playwright install --with-deps chromium`
-npm run preview            # http://localhost:4174/preview/
+node scripts/check-tailwind.mjs   # just the 0.10 Button parity check (part of test:components)
+npm run preview            # builds preview/build/, then http://localhost:4174/preview/ (tailwind.html compares buttons)
 npm run rollout -- --workspace <dir> [--apply] [--only a,b]
 ```
 
@@ -44,6 +45,8 @@ The cross-app browser checks (`test:browser`, `test:calculator`, `test:identity`
 
 - `src/tokens.js` is the single source. `foundation` holds type, space, radii, motion and the signal gradients; `appearances.light/dark` hold colours; `projectAppearanceOverrides` is empty, so every project resolves to one palette ("one look for everything"). `resolveTokens()` adds `focus` (= `action-link`) and amount colours. `scripts/build.mjs` turns it into `tokens.css` (one rule per project × appearance), `tokens.json` and the font faces.
 - `src/components.css` styles the React components (`src/react.js`, `src/table.js`) and static classes. `src/legacy.css` maps older site variable names onto tokens. `src/site.js` mounts the static header; `src/theme.js` is the appearance controller; `src/prepaint.js` must load synchronously in `<head>` before styles.
+- Tailwind CSS v4 (0.10): `src/tailwind-theme.js` maps Tailwind theme names onto `--ds-*` tokens; `scripts/tailwind.mjs` writes `dist/tailwind.css` from it (theme, `@custom-variant`s, `@utility` surfaces). `src/ui/` holds components in shadcn's shape (cva over Base UI, `data-slot`, `cn()`), compiled by esbuild into `dist/ui.js`. `docs/tailwind-migration.md` is the plan. Never define shadcn's colour names (`primary`, `muted`, `foreground`…) or a signal text colour; `tests/tailwind.test.mjs` fails on them.
+- Porting a shadcn component: `npx shadcn@4.23.0 add <name>` (`components.json`: base-nova, JSX). The registry imports `cn` from the `cn` npm package and the CLI installs it; uninstall it and import from `@/ui/cn` instead. Restyle every class to Felt, keep `forwardRef` while a consumer runs React 18, export it from `src/ui/index.js`, and add a parity check against the `ds-*` version.
 - Consumers never take a live dependency: static sites commit a snapshot with `release.json` hashes, React apps commit an `npm pack` tarball (and, for the calculator and Mr. Shake, a hashed snapshot too).
 
 ## Invariants that are easy to break

@@ -1,0 +1,201 @@
+/* Generated from src/tailwind-theme.js and src/tokens.js. Do not edit. */
+/* Felt for Tailwind CSS v4. Import it after "tailwindcss":
+     @import "tailwindcss";
+     @import "@doshi-experiments/design-system/tailwind.css";
+   It brings tokens.css with it and scans ui.js, so the shared components need no config. */
+@import "./tokens.css";
+@source "./ui.js";
+
+/* The palette already follows the root's data-theme. dark: is for what differs by more than
+   colour, such as the fibre's blend mode. A root without data-theme follows the system. */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme]), :root:not([data-theme]) *) {
+      @slot;
+    }
+  }
+}
+@custom-variant comfortable (&:where([data-density="comfortable"], [data-density="comfortable"] *));
+@custom-variant compact (&:where([data-density="compact"], [data-density="compact"] *));
+@custom-variant game (&:where([data-density="game"], [data-density="game"] *));
+
+@theme inline {
+  --color-*: initial;
+  --font-*: initial;
+  --text-*: initial;
+  --radius-*: initial;
+  --shadow-*: initial;
+  --inset-shadow-*: initial;
+  --drop-shadow-*: initial;
+  --text-shadow-*: initial;
+  --ease-*: initial;
+  --color-page: var(--ds-surface-page);
+  --color-raised: var(--ds-surface-raised);
+  --color-overlay: var(--ds-surface-overlay);
+  --color-inset: var(--ds-surface-inset);
+  --color-ink: var(--ds-text);
+  --color-ink-secondary: var(--ds-text-secondary);
+  --color-ink-disabled: var(--ds-text-disabled);
+  --color-ink-inverse: var(--ds-text-inverse);
+  --color-line: var(--ds-border);
+  --color-stitch: var(--ds-stitch);
+  --color-selection: var(--ds-selection);
+  --color-link: var(--ds-action-link);
+  --color-focus: var(--ds-focus);
+  --color-chart-1: var(--ds-chart-1);
+  --color-chart-2: var(--ds-chart-2);
+  --color-chart-3: var(--ds-chart-3);
+  --color-chart-4: var(--ds-chart-4);
+  --color-ramp-1: var(--ds-ramp-1);
+  --color-ramp-2: var(--ds-ramp-2);
+  --color-ramp-3: var(--ds-ramp-3);
+  --color-ramp-4: var(--ds-ramp-4);
+  --color-ramp-5: var(--ds-ramp-5);
+  --color-amount-in: var(--ds-amount-in);
+  --color-amount-out: var(--ds-amount-out);
+  --font-sans: var(--ds-font-body);
+  --font-mono: var(--ds-font-mono);
+  --radius-pill: var(--ds-radius-pill);
+  --radius-control: var(--ds-radius-control);
+  --radius-container: var(--ds-radius-container);
+  --radius-dialog: var(--ds-radius-dialog);
+  --shadow-raised: var(--ds-shadow-raised);
+  --shadow-pressed: var(--ds-shadow-pressed);
+  --shadow-overlay: var(--ds-shadow-overlay);
+  --shadow-signal: var(--ds-shadow-signal);
+  --shadow-signal-pressed: var(--ds-shadow-signal-pressed);
+  --spacing-target: var(--ds-control-target);
+  --spacing-control: var(--ds-control-height);
+  --spacing-control-compact: var(--ds-control-compact-height);
+  --spacing-panel: var(--ds-panel-padding);
+  --spacing-cell: var(--ds-cell-padding);
+  --container-measure: var(--ds-measure);
+  --container-page: var(--ds-page-width);
+  --ease-felt: var(--ds-ease);
+  --ease-spring: var(--ds-ease-spring);
+  --text-caption: var(--ds-text-caption);
+  --text-caption--line-height: 1.5;
+  --text-caption--letter-spacing: normal;
+  --text-body: var(--ds-text-body);
+  --text-body--line-height: 1.55;
+  --text-body--letter-spacing: normal;
+  --text-card: var(--ds-text-card);
+  --text-card--line-height: 1.4;
+  --text-card--letter-spacing: -.01em;
+  --text-section: var(--ds-text-section);
+  --text-section--line-height: 1.2;
+  --text-section--letter-spacing: -.02em;
+  --text-title: var(--ds-text-title);
+  --text-title--line-height: 1.15;
+  --text-title--letter-spacing: -.025em;
+  --text-large: var(--ds-text-large);
+  --text-large--line-height: 1.1;
+  --text-large--letter-spacing: -.03em;
+  --text-hero: var(--ds-text-hero);
+  --text-hero--line-height: 1.05;
+  --text-hero--letter-spacing: -.04em;
+  --text-display: var(--ds-text-display);
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -.045em;
+  --default-font-family: var(--ds-font-body);
+  --default-transition-duration: var(--ds-duration-fast);
+  --default-transition-timing-function: var(--ds-ease);
+}
+
+/* Surfaces. raised and pressed look exactly like .ds-card and the fields; stitched draws the
+   1.5px dashed stitch 7px inside the edge and needs a positioned element. */
+@utility raised {
+  background-color: var(--ds-surface-raised);
+  color: var(--ds-text);
+  box-shadow: var(--ds-shadow-raised);
+}
+@utility pressed {
+  background-color: var(--ds-surface-inset);
+  box-shadow: var(--ds-shadow-pressed);
+}
+@utility stitched {
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    border-radius: calc(var(--ds-radius-container) - 6px);
+    border: 1.5px dashed var(--ds-stitch);
+    pointer-events: none;
+    transition: border-color var(--ds-duration-base) var(--ds-ease);
+  }
+}
+@utility stitch-rule {
+  border-top: 1.5px dashed var(--ds-stitch);
+}
+
+/* The signal is a fill under white text, never a text colour. Hover and press deepen it:
+   write hover:signal-hover active:signal-pressed. Signal-coloured text uses action-link. */
+@utility signal {
+  background: var(--ds-action-gradient);
+  color: var(--ds-action-text);
+}
+@utility signal-hover {
+  background: var(--ds-action-gradient-hover);
+}
+@utility signal-pressed {
+  background: var(--ds-action-gradient-pressed);
+}
+@utility signal-solid {
+  background-color: var(--ds-action-primary);
+  color: var(--ds-action-text);
+}
+@utility accent-signal {
+  accent-color: var(--ds-action-primary);
+}
+@utility action-link {
+  color: var(--ds-action-link);
+}
+
+/* Status colours come as pairs: the tint and its text. */
+@utility tone-success {
+  background-color: var(--ds-success-bg);
+  color: var(--ds-success-text);
+}
+@utility tone-warning {
+  background-color: var(--ds-warning-bg);
+  color: var(--ds-warning-text);
+}
+@utility tone-error {
+  background-color: var(--ds-error-bg);
+  color: var(--ds-error-text);
+}
+@utility tone-info {
+  background-color: var(--ds-info-bg);
+  color: var(--ds-info-text);
+}
+
+@utility duration-fast {
+  --tw-duration: var(--ds-duration-fast);
+  transition-duration: var(--ds-duration-fast);
+}
+@utility duration-base {
+  --tw-duration: var(--ds-duration-base);
+  transition-duration: var(--ds-duration-base);
+}
+@utility duration-slow {
+  --tw-duration: var(--ds-duration-slow);
+  transition-duration: var(--ds-duration-slow);
+}
+
+/* The wool: a 240px fibre tile blended into the element's own background, multiplied in light
+   and overlaid in dark. data-texture="off" on the root removes it. */
+@utility fibre {
+  background-image: url("./felt/fibre-light.svg");
+  background-size: 240px 240px;
+  background-blend-mode: multiply;
+  @variant dark {
+    background-image: url("./felt/fibre-dark.svg");
+    background-blend-mode: overlay;
+  }
+  &:where([data-texture="off"], [data-texture="off"] *) {
+    background-image: none;
+  }
+}
