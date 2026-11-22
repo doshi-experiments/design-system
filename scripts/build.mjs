@@ -29,7 +29,7 @@ for (const project of Object.keys(projects)) for (const appearance of Object.key
 await writeFile(new URL('tokens.json', out), JSON.stringify(themes, null, 2) + '\n');
 console.log('Built CSS, JavaScript, JSON, and appearance adapter.');
 await copyFile(new URL('../src/legacy.css', import.meta.url), new URL('legacy.css', out));
-for (const file of ['react.js','table.js','components.css','metadata.js','site.js','site-contract.js','prepaint.js']) await copyFile(new URL(`../src/${file}`, import.meta.url), new URL(file, out));
+for (const file of ['react.js','table.js','components.css','metadata.js','site.js','site-contract.js','prepaint.js','vite.js']) await copyFile(new URL(`../src/${file}`, import.meta.url), new URL(file, out));
 // 0.10: Felt for Tailwind CSS v4, and the components in shadcn's shape that use it.
 await writeFile(new URL('tailwind.css', out), tailwindCss());
 await build({absWorkingDir:new URL('../', import.meta.url).pathname, entryPoints:[new URL('../src/ui/index.js', import.meta.url).pathname], outfile:new URL('ui.js', out).pathname, bundle:true, format:'esm', jsx:'automatic', target:'es2020',

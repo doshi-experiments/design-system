@@ -1,7 +1,8 @@
 # Moving to Tailwind CSS v4 and shadcn on Base UI
 
-Status: plan approved 21 November 2026. Step 0, the 0.10.0 foundation, is built in this
-repository (see the end of this document); no consumer has moved yet.
+Status: plan approved 21 November 2026, with every open question settled as recommended
+(Workers Builds for question 8). Step 0, the 0.10.0 foundation, is merged; 0.10.1 adds
+the Vite plugin and `ds-usage.mjs`. Wave 1 (steps 1 to 4) is in progress.
 
 Every app moves onto Tailwind CSS v4, with React components that follow shadcn's
 structure on Base UI. Felt stays exactly as it is: same tokens, same surfaces, same

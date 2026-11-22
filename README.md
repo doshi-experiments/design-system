@@ -1,6 +1,6 @@
 # Doshi design system
 
-Version 0.10.0 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation underlines the current page; the labeled System / Light / Dark appearance control is unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. From 0.10.0 the same identity also ships for Tailwind CSS v4 (`tailwind.css`, generated from `src/tailwind-theme.js`) with components in shadcn's structure on Base UI (`src/ui/`, exported as `/ui`); see [the migration plan](docs/tailwind-migration.md). Generated assets must not be edited in consuming repos.
+Version 0.10.1 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation underlines the current page; the labeled System / Light / Dark appearance control is unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. From 0.10.0 the same identity also ships for Tailwind CSS v4 (`tailwind.css`, generated from `src/tailwind-theme.js`) with components in shadcn's structure on Base UI (`src/ui/`, exported as `/ui`); see [the migration plan](docs/tailwind-migration.md). Generated assets must not be edited in consuming repos.
 
 ```sh
 npm run build
@@ -46,7 +46,14 @@ import {Button, cn} from '@doshi-experiments/design-system/ui';
 
 `tailwind.css` brings `tokens.css` with it and declares `@source "./ui.js"`, so the shared components' classes are generated without any app config. Its theme points every utility at the `--ds-*` tokens (`bg-raised`, `text-ink`, `text-caption`, `rounded-pill`, `shadow-raised`, `min-h-target`, `p-panel`, `max-w-measure`), so colours switch with `data-theme` and sizes with `data-density` without a `dark:` variant. Tailwind's default palette, type sizes, radii and shadows are cleared: shadcn's `bg-primary` or `text-sm` generate nothing. Felt's surfaces are utilities: `raised`, `pressed`, `stitched` (on a positioned element), `stitch-rule`, `fibre`, the `signal` fill (with `hover:signal-hover` and `active:signal-pressed`), `signal-solid`, `accent-signal`, `action-link` for signal-coloured text, and `tone-success|warning|error|info` pairs. There is deliberately no signal or status text colour. Variants: `dark:` (for what differs by more than colour, such as the fibre) and `comfortable:`, `compact:` and `game:` for the root's density. `cn()` merges classes with tailwind-merge taught Felt's names.
 
-Vite's Tailwind plugin rebases the package's `url()`s for fonts and the fibre. The Tailwind CLI keeps them as written (`./fonts/…`, `./felt/…`), so an app built with the CLI copies `dist/fonts/` and `dist/felt/` beside its compiled CSS. `/ui` components need React 18.3 or 19 and `@base-ui/react`; `tailwindcss` 4.3 is an optional peer dependency.
+Vite's Tailwind plugin rebases the package's `url()`s for fonts and the fibre. The Tailwind CLI keeps them as written (`./fonts/…`, `./felt/…`), so an app built with the CLI copies `dist/fonts/` and `dist/felt/` beside its compiled CSS. A site built with Vite inlines `prepaint.js` with the shared plugin, which puts it straight after `<meta charset>` (or at a `<!-- Shared appearance prepaint -->` marker) and refuses a page whose styles would load first:
+
+```js
+import {prepaint} from '@doshi-experiments/design-system/vite';
+export default defineConfig({plugins: [tailwindcss(), prepaint()]});
+```
+
+`node scripts/ds-usage.mjs <checkout>…` counts the `ds-*` classes and `/react` imports an app still has; each migration PR reports it. `/ui` components need React 18.3 or 19 and `@base-ui/react`; `tailwindcss` 4.3 is an optional peer dependency.
 
 Static sites and the React apps' snapshots are upgraded centrally. With clean checkouts of every consumer in a rollout workspace (named as in `rollout.json`), prepare and then apply an upgrade:
 
@@ -401,3 +408,14 @@ before. The plan, the order of migration and the retirement of `ds-*` are in
 
 One behaviour differs by design: Tailwind v4's `hover:` applies only on devices that can
 hover, so a tapped button on a phone no longer keeps its hover colour.
+
+## A Vite plugin for prepaint, and a usage report (0.10.1)
+
+What the static sites need to move onto Vite and Tailwind. Nothing is drawn differently.
+
+- `/vite` (new export) is a Vite plugin, `prepaint()`, that inlines `prepaint.js` into
+  every page straight after `<meta charset>`, or at a `<!-- Shared appearance prepaint -->`
+  marker, and fails the build if a stylesheet would load before it.
+- `scripts/ds-usage.mjs` counts each consumer's remaining `ds-*` classes and `/react`
+  imports, skipping snapshots, archives and built files. `--fail-on-any` is the check
+  1.0.0 will run before the old classes are removed.

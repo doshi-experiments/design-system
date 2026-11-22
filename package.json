@@ -1,6 +1,6 @@
 {
   "name": "@doshi-experiments/design-system",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "private": true,
   "type": "module",
   "files": [
@@ -21,7 +21,8 @@
     },
     "./table": "./dist/table.js",
     "./site": "./dist/site.js",
-    "./prepaint.js": "./dist/prepaint.js"
+    "./prepaint.js": "./dist/prepaint.js",
+    "./vite": "./dist/vite.js"
   },
   "scripts": {
     "build": "node scripts/build.mjs",
