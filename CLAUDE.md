@@ -29,6 +29,7 @@ npm run test:components    # Playwright; needs `npx playwright install --with-de
 node scripts/check-tailwind.mjs   # just the 0.10 Button parity check (part of test:components)
 npm run preview            # builds preview/build/, then http://localhost:4174/preview/ (tailwind.html compares buttons)
 npm run rollout -- --workspace <dir> [--apply] [--only a,b]
+node scripts/ds-usage.mjs <checkout>…  # ds-* classes and /react imports an app still has
 ```
 
 CI (`.github/workflows/checks.yml`) runs the build and fails on `git diff --exit-code -- dist`, so always commit a rebuilt `dist/`. It then runs `npm test`, the Playwright component checks and `npm pack --dry-run`.
