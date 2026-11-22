@@ -11,31 +11,33 @@
     {
       "id": "experiments-landing",
       "directory": "experiments-landing",
-      "snapshot": "public/design-system",
-      "validation": "Preview the static site and run the shared browser checks."
+      "validation": "npm ci && npm run build; run the shared browser checks against dist/.",
+      "packageDirectory": ".",
+      "tarballDirectory": "."
     },
     {
       "id": "visualizations",
       "directory": "visualizations",
-      "snapshot": "public/design-system",
-      "validation": "Preview the static site and run the shared browser checks."
+      "validation": "npm ci && npm run build; run the shared browser checks against dist/.",
+      "packageDirectory": ".",
+      "tarballDirectory": "."
     },
     {
       "id": "rent-vs-buy-calculator",
       "directory": "rent-vs-buy-calculator",
-      "snapshot": "src/design-system",
       "packageDirectory": ".",
       "tarballDirectory": ".",
-      "references": ["Dockerfile"],
+      "references": [
+        "Dockerfile"
+      ],
       "validation": "npm ci && npm run build; run the shared calculator browser checks."
     },
     {
       "id": "mr-shake",
       "directory": "mr-shake",
-      "snapshot": "src/design-system",
       "packageDirectory": ".",
       "tarballDirectory": ".",
-      "validation": "npm ci && npm test && npm run build; run the shared browser checks."
+      "validation": "npm ci && npm test && npm run build; run test/e2e.mjs and the shared browser checks."
     },
     {
       "id": "finance",

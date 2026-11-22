@@ -6,8 +6,8 @@ import {fileURLToPath} from 'node:url';
 const workspace=process.env.DESIGN_WORKSPACE || fileURLToPath(new URL('../../',import.meta.url)).replace(/\/$/,'');
 const sites=[
  ['portfolio','portfolio-landing',''],
- ['experiments','experiments-landing','public'],
- ['visualizations','visualizations','public'],
+ ['experiments','experiments-landing','dist'],
+ ['visualizations','visualizations','dist'],
  ['calculator','rent-vs-buy-calculator','dist'],
  ['game','mr-shake','dist'],
 ];
