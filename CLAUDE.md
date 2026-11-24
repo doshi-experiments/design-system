@@ -27,6 +27,7 @@ npm test                   # node --test: tokens, appearance, rollout
 node --test tests/tokens.test.mjs
 npm run test:components    # Playwright; needs `npx playwright install --with-deps chromium`
 node scripts/check-tailwind.mjs   # just the 0.10 Button parity check (part of test:components)
+node scripts/check-ui.mjs         # just the 0.11 /ui-against-/react parity check (part of test:components)
 npm run preview            # builds preview/build/, then http://localhost:4174/preview/ (tailwind.html compares buttons)
 npm run rollout -- --workspace <dir> [--apply] [--only a,b]
 node scripts/ds-usage.mjs <checkout>…  # ds-* classes and /react imports an app still has

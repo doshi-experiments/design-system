@@ -70,8 +70,8 @@ Headings tighten their tracking as they grow (-.02em at 25px to -.045em at 61px)
 Body text is 16px in apps and 18px in portfolio prose, with a 1.55 line-height and a
 64-character measure. The type scale stays 16, 20, 25, 31, 39, 49, and 61px, with one
 smaller step, 14px (`text-caption`), for captions, table cells, chart notes and helper
-text. Nothing is set below 14px except the shared labels, affixes and chips that already
-use 13px. A card's heading is the 20px step at weight 500 (`.ds-card-title`, or
+text. Below it sits only the shared components' own small type: 13px labels, affixes and
+chips, 12px field hints and 11px badges. A card's heading is the 20px step at weight 500 (`.ds-card-title`, or
 `text-card font-medium`). Financial values use tabular numerals and right alignment.
 
 Buttons, keys, chips and segments are pills (`radius-pill`); fields, selects, tracks and

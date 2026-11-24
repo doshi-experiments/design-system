@@ -1,6 +1,6 @@
 {
   "name": "@doshi-experiments/design-system",
-  "version": "0.10.2",
+  "version": "0.11.0",
   "private": true,
   "type": "module",
   "files": [
@@ -31,7 +31,7 @@
     "prepack": "npm run build",
     "test:browser": "node scripts/check-rollout.mjs && node scripts/check-interactions.mjs && node scripts/check-index.mjs",
     "test:calculator": "node scripts/check-calculator.mjs && node scripts/check-interactions.mjs",
-    "test:components": "node scripts/check-components.mjs && node scripts/check-tailwind.mjs",
+    "test:components": "node scripts/check-components.mjs && node scripts/check-tailwind.mjs && node scripts/check-ui.mjs",
     "test:identity": "node scripts/check-identity.mjs",
     "rollout": "node scripts/rollout.mjs"
   },
