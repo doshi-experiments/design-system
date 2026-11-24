@@ -2,8 +2,11 @@
 
 Status: plan approved 21 November 2026, with every open question settled as recommended
 (Workers Builds for question 8). Step 0, the 0.10.0 foundation, is merged; 0.10.1 adds
-the Vite plugin and `ds-usage.mjs`. Wave 1 (steps 1 to 4) is in review: the calculator, experiments-landing,
-visualizations and Mr. Shake each have a PR, Mr. Shake's after its e2e fix.
+the Vite plugin and `ds-usage.mjs`. Wave 1 (steps 1 to 4), the calculator, experiments-landing,
+visualizations and Mr. Shake, is merged and live (22 November). 0.10.2 adds what the audit
+after wave 1 asked for: the Button's secondary, link and icon, `ds-button` and `ds-chip` for
+plain HTML, Felt's breakpoints, and card sections and titles. Mr. Shake's and the visualizations'
+own controls move onto `/ui` in wave 2.
 
 Every app moves onto Tailwind CSS v4, with React components that follow shadcn's
 structure on Base UI. Felt stays exactly as it is: same tokens, same surfaces, same

@@ -21,6 +21,14 @@ export async function buildTailwindPreview(out) {
 @import "${relative(out, join(dist, 'components.css'))}" layer(components);
 `);
   await promisify(execFile)(join(root, 'node_modules/.bin/tailwindcss'), ['-i', input, '-o', join(out, 'tailwind.css')]);
+  // A page without React or components.css: Tailwind and Felt only, with the ds-button utility its
+  // markup names. In tailwind.css above, components.css styles that column instead.
+  const html = join(out, 'html-input.css');
+  await writeFile(html, `@import "${relative(out, join(root, 'node_modules/tailwindcss/index.css'))}" source(none);
+@import "${relative(out, join(dist, 'tailwind.css'))}";
+@source inline("ds-button ds-chip");
+`);
+  await promisify(execFile)(join(root, 'node_modules/.bin/tailwindcss'), ['-i', html, '-o', join(out, 'tailwind-html.css')]);
   // The Tailwind CLI keeps url()s as written, so the fonts and the fibre sit beside the CSS.
   for (const folder of ['fonts', 'felt']) await cp(join(dist, folder), join(out, folder), {recursive: true});
   await build({absWorkingDir: root, entryPoints: [join(root, 'preview/tailwind-app.jsx')], outfile: join(out, 'tailwind-app.js'),

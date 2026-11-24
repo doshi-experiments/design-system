@@ -35,8 +35,13 @@ export function SegmentedControl({options, value, onValueChange, label, size}) {
 }
 
 const h = React.createElement;
-export function Card({as: Tag = 'section', children, className = '', ...props}) {
-  return h(Tag, {...props, className:`ds-card ${className}`}, children);
+// variant="flat" is a section inside another card: no surface of its own, just its padding.
+export function Card({as: Tag = 'section', variant, children, className = '', ...props}) {
+  return h(Tag, {...props, className:`ds-card ${className}`, 'data-variant':variant}, children);
+}
+// A card's heading: the card step of the type scale (20px) at heading weight.
+export function CardTitle({as: Tag = 'h2', children, className = '', ...props}) {
+  return h(Tag, {...props, className:`ds-card-title ${className}`}, children);
 }
 export function PageHeader({eyebrow, title, description, actions}) {
   return h('header', {className:'ds-page-header'},

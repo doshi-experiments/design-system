@@ -1,6 +1,6 @@
 # Doshi design system
 
-Version 0.10.1 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation underlines the current page; the labeled System / Light / Dark appearance control is unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. From 0.10.0 the same identity also ships for Tailwind CSS v4 (`tailwind.css`, generated from `src/tailwind-theme.js`) with components in shadcn's structure on Base UI (`src/ui/`, exported as `/ui`); see [the migration plan](docs/tailwind-migration.md). Generated assets must not be edited in consuming repos.
+Version 0.10.2 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation underlines the current page; the labeled System / Light / Dark appearance control is unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. From 0.10.0 the same identity also ships for Tailwind CSS v4 (`tailwind.css`, generated from `src/tailwind-theme.js`) with components in shadcn's structure on Base UI (`src/ui/`, exported as `/ui`); see [the migration plan](docs/tailwind-migration.md). Generated assets must not be edited in consuming repos.
 
 ```sh
 npm run build
@@ -44,7 +44,16 @@ An app with a Tailwind CSS v4 build imports Felt's theme after Tailwind, and kee
 import {Button, cn} from '@doshi-experiments/design-system/ui';
 ```
 
-`tailwind.css` brings `tokens.css` with it and declares `@source "./ui.js"`, so the shared components' classes are generated without any app config. Its theme points every utility at the `--ds-*` tokens (`bg-raised`, `text-ink`, `text-caption`, `rounded-pill`, `shadow-raised`, `min-h-target`, `p-panel`, `max-w-measure`), so colours switch with `data-theme` and sizes with `data-density` without a `dark:` variant. Tailwind's default palette, type sizes, radii and shadows are cleared: shadcn's `bg-primary` or `text-sm` generate nothing. Felt's surfaces are utilities: `raised`, `pressed`, `stitched` (on a positioned element), `stitch-rule`, `fibre`, the `signal` fill (with `hover:signal-hover` and `active:signal-pressed`), `signal-solid`, `accent-signal`, `action-link` for signal-coloured text, and `tone-success|warning|error|info` pairs. There is deliberately no signal or status text colour. Variants: `dark:` (for what differs by more than colour, such as the fibre) and `comfortable:`, `compact:` and `game:` for the root's density. `cn()` merges classes with tailwind-merge taught Felt's names.
+`tailwind.css` brings `tokens.css` with it and declares `@source "./ui.js"`, so the shared components' classes are generated without any app config. Its theme points every utility at the `--ds-*` tokens (`bg-raised`, `text-ink`, `text-caption`, `rounded-pill`, `shadow-raised`, `min-h-target`, `p-panel`, `max-w-measure`), so colours switch with `data-theme` and sizes with `data-density` without a `dark:` variant. Tailwind's default palette, type sizes, radii and shadows are cleared: shadcn's `bg-primary` or `text-sm` generate nothing. Felt's surfaces are utilities: `raised`, `pressed`, `stitched` (on a positioned element), `stitch-rule`, `fibre`, the `signal` fill (with `hover:signal-hover` and `active:signal-pressed`), `signal-solid`, `accent-signal`, `action-link` for signal-coloured text, and `tone-success|warning|error|info` pairs. There is deliberately no signal or status text colour. Variants: `dark:` (for what differs by more than colour, such as the fibre) and `comfortable:`, `compact:` and `game:` for the root's density. Breakpoints are Felt's, not Tailwind's: `xs` 380px, `sm` 640px, `md` 800px, `lg` 1024px and `xl` 1240px (`2xl` is gone). `cn()` merges classes with tailwind-merge taught Felt's names.
+
+A page without React uses the `ds-button` and `ds-chip` utilities, which draw what `/ui`'s `Button` and `.ds-chip-link` draw and are generated only where a page names them. The button reads the attributes `/react` writes, and its disabled look follows `:disabled`:
+
+```html
+<button class="ds-button" data-variant="primary">Save changes</button>
+<button class="ds-button" data-size="icon" aria-label="Add note"><svg>…</svg></button>
+<a class="ds-chip" href="/visualizations/">Visualizations</a>
+<button class="ds-chip" aria-pressed="true">Clean</button>
+```
 
 Vite's Tailwind plugin rebases the package's `url()`s for fonts and the fibre. The Tailwind CLI keeps them as written (`./fonts/…`, `./felt/…`), so an app built with the CLI copies `dist/fonts/` and `dist/felt/` beside its compiled CSS. A site built with Vite inlines `prepaint.js` with the shared plugin, which puts it straight after `<meta charset>` (or at a `<!-- Shared appearance prepaint -->` marker) and refuses a page whose styles would load first:
 
@@ -169,7 +178,7 @@ Import the actual React components from `@doshi-experiments/design-system/react`
 
 ```jsx
 import {
-  AppShell, Alert, Badge, Button, Card, CheckboxField, Dialog, Disclosure,
+  AppShell, Alert, Badge, Button, Card, CardTitle, CheckboxField, Dialog, Disclosure,
   EmptyState, FileUpload, PageHeader, SelectField, TextField, WorkflowSteps,
 } from '@doshi-experiments/design-system/react';
 import {EditableTable} from '@doshi-experiments/design-system/table';
@@ -419,3 +428,28 @@ What the static sites need to move onto Vite and Tailwind. Nothing is drawn diff
 - `scripts/ds-usage.mjs` counts each consumer's remaining `ds-*` classes and `/react`
   imports, skipping snapshots, archives and built files. `--fail-on-any` is the check
   1.0.0 will run before the old classes are removed.
+
+## Button variants, plain-HTML buttons and chips, breakpoints and card sections (0.10.2)
+
+What the audit after wave 1 asked of the system. Nothing already in use draws differently.
+
+- `/ui`'s `Button` gains `variant="secondary"`, the raised pill with the selection fill on
+  hover that `/react`'s secondary already drew, `variant="link"`, underlined signal text
+  with the full target, and `size="icon"`, a round button the size of the target for one
+  icon (give it an `aria-label`). `components.css` draws `link` and `icon` for `/react` too.
+  The classes live in `src/ui/button-classes.js`.
+- `ds-button` and `ds-chip` are Tailwind utilities in `tailwind.css` for pages without
+  React. `ds-button` is built from the same classes as `/ui`'s `Button` and reads
+  `data-variant` and `data-size`; `ds-chip` draws `.ds-chip-link`, and takes the signal
+  with `aria-pressed="true"` or `aria-current`. `ds-usage` no longer counts them.
+- Felt's breakpoints replace Tailwind's in `tailwind.css`: `xs` 380px, `sm` 640px, `md`
+  800px, `lg` 1024px and `xl` 1240px.
+- `<Card variant="flat">` is a section inside another card, with no surface or stitch of
+  its own, and `CardTitle` (`.ds-card-title`) is a card's heading at the 20px step and
+  weight 500.
+- `identity.md` names 14px (`text-caption`) as the one step below body text, the card
+  heading, and the breakpoints.
+- The Button parity check covers 14 cases and the chip, and compares the plain-HTML
+  utilities as well as `/ui` against `components.css`. The component lab checks the flat
+  card and the card title.
+

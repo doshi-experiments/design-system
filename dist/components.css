@@ -86,6 +86,9 @@
 .ds-table tbody tr:hover {background:var(--ds-selection)}
 .ds-card :is(.ds-card,.ds-table-scroll) {border-radius:var(--ds-radius-control)}
 @media(max-width:380px) {.ds-field-grid {grid-template-columns:minmax(0,1fr)} .ds-card {padding:18px}}
+.ds-card[data-variant="flat"] {padding:16px 0; border-radius:0; background:transparent; box-shadow:none}
+.ds-card[data-variant="flat"]::after {content:none}
+.ds-card-title {margin:0; color:var(--ds-text); font:500 var(--ds-text-card)/1.4 var(--ds-font-display); font-variation-settings:var(--ds-font-display-variation); letter-spacing:-.01em}
 
 /* Touch counters and static HTML recipes use the same semantic tokens. */
 .ds-stepper {display:flex; align-items:center; gap:8px; flex-shrink:0}
@@ -115,8 +118,12 @@
 .ds-button[data-variant="primary"]:active:not(:disabled):not([data-disabled]) {background:var(--ds-action-gradient-pressed);box-shadow:var(--ds-shadow-signal-pressed)}
 .ds-button[data-variant="danger"] {background:var(--ds-error-bg);color:var(--ds-error-text);border-color:var(--ds-error-text);box-shadow:none}
 .ds-button[data-variant="ghost"] {background:transparent;border-color:transparent;color:var(--ds-action-link);box-shadow:none}
+.ds-button[data-variant="link"] {background:transparent;border-color:transparent;color:var(--ds-action-link);box-shadow:none;text-decoration:underline;text-underline-offset:.2em}
+.ds-button[data-variant="link"]:hover:not(:disabled):not([data-disabled]) {text-decoration-thickness:2px}
+.ds-button[data-size="icon"] {display:inline-flex;align-items:center;justify-content:center;width:var(--ds-control-target);height:var(--ds-control-target);padding:0}
+.ds-button[data-size="icon"] svg {width:20px;height:20px}
 .ds-button[data-variant]:is(:disabled,[data-disabled]),.ds-button:is(:disabled,[data-disabled]) {background:var(--ds-surface-inset);color:var(--ds-text-disabled);border-color:transparent;box-shadow:none}
-.ds-button[data-variant]:not([data-variant="primary"]):hover:not(:disabled):not([data-disabled]) {background:var(--ds-selection)}
+.ds-button[data-variant]:not([data-variant="primary"],[data-variant="link"]):hover:not(:disabled):not([data-disabled]) {background:var(--ds-selection)}
 .ds-field-label {display:block;margin:0 0 6px;color:var(--ds-text-secondary);font:600 .875rem/1.5 var(--ds-font-body)}
 .ds-text-input,.ds-select-input {box-sizing:border-box;width:100%;max-width:100%;min-width:0;min-height:max(44px,var(--ds-control-height));padding:10px 14px;border:1px solid var(--ds-border);border-radius:var(--ds-radius-control);color:var(--ds-text);background:var(--ds-surface-inset);box-shadow:var(--ds-shadow-pressed);font:400 1rem/1.4 var(--ds-font-body)}
 .ds-select-input {cursor:pointer;padding-right:8px}

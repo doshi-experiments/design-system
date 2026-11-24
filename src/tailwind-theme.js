@@ -36,6 +36,10 @@ export const typeScale = {
   hero: {size: 'text-hero', leading: '1.05', tracking: '-.04em'},
   display: {size: 'text-display', leading: '1.05', tracking: '-.045em'},
 };
+// Breakpoints replace Tailwind's: small phone, phone to tablet, tablet to desktop, desktop, and
+// the width at which the page stops growing (page-width). Media queries can't read custom
+// properties, so these are values, not tokens (docs/identity.md).
+export const breakpoints = {xs: '23.75rem', sm: '40rem', md: '50rem', lg: '64rem', xl: '77.5rem'};
 export const durations = {fast: 'duration-fast', base: 'duration-base', slow: 'duration-slow'};
 export const tones = ['success', 'warning', 'error', 'info'];
 export const densityVariants = ['comfortable', 'compact', 'game'];

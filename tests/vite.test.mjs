@@ -25,15 +25,15 @@ test('the Vite plugin refuses pages where styles would paint first or there is n
   assert.throws(() => transform('<body></body>'), /no <head>/);
 });
 
-test('ds-usage counts ds-* classes and /react imports, skipping snapshots and custom properties', async () => {
+test('ds-usage counts ds-* classes and /react imports, skipping snapshots, custom properties and Tailwind utilities', async () => {
   const root = await mkdtemp(join(tmpdir(), 'ds-usage-'));
   try {
     await mkdir(join(root, 'src/design-system'), {recursive: true});
     await mkdir(join(root, 'node_modules/x'), {recursive: true});
-    await writeFile(join(root, 'index.html'), '<a class="ds-button ds-chip-link" style="color:var(--ds-text)" data-ds-x>Go</a><a class="ds-button">Go</a>');
+    await writeFile(join(root, 'index.html'), '<a class="ds-button ds-chip-link" style="color:var(--ds-text)" data-ds-x>Go</a><a class="ds-button">Go</a><a class="ds-chip">Go</a>');
     await writeFile(join(root, 'src/app.jsx'), "import {Button} from '@doshi-experiments/design-system/react';\nconst c = 'ds-card';");
     await writeFile(join(root, 'src/design-system/components.css'), '.ds-button{}');
     await writeFile(join(root, 'node_modules/x/a.js'), "'ds-card'");
-    assert.deepEqual(await usage(root), {classes: {'ds-button': 2, 'ds-chip-link': 1, 'ds-card': 1}, total: 4, reactImports: ['src/app.jsx']});
+    assert.deepEqual(await usage(root), {classes: {'ds-chip-link': 1, 'ds-card': 1}, total: 2, reactImports: ['src/app.jsx']});
   } finally {await rm(root, {recursive: true, force: true});}
 });
