@@ -13,6 +13,8 @@ import {sourceDirectory} from './sync.mjs';
 const skipped = new Set(['.git', 'node_modules', 'dist', 'vendor', 'versions', 'design-system', 'test-results', '.wrangler', 'build']);
 const extensions = /\.(?:html|jsx?|mjs|css|tsx?)$/;
 const classPattern = /(?<![\w-])ds-[a-z][\w-]*/g;
+// tailwind.css defines these as utilities too (0.10.2), so they outlive components.css.
+const utilities = new Set(['ds-button', 'ds-chip']);
 const reactPattern = /design-system\/react(?:\.js)?['"]/g;
 
 async function* files(directory) {
@@ -26,7 +28,7 @@ export async function usage(root) {
   const classes = {}, imports = [];
   for await (const file of files(root)) {
     const source = await readFile(file, 'utf8');
-    for (const [name] of source.matchAll(classPattern)) classes[name] = (classes[name] || 0) + 1;
+    for (const [name] of source.matchAll(classPattern)) if (!utilities.has(name)) classes[name] = (classes[name] || 0) + 1;
     if (source.match(reactPattern)) imports.push(relative(root, file));
   }
   const total = Object.values(classes).reduce((sum, count) => sum + count, 0);

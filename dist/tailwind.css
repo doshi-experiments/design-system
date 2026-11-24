@@ -32,6 +32,7 @@
   --drop-shadow-*: initial;
   --text-shadow-*: initial;
   --ease-*: initial;
+  --breakpoint-*: initial;
   --color-page: var(--ds-surface-page);
   --color-raised: var(--ds-surface-raised);
   --color-overlay: var(--ds-surface-overlay);
@@ -76,6 +77,11 @@
   --container-page: var(--ds-page-width);
   --ease-felt: var(--ds-ease);
   --ease-spring: var(--ds-ease-spring);
+  --breakpoint-xs: 23.75rem;
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 50rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 77.5rem;
   --text-caption: var(--ds-text-caption);
   --text-caption--line-height: 1.5;
   --text-caption--letter-spacing: normal;
@@ -152,6 +158,46 @@
 }
 @utility action-link {
   color: var(--ds-action-link);
+}
+
+/* Buttons and chips for pages without React: the same classes as /ui's Button, keyed on the
+   attributes /react's Button writes, so <button class="ds-button" data-variant="primary"> draws
+   what <Button variant="primary"> draws. data-size takes small or icon. */
+@utility ds-button {
+  @apply inline-flex items-center justify-center gap-2 min-h-control min-w-target rounded-pill border border-transparent px-5 py-2.5 font-semibold cursor-pointer focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-focus motion-safe:transition-[translate,box-shadow,background-color] motion-safe:not-disabled:active:translate-y-px [&_svg]:pointer-events-none [&_svg]:shrink-0;
+  &:where(:not([data-variant]), [data-variant="default"]) {
+    @apply raised not-disabled:active:shadow-pressed;
+  }
+  &[data-variant="secondary"] {
+    @apply raised not-disabled:hover:bg-selection not-disabled:active:shadow-pressed;
+  }
+  &[data-variant="primary"] {
+    @apply signal shadow-signal not-disabled:hover:signal-hover not-disabled:active:signal-pressed not-disabled:active:shadow-signal-pressed;
+  }
+  &[data-variant="danger"] {
+    @apply tone-error border-current not-disabled:hover:bg-selection not-disabled:active:shadow-pressed;
+  }
+  &[data-variant="ghost"] {
+    @apply bg-transparent action-link not-disabled:hover:bg-selection not-disabled:active:shadow-pressed;
+  }
+  &[data-variant="link"] {
+    @apply bg-transparent action-link underline underline-offset-[.2em] not-disabled:hover:decoration-2 not-disabled:active:shadow-pressed;
+  }
+  &[data-size="small"] {
+    @apply relative min-h-control-compact px-4 py-1.5 leading-[1.25] after:absolute after:inset-x-0 after:top-1/2 after:h-[max(100%,var(--ds-control-target))] after:-translate-y-1/2;
+  }
+  &[data-size="icon"] {
+    @apply size-target p-0 [&_svg]:size-5;
+  }
+  &:disabled {
+    @apply cursor-not-allowed border-transparent bg-inset bg-none text-ink-disabled shadow-none;
+  }
+}
+@utility ds-chip {
+  @apply pressed inline-flex items-center border-none min-h-target py-2 px-3.5 rounded-pill font-sans text-[.8125rem] font-semibold leading-[1.4] text-ink no-underline cursor-pointer hover:bg-selection focus-visible:outline-3 focus-visible:-outline-offset-4 focus-visible:outline-focus;
+  &:is([aria-pressed="true"], [aria-current]:not([aria-current="false"])) {
+    @apply signal shadow-signal hover:signal-hover;
+  }
 }
 
 /* Status colours come as pairs: the tint and its text. */

@@ -11,7 +11,7 @@ const fixture = await mkdtemp(join(tmpdir(), 'ds-components-'));
 const entry = `
 import React from 'react';
 import {createRoot} from 'react-dom/client';
-import {AppShell,Button,Card,TextField,SelectField,CheckboxField,Alert,FileUpload,WorkflowSteps,Disclosure,Dialog,PageHeader,EmptyState,SiteHeader,Select,DateField,TimeField,MenuButton,ToggleButton,ToastProvider,toast} from './src/react.js';
+import {AppShell,Button,Card,CardTitle,TextField,SelectField,CheckboxField,Alert,FileUpload,WorkflowSteps,Disclosure,Dialog,PageHeader,EmptyState,SiteHeader,Select,DateField,TimeField,MenuButton,ToggleButton,ToastProvider,toast} from './src/react.js';
 import {EditableTable} from './src/table.js';
 import {createAppearanceController} from './src/theme.js';
 const h = React.createElement;
@@ -40,6 +40,7 @@ function Example(){
  h(Card,null,h(TextField,{label:'Description',value:name,onValueChange:setName,hint:'Keep bank details unchanged.'}),h(SelectField,{label:'Default category',value:category,onValueChange:setCategory,options}),h(CheckboxField,{label:'I reviewed the changes',checked:ack,onCheckedChange:setAck}),
  h(FileUpload,{label:'Upload statements',accept:'.csv',multiple:true,onFilesChange:setFiles,hint:'CSV files only.'}),h('p',{id:'state',hidden:true},JSON.stringify({name,category,ack,step,files:files.map(file=>file.name)}))),
  h(Pickers),
+ h(Card,{id:'outer-card'},h(CardTitle,null,'Monthly costs'),h(Card,{variant:'flat',id:'flat-card'},h('p',null,'A section inside the card.'))),
  h(Alert,{tone:'warning',title:'Review before saving'},'Confirm uncategorized items explicitly.'),
  h(EditableTable,{data:rows,columns,getRowId:row=>row.id,label:'Review items',caption:'Editable categories',meta:{update:(id,value)=>setRows(current=>current.map(row=>row.id===id?{...row,category:value}:row)),skip:(id,value)=>setRows(current=>current.map(row=>row.id===id?{...row,skip:value}:row))}}),
  h('p',{id:'rows',hidden:true},JSON.stringify(rows)),
@@ -90,6 +91,8 @@ try {
  await page.evaluate(()=>history.replaceState(null,'','#/activity'));await page.getByRole('link',{name:'Skip to content'}).focus();await page.keyboard.press('Enter');assert.equal(await page.evaluate(()=>location.hash),'#/activity');assert.equal(await page.evaluate(()=>document.activeElement.id),'main-content');checks++;
  await page.getByLabel('Description',{exact:true}).fill('New merchant');await page.getByLabel('Default category').selectOption('travel');await page.getByLabel('I reviewed the changes').check();await page.getByRole('button',{name:'Confirm',exact:true}).click();
  await page.getByLabel('Upload statements').setInputFiles([{name:'statement.csv',mimeType:'text/csv',buffer:Buffer.from('date,amount\n2026-01-01,10') }]);
+ const flat=await page.evaluate(()=>{const card=getComputedStyle(document.getElementById('flat-card')),after=getComputedStyle(document.getElementById('flat-card'),'::after'),title=getComputedStyle(document.querySelector('#outer-card .ds-card-title'));return {background:card.backgroundColor,shadow:card.boxShadow,padding:card.padding,radius:card.borderTopLeftRadius,stitch:after.content,size:title.fontSize,weight:title.fontWeight,margin:title.margin};});
+ assert.deepEqual(flat,{background:'rgba(0, 0, 0, 0)',shadow:'none',padding:'16px 0px',radius:'0px',stitch:'none',size:'20px',weight:'500',margin:'0px'},'flat card and card title');checks++;
  const state=JSON.parse(await page.locator('#state').textContent());assert.deepEqual(state,{name:'New merchant',category:'travel',ack:true,step:'confirm',files:['statement.csv']});checks++;
  await page.getByLabel('Category for Market').selectOption('travel');const rows=JSON.parse(await page.locator('#rows').textContent());assert.deepEqual(rows.map(row=>row.category),['travel','travel']);checks++;
  await page.getByLabel('Skip Market').check();assert.deepEqual(JSON.parse(await page.locator('#rows').textContent()).map(row=>!!row.skip),[true,false]);

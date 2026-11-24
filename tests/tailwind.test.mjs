@@ -6,7 +6,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {promisify} from 'node:util';
 import {resolveTokens, densities} from '../src/tokens.js';
-import {themeTokens, typeScale, durations, tones} from '../src/tailwind-theme.js';
+import {themeTokens, typeScale, breakpoints, durations, tones} from '../src/tailwind-theme.js';
 import {tailwindCss} from '../scripts/tailwind.mjs';
 import {cn} from '../src/ui/cn.js';
 
@@ -63,7 +63,7 @@ test('the theme generates Felt utilities and nothing from Tailwind or shadcn def
 test('every class the components use generates CSS', async () => {
   const {buttonVariants} = await import('../dist/ui.js');
   const classes = new Set();
-  for (const variant of ['default', 'primary', 'danger', 'ghost']) for (const size of ['default', 'small']) buttonVariants({variant, size}).split(/\s+/).forEach(name => name && classes.add(name));
+  for (const variant of ['default', 'secondary', 'primary', 'danger', 'ghost', 'link']) for (const size of ['default', 'small', 'icon']) buttonVariants({variant, size}).split(/\s+/).forEach(name => name && classes.add(name));
   const output = await compile([...classes]);
   const missing = [...classes].filter(name => !generates(output, name));
   assert.deepEqual(missing, [], 'unstyled classes');
@@ -95,4 +95,20 @@ test('cn() resolves conflicts within Felt names and keeps different kinds apart'
   assert.equal(cn('signal', 'tone-error'), 'tone-error');
   assert.equal(cn('font-sans', 'font-semibold'), 'font-sans font-semibold');
   assert.equal(cn('px-5', false, null, {'py-2': true, hidden: false}), 'px-5 py-2');
+});
+
+test('breakpoints are Felt\'s, and Tailwind\'s are gone', async () => {
+  const out = await compile(['xs:flex', 'sm:flex', 'md:flex', 'lg:flex', 'xl:flex', '2xl:flex']);
+  for (const [name, value] of Object.entries(breakpoints)) assert.match(css, new RegExp(`--breakpoint-${name}: ${value.replace('.', '\\.')};`));
+  for (const value of Object.values(breakpoints)) assert.match(out, new RegExp(`@media \\(width >= ${value.replace('.', '\\.')}\\)`));
+  assert.doesNotMatch(out, /96rem/, '2xl generates nothing');
+});
+
+test('ds-button and ds-chip compile for plain markup, with the disabled look last', async () => {
+  const out = await compile(['ds-button', 'ds-chip']);
+  const button = out.slice(out.indexOf('.ds-button {'), out.indexOf('.ds-chip {'));
+  for (const selector of ['&[data-variant="primary"]', '&[data-variant="link"]', '&[data-size="icon"]', '&:disabled']) assert.ok(button.includes(selector), selector);
+  assert.ok(button.lastIndexOf('&:disabled') > button.lastIndexOf('&[data-variant='), 'disabled follows the variants');
+  assert.doesNotMatch(button, /data-disabled/, 'plain buttons use :disabled');
+  assert.match(out, /\.ds-chip \{[\s\S]*aria-pressed="true"/);
 });

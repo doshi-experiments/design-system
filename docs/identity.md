@@ -68,8 +68,11 @@ Use 400 for body, 500 for headings and figures, and 600 for controls and labels.
 Headings tighten their tracking as they grow (-.02em at 25px to -.045em at 61px).
 
 Body text is 16px in apps and 18px in portfolio prose, with a 1.55 line-height and a
-64-character measure. The type scale stays 16, 20, 25, 31, 39, 49, and 61px. Financial
-values use tabular numerals and right alignment.
+64-character measure. The type scale stays 16, 20, 25, 31, 39, 49, and 61px, with one
+smaller step, 14px (`text-caption`), for captions, table cells, chart notes and helper
+text. Nothing is set below 14px except the shared labels, affixes and chips that already
+use 13px. A card's heading is the 20px step at weight 500 (`.ds-card-title`, or
+`text-card font-medium`). Financial values use tabular numerals and right alignment.
 
 Buttons, keys, chips and segments are pills (`radius-pill`); fields, selects, tracks and
 alerts are 14px (`radius-control`); cards and panels 24px; dialogs 30px. Raised surfaces
@@ -79,6 +82,12 @@ dashed line 7px inside the edge. Each page has a 240px fibre tile blended into i
 background (multiplied in light, overlaid in dark); `data-texture="off"` on the root
 removes it. Shared control targets stay at least 44px; Mr. Shake keeps its 60px game
 controls. Global navigation retains its own compact 44px targets.
+
+Layouts change at five shared breakpoints, which replace Tailwind's in `tailwind.css`:
+`xs` 380px (small phones), `sm` 640px (phone to tablet), `md` 800px (tablet to desktop),
+`lg` 1024px (desktop) and `xl` 1240px, where the page stops growing (`page-width`).
+Write `md:grid-cols-2` or `max-sm:…` rather than an arbitrary width; an app moves onto
+them as it is reworked.
 
 ## Composition and interaction
 
