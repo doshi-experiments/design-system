@@ -6,7 +6,8 @@ the Vite plugin and `ds-usage.mjs`. Wave 1 (steps 1 to 4), the calculator, exper
 visualizations and Mr. Shake, is merged and live (22 November). 0.10.2 adds what the audit
 after wave 1 asked for: the Button's secondary, link and icon, `ds-button` and `ds-chip` for
 plain HTML, Felt's breakpoints, and card sections and titles. Mr. Shake's and the visualizations'
-own controls move onto `/ui` in wave 2.
+own controls move onto `/ui` in wave 2. Wave 2 began with 0.11.0: Toggle, the field family,
+Input, Input Group, Native Select, Checkbox, Card, Badge and Alert.
 
 Every app moves onto Tailwind CSS v4, with React components that follow shadcn's
 structure on Base UI. Felt stays exactly as it is: same tokens, same surfaces, same

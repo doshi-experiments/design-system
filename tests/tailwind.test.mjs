@@ -61,9 +61,13 @@ test('the theme generates Felt utilities and nothing from Tailwind or shadcn def
 });
 
 test('every class the components use generates CSS', async () => {
-  const {buttonVariants} = await import('../dist/ui.js');
+  const {buttonVariants, toggleVariants, badgeVariants, alertVariants, cardVariants} = await import('../dist/ui.js');
   const classes = new Set();
-  for (const variant of ['default', 'secondary', 'primary', 'danger', 'ghost', 'link']) for (const size of ['default', 'small', 'icon']) buttonVariants({variant, size}).split(/\s+/).forEach(name => name && classes.add(name));
+  const add = list => list.split(/\s+/).forEach(name => name && classes.add(name));
+  for (const variant of ['default', 'secondary', 'primary', 'danger', 'ghost', 'link']) for (const size of ['default', 'small', 'icon']) add(buttonVariants({variant, size}));
+  for (const tone of ['default', ...tones]) {add(toggleVariants({tone, size: 'small'})); add(badgeVariants({tone}));}
+  for (const tone of tones) add(alertVariants({tone}));
+  for (const variant of ['default', 'flat']) add(cardVariants({variant}));
   const output = await compile([...classes]);
   const missing = [...classes].filter(name => !generates(output, name));
   assert.deepEqual(missing, [], 'unstyled classes');
@@ -73,7 +77,8 @@ test('src/ui uses no shadcn colour names and no signal text', async () => {
   const shadcn = /\b(?:bg|text|border|ring|outline|fill|stroke|from|via|to|divide|placeholder|caret|accent|decoration)-(?:primary|secondary|muted|accent|destructive|background|foreground|card|popover|input|ring|border|sidebar|chart)(?:-foreground)?\b/;
   const signalText = /\btext-(?:signal|action|\[[^\]]*(?:signal|action-primary|action-gradient)[^\]]*\])/;
   for (const file of await readdir(join(root, 'src/ui'))) {
-    const source = await readFile(join(root, 'src/ui', file), 'utf8');
+    // text-card is Felt's 20px type step; with Tailwind's colours cleared it can't be a colour.
+    const source = (await readFile(join(root, 'src/ui', file), 'utf8')).replace(/\btext-card\b/g, '');
     assert.doesNotMatch(source, shadcn, `${file} uses a shadcn colour`);
     assert.doesNotMatch(source, signalText, `${file} colours text with the signal`);
   }

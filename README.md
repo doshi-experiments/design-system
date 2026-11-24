@@ -1,6 +1,6 @@
 # Doshi design system
 
-Version 0.10.2 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation underlines the current page; the labeled System / Light / Dark appearance control is unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. From 0.10.0 the same identity also ships for Tailwind CSS v4 (`tailwind.css`, generated from `src/tailwind-theme.js`) with components in shadcn's structure on Base UI (`src/ui/`, exported as `/ui`); see [the migration plan](docs/tailwind-migration.md). Generated assets must not be edited in consuming repos.
+Version 0.11.0 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation underlines the current page; the labeled System / Light / Dark appearance control is unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. From 0.10.0 the same identity also ships for Tailwind CSS v4 (`tailwind.css`, generated from `src/tailwind-theme.js`) with components in shadcn's structure on Base UI (`src/ui/`, exported as `/ui`); see [the migration plan](docs/tailwind-migration.md). Generated assets must not be edited in consuming repos.
 
 ```sh
 npm run build
@@ -28,6 +28,8 @@ import '@doshi-experiments/design-system/tokens.css';
 import '@doshi-experiments/design-system/components.css';
 ```
 
+Deprecated since 0.11.0, and removed at 1.0: `ToggleButton`, `Badge`, `Alert`, `Card`, `CardTitle`, `TextField`, `SelectField`, `CheckboxField`, `FieldGroup` and `NumericField`'s markup, with their `ds-*` classes. Use `/ui`'s `Toggle`, `Badge`, `Alert`, `Card`, `CardTitle`, `Field` with `Input`, `NativeSelect` or `Checkbox`, and `FieldSet` with `FieldGroup`.
+
 React consumers also install React, React DOM and `@base-ui/react`. They are optional peer dependencies so static consumers need none of them. `Button` preserves native disabled semantics and locks during loading. `HelpPopover` uses Base UI focus/dismissal behavior and a portaled, fixed positioner. These are app-owned initial recipes over the Base UI foundation selected for shadcn; this release does not claim to contain the full shadcn component catalogue.
 
 ### Tailwind CSS v4 (0.10.0)
@@ -41,8 +43,23 @@ An app with a Tailwind CSS v4 build imports Felt's theme after Tailwind, and kee
 ```
 
 ```js
-import {Button, cn} from '@doshi-experiments/design-system/ui';
+import {Button, Card, CardTitle, Field, FieldLabel, Input, cn} from '@doshi-experiments/design-system/ui';
 ```
+
+`/ui` holds `Button`; `Toggle`; `Badge`; `Alert` with `AlertTitle`, `AlertDescription` and `AlertAction`; `Card` with `CardHeader`, `CardTitle`, `CardDescription`, `CardAction`, `CardContent` and `CardFooter`; the field family, `Field`, `FieldLabel`, `FieldHeading`, `FieldDescription`, `FieldError`, `FieldSet`, `FieldLegend` and `FieldGroup`; `Input`; `InputGroup` with `InputGroupInput` and `InputGroupAddon`; `NativeSelect`; and `Checkbox`. Each draws what the `/react` component it replaces draws, which `scripts/check-ui.mjs` checks part by part. A text field is composed rather than configured:
+
+```jsx
+<Field>
+  <FieldLabel htmlFor="price">Purchase price</FieldLabel>
+  <Input id="price" value={price} onChange={event => setPrice(event.target.value)} />
+  <FieldDescription>Before closing costs.</FieldDescription>
+</Field>
+<Field orientation="choice">
+  <FieldLabel variant="choice"><Checkbox checked={done} onCheckedChange={setDone} /><span>I reviewed the changes</span></FieldLabel>
+</Field>
+```
+
+A numeric field puts `FieldLabel variant="heading"` in a `FieldHeading` and its input in an `InputGroup` with `InputGroupAddon` prefixes or suffixes; fields in a `FieldGroup` share rows so their inputs line up. Hide a label with `sr-only`. `Checkbox` stays the browser's own 20px box in the signal, and `NativeSelect` keeps the browser's arrow.
 
 `tailwind.css` brings `tokens.css` with it and declares `@source "./ui.js"`, so the shared components' classes are generated without any app config. Its theme points every utility at the `--ds-*` tokens (`bg-raised`, `text-ink`, `text-caption`, `rounded-pill`, `shadow-raised`, `min-h-target`, `p-panel`, `max-w-measure`), so colours switch with `data-theme` and sizes with `data-density` without a `dark:` variant. Tailwind's default palette, type sizes, radii and shadows are cleared: shadcn's `bg-primary` or `text-sm` generate nothing. Felt's surfaces are utilities: `raised`, `pressed`, `stitched` (on a positioned element), `stitch-rule`, `fibre`, the `signal` fill (with `hover:signal-hover` and `active:signal-pressed`), `signal-solid`, `accent-signal`, `action-link` for signal-coloured text, and `tone-success|warning|error|info` pairs. There is deliberately no signal or status text colour. Variants: `dark:` (for what differs by more than colour, such as the fibre) and `comfortable:`, `compact:` and `game:` for the root's density. Breakpoints are Felt's, not Tailwind's: `xs` 380px, `sm` 640px, `md` 800px, `lg` 1024px and `xl` 1240px (`2xl` is gone). `cn()` merges classes with tailwind-merge taught Felt's names.
 
@@ -452,4 +469,33 @@ What the audit after wave 1 asked of the system. Nothing already in use draws di
 - The Button parity check covers 14 cases and the chip, and compares the plain-HTML
   utilities as well as `/ui` against `components.css`. The component lab checks the flat
   card and the card title.
+
+## Toggle, fields, select, checkbox, card, badge and alert in /ui (0.11.0)
+
+The second set of shadcn components on Base UI, restyled to Felt. Nothing already in use
+draws differently; apps adopt them in their own pull requests.
+
+- New in `/ui`: `Toggle`, `Badge`, `Alert` (with `AlertTitle`, `AlertDescription`,
+  `AlertAction`), `Card` (with `CardHeader`, `CardTitle`, `CardDescription`, `CardAction`,
+  `CardContent`, `CardFooter`), the field family (`Field`, `FieldLabel`, `FieldHeading`,
+  `FieldDescription`, `FieldError`, `FieldSet`, `FieldLegend`, `FieldGroup`), `Input`,
+  `InputGroup` (with `InputGroupInput`, `InputGroupAddon`), `NativeSelect` (with
+  `NativeSelectOption`, `NativeSelectOptGroup`) and `Checkbox`. They were added with
+  `shadcn add` and restyled; Toggle, Badge and Alert keep `/react`'s `tone` prop.
+- Two depart from shadcn on purpose: `Checkbox` is the native input in the signal rather
+  than a drawn box, and `NativeSelect` keeps the browser's arrow, because that is what
+  Felt draws. `FieldHeading` and `FieldLabel`'s `heading` and `choice` variants are Felt's
+  additions for numeric fields and checkbox rows.
+- Deprecated, to be removed at 1.0: `/react`'s `ToggleButton` (use `Toggle`), `Badge`,
+  `Alert`, `Card` and `CardTitle`, `TextField`, `SelectField` (use `NativeSelect`),
+  `CheckboxField`, `FieldGroup` (use `FieldSet` and `FieldGroup`) and `NumericField`'s
+  markup, with their `ds-*` classes. `NumericField`'s behaviour (paste sanitising, arrow
+  keys, range messages) moves when the app's fields do.
+- `scripts/check-ui.mjs` (in `npm run test:components`) renders 25 cases from
+  `preview/ui-parity.jsx`, each `/react` component on a Tailwind page with `components.css`
+  in a layer beside its `/ui` composition on a page with Tailwind alone, and compares every
+  named part by computed style, at rest and hovered and focused for controls, and each
+  case by pixel, in light and dark, at 390px and 1440px, at comfortable and game density.
+- `identity.md` now lists the shared components' small type accurately: 13px labels,
+  affixes and chips, 12px hints and 11px badges.
 
