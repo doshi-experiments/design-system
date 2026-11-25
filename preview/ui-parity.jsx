@@ -106,6 +106,117 @@ const cases = [
       <New.FieldDescription role="status" data-warning="">Enter a number up to 100.</New.FieldDescription></New.Field>},
 ]
 
+// 0.12: popups. open names the trigger to click; parts starting with @ are found in the
+// whole document, because popups render in a portal.
+const groups = [{label: 'More', options: [{value: 'weekly', label: 'Weekly'}]}]
+function OldDialogCase({dismissible = true}) {
+  const [open, setOpen] = React.useState(false)
+  return <>
+    <Old.Button onClick={() => setOpen(true)}>Open</Old.Button>
+    <Old.Dialog open={open} onOpenChange={setOpen} dismissible={dismissible} title="Save these decisions?" description="Only the explicit save action submits the changes."
+      actions={<Old.Button variant="primary" onClick={() => setOpen(false)}>Save decisions</Old.Button>}><p>Two items change category.</p></Old.Dialog>
+  </>
+}
+function NewDialogCase({dismissible = true}) {
+  const [open, setOpen] = React.useState(false)
+  return <New.Dialog open={open} onOpenChange={setOpen} dismissible={dismissible}>
+    <New.DialogTrigger render={<New.Button />}>Open</New.DialogTrigger>
+    <New.DialogContent>
+      <New.DialogTitle>Save these decisions?</New.DialogTitle>
+      <New.DialogDescription>Only the explicit save action submits the changes.</New.DialogDescription>
+      <New.DialogBody><p>Two items change category.</p></New.DialogBody>
+      <New.DialogFooter><New.DialogClose>Cancel</New.DialogClose><New.Button variant="primary" onClick={() => setOpen(false)}>Save decisions</New.Button></New.DialogFooter>
+    </New.DialogContent>
+  </New.Dialog>
+}
+const newSelect = ({variant, size, label = 'Frequency', hidden = false} = {}) => {
+  const items = [...options, ...groups[0].options]
+  return <New.Field>
+    <New.FieldLabel htmlFor={`n-select-${variant}-${size}`} className={hidden ? 'sr-only' : undefined}>{label}</New.FieldLabel>
+    <New.Select items={items} value="monthly" onValueChange={plain}>
+      <New.SelectTrigger id={`n-select-${variant}-${size}`} variant={variant} size={size}><New.SelectValue /></New.SelectTrigger>
+      <New.SelectContent>
+        {options.map(o => <New.SelectItem key={o.value} value={o.value}>{o.label}</New.SelectItem>)}
+        {groups.map(g => <New.SelectGroup key={g.label}><New.SelectLabel>{g.label}</New.SelectLabel>
+          {g.options.map(o => <New.SelectItem key={o.value} value={o.value}>{o.label}</New.SelectItem>)}</New.SelectGroup>)}
+      </New.SelectContent>
+    </New.Select>
+  </New.Field>
+}
+const menuItems = [{label: 'Tomorrow', onSelect: plain}, 'separator', {label: 'Next week', onSelect: plain}, {label: 'Never', disabled: true}]
+cases.push(
+  // .ds-button is inline-block and /ui's Button an inline-flex that centres; for text they draw alike.
+  {id: 'help', target: 'root', open: ['.ds-help', '[data-slot=help-trigger]'], ignore: {close: ['display', 'gap', 'align-items', 'justify-content']},
+    parts: {root: ['.ds-help', '[data-slot=help-trigger]'], popup: ['@[data-ds-help-popup]', '@[data-help-popup]'], title: ['@.ds-popover-title', '@[data-slot=popover-title]'],
+      description: ['@.ds-popover-description', '@[data-slot=popover-description]'], close: ['@.ds-popover .ds-button', '@[data-slot=popover-close]']},
+    old: <Old.HelpPopover title="Down payment">At least 5% of the price, more above $500,000.</Old.HelpPopover>,
+    new: <New.HelpPopover title="Down payment">At least 5% of the price, more above $500,000.</New.HelpPopover>},
+  {id: 'help-in-heading', parts: {heading: ['.ds-field-heading', '[data-slot=field-heading]'], help: ['.ds-help', '[data-slot=help-trigger]']},
+    old: <Old.NumericField label="Rate" value="4.5" onValueChange={plain} suffix="%" help={<Old.HelpPopover title="Rate">The posted rate.</Old.HelpPopover>} />,
+    new: <New.Field><New.FieldHeading><New.FieldLabel variant="heading" htmlFor="n-help-rate">Rate</New.FieldLabel><New.HelpPopover title="Rate">The posted rate.</New.HelpPopover></New.FieldHeading>
+      <New.InputGroup><New.InputGroupInput id="n-help-rate" value="4.5" onChange={plain} /><New.InputGroupAddon>%</New.InputGroupAddon></New.InputGroup></New.Field>},
+  // RangeField also draws its number field, so the case is compared by part, not by pixel.
+  // The old label is a span; FieldLabel is a real label, so clicking it opens the select.
+  {id: 'select', target: 'trigger', open: ['.ds-picker', '[data-slot=select-trigger]'], ignore: {label: ['cursor']},
+    parts: {label: ['.ds-field-label', '[data-slot=field-label]'], trigger: ['.ds-picker', '[data-slot=select-trigger]'], value: ['.ds-picker-value', '[data-slot=select-value]'],
+      icon: ['.ds-picker-icon', '[data-slot=select-trigger] svg'], popup: ['@.ds-select-popup', '@[data-slot=select-content]'],
+      option: ['@.ds-option:not([data-selected])', '@[data-slot=select-item]:not([data-selected])'], selected: ['@.ds-option[data-selected]', '@[data-slot=select-item][data-selected]'],
+      check: ['@.ds-option-check', '@[data-slot=select-item][data-selected] > span:last-child'],
+      group: ['@.ds-option-group', '@[data-slot=select-group]'], groupLabel: ['@.ds-option-group-label', '@[data-slot=select-label]']},
+    old: <Old.Select label="Frequency" value="monthly" options={options} groups={groups.map(g => [g.label, g.options.map(o => [o.value, o.label])])} onValueChange={plain} />,
+    new: newSelect()},
+  {id: 'select-quiet-small', target: 'trigger', parts: {trigger: ['.ds-picker', '[data-slot=select-trigger]']},
+    old: <Old.Select label="Size" layout="hidden" variant="quiet" size="small" value="monthly" options={options} onValueChange={plain} />,
+    new: newSelect({variant: 'quiet', size: 'small', label: 'Size', hidden: true})},
+  {id: 'select-small', target: 'trigger', parts: {trigger: ['.ds-picker', '[data-slot=select-trigger]']},
+    old: <Old.Select label="Size" size="small" value="monthly" options={options} onValueChange={plain} />,
+    new: newSelect({size: 'small', label: 'Size'})},
+  {id: 'menu', target: 'trigger', open: ['.ds-menu-trigger', '[data-slot=dropdown-menu-trigger]'],
+    parts: {trigger: ['.ds-menu-trigger', '[data-slot=dropdown-menu-trigger]'], chevron: ['.ds-menu-trigger svg', '[data-slot=dropdown-menu-trigger] svg'],
+      popup: ['@.ds-menu:not(.ds-select-popup)', '@[data-slot=dropdown-menu-content]'], item: ['@.ds-menu-item', '@[data-slot=dropdown-menu-item]'],
+      disabled: ['@.ds-menu-item[data-disabled]', '@[data-slot=dropdown-menu-item][data-disabled]'], separator: ['@.ds-menu-separator', '@[data-slot=dropdown-menu-separator]']},
+    old: <Old.MenuButton label="Snooze" items={menuItems} />,
+    new: <New.DropdownMenu><New.DropdownMenuTrigger>Snooze</New.DropdownMenuTrigger><New.DropdownMenuContent>
+      <New.DropdownMenuItem onClick={plain}>Tomorrow</New.DropdownMenuItem><New.DropdownMenuSeparator />
+      <New.DropdownMenuItem onClick={plain}>Next week</New.DropdownMenuItem><New.DropdownMenuItem disabled>Never</New.DropdownMenuItem></New.DropdownMenuContent></New.DropdownMenu>},
+  {id: 'dialog', open: ['button', 'button'], ignore: {cancel: ['display', 'gap', 'align-items', 'justify-content']},
+    parts: {backdrop: ['@.ds-dialog-backdrop', '@[data-slot=dialog-overlay]'], viewport: ['@.ds-dialog-viewport', '@[data-slot=dialog-viewport]'], popup: ['@.ds-dialog', '@[data-slot=dialog-content]'],
+      title: ['@.ds-dialog-title', '@[data-slot=dialog-title]'], description: ['@.ds-dialog-description', '@[data-slot=dialog-description]'], body: ['@.ds-dialog-content', '@[data-slot=dialog-body]'],
+      footer: ['@.ds-dialog-actions', '@[data-slot=dialog-footer]'], cancel: ['@.ds-dialog-actions > .ds-button:first-child', '@[data-slot=dialog-close]']},
+    old: <OldDialogCase />, new: <NewDialogCase />},
+  // Last of the compared cases: the old RangeField also draws its number field, so the cases' heights
+  // differ, and anything after would sit at a different sub-pixel offset.
+  // Widths follow the layout around the slider; the range's share of the track is compared by its
+  // width relative to the track instead.
+  {id: 'slider', target: 'thumb', pixels: false, ignore: {control: ['width'], track: ['width'], range: ['width']},
+    parts: {control: ['.ds-slider-control', '[data-slot=slider-control]'], track: ['.ds-slider-track', '[data-slot=slider-track]'],
+      range: ['.ds-slider-indicator', '[data-slot=slider-range]'], thumb: ['.ds-slider-thumb', '[data-slot=slider-thumb]']},
+    old: <Old.RangeField label="How long you stay" value="10" min={1} max={30} onValueChange={plain} suffix="yr" />,
+    new: <div className="grid grid-cols-[minmax(0,1fr)_minmax(100px,140px)] gap-x-5 gap-y-1 items-center py-2 min-w-0">
+      <div className="text-caption font-semibold text-ink-secondary">How long you stay</div>
+      <New.Slider className="col-start-1" value={10} min={1} max={30} onValueChange={plain} thumbProps={{'aria-label': 'How long you stay'}} />
+      <div className="col-start-2 row-span-2 row-start-1" /></div>},
+)
+
+// Combobox is new, so it has no /react counterpart; check-ui.mjs drives it instead.
+const categories = [{value: 'food', label: 'Food'}, {value: 'fuel', label: 'Fuel'}, {value: 'travel', label: 'Travel'}]
+function ComboboxCase() {
+  const [value, setValue] = React.useState('')
+  const selected = categories.find(c => c.value === value) || null
+  return <New.Field>
+    <New.FieldLabel htmlFor="n-category">Category</New.FieldLabel>
+    <New.Combobox items={categories} value={selected} autoHighlight itemToStringLabel={c => c.label} isItemEqualToValue={(a, b) => a.value === b.value}
+      onValueChange={item => item && setValue(item.value)}>
+      <New.ComboboxInput id="n-category" placeholder="Type to search" />
+      <New.ComboboxContent>
+        <New.ComboboxEmpty>No matches.</New.ComboboxEmpty>
+        <New.ComboboxList>{item => <New.ComboboxItem key={item.value} value={item}>{item.label}</New.ComboboxItem>}</New.ComboboxList>
+      </New.ComboboxContent>
+    </New.Combobox>
+    <p id="combobox-value" hidden>{value}</p>
+  </New.Field>
+}
+
 function Parity({set}) {
   return (
     <main className="parity">
@@ -115,10 +226,12 @@ function Parity({set}) {
           <div data-case={item.id}>{item[set]}</div>
         </section>
       ))}
+      {/* Last, so it shifts no compared case on the new page. */}
+      {set === 'new' && <section className="parity-case"><h2>combobox</h2><ComboboxCase /></section>}
     </main>
   )
 }
 
 const set = new URLSearchParams(location.search).get('set') === 'new' ? 'new' : 'old'
-window.__cases = cases.map(({id, parts, target}) => ({id, parts, target}))
+window.__cases = cases.map(({id, parts, target, open, ignore, pixels}) => ({id, parts, target, open, ignore, pixels}))
 createRoot(document.getElementById('root')).render(<Parity set={set} />)

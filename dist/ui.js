@@ -347,7 +347,7 @@ function FieldHeading({ className, ...props }) {
     "div",
     {
       "data-slot": "field-heading",
-      className: cn("flex flex-wrap items-end gap-1 min-h-8 mb-1.5 text-ink-secondary text-[.8125rem] font-semibold", className),
+      className: cn("flex flex-wrap items-end gap-1 min-h-8 mb-1.5 text-ink-secondary text-[.8125rem] font-semibold *:data-[slot=help-trigger]:size-11 *:data-[slot=help-trigger]:bg-transparent *:data-[slot=help-trigger]:shadow-none *:data-[slot=help-trigger]:-my-1.5", className),
       ...props
     }
   );
@@ -487,6 +487,310 @@ var Checkbox = React2.forwardRef(function Checkbox2({ className, indeterminate =
     }
   );
 });
+
+// src/ui/popover.jsx
+import * as React3 from "react";
+import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
+import { jsx as jsx11, jsxs } from "react/jsx-runtime";
+function Popover(props) {
+  return /* @__PURE__ */ jsx11(PopoverPrimitive.Root, { "data-slot": "popover", ...props });
+}
+function PopoverTrigger(props) {
+  return /* @__PURE__ */ jsx11(PopoverPrimitive.Trigger, { "data-slot": "popover-trigger", ...props });
+}
+function PopoverContent({ className, side, align, sideOffset = 8, children, ...props }) {
+  return /* @__PURE__ */ jsx11(PopoverPrimitive.Portal, { children: /* @__PURE__ */ jsx11(PopoverPrimitive.Positioner, { positionMethod: "fixed", side, align, sideOffset, className: "z-100", children: /* @__PURE__ */ jsx11(
+    PopoverPrimitive.Popup,
+    {
+      "data-slot": "popover-content",
+      className: cn(
+        "max-w-[min(28rem,var(--available-width))] max-h-(--available-height) overflow-auto p-panel border-0 rounded-container bg-overlay text-ink shadow-overlay font-normal text-body leading-[1.5] text-left tracking-normal normal-case whitespace-normal",
+        className
+      ),
+      ...props,
+      children
+    }
+  ) }) });
+}
+function PopoverTitle({ className, ...props }) {
+  return /* @__PURE__ */ jsx11(PopoverPrimitive.Title, { "data-slot": "popover-title", className: cn("m-0 mb-2 text-[1.125rem]", className), ...props });
+}
+function PopoverDescription({ className, ...props }) {
+  return /* @__PURE__ */ jsx11(PopoverPrimitive.Description, { "data-slot": "popover-description", className: cn("m-0 mb-4", className), ...props });
+}
+function PopoverClose({ className, ...props }) {
+  return /* @__PURE__ */ jsx11(PopoverPrimitive.Close, { "data-slot": "popover-close", className: cn(buttonVariants(), className), ...props });
+}
+function HelpPopover({ label = "More information", title, children, className }) {
+  const [open, setOpen] = React3.useState(false);
+  const restoringFocus = React3.useRef(false);
+  return /* @__PURE__ */ jsxs(Popover, { open, onOpenChange: (next) => {
+    restoringFocus.current = !next;
+    setOpen(next);
+  }, children: [
+    /* @__PURE__ */ jsx11(
+      PopoverTrigger,
+      {
+        "data-slot": "help-trigger",
+        "aria-label": label,
+        openOnHover: true,
+        className: cn(
+          "inline-grid place-items-center shrink-0 size-target border-0 rounded-[50%] p-0 font-semibold text-[1rem] leading-[normal] bg-raised text-ink-secondary shadow-raised cursor-help focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-focus",
+          className
+        ),
+        onFocus: (event) => {
+          if (restoringFocus.current) {
+            restoringFocus.current = false;
+            return;
+          }
+          if (event.target.matches(":focus-visible")) setOpen(true);
+        },
+        children: "i"
+      }
+    ),
+    /* @__PURE__ */ jsxs(PopoverContent, { "data-help-popup": "", children: [
+      /* @__PURE__ */ jsx11(PopoverTitle, { children: title }),
+      /* @__PURE__ */ jsx11(PopoverDescription, { children }),
+      /* @__PURE__ */ jsx11(PopoverClose, { children: "Close" })
+    ] })
+  ] });
+}
+
+// src/ui/slider.jsx
+import { Slider as SliderPrimitive } from "@base-ui/react/slider";
+import { jsx as jsx12, jsxs as jsxs2 } from "react/jsx-runtime";
+function Slider({ className, thumbProps, ...props }) {
+  return /* @__PURE__ */ jsx12(SliderPrimitive.Root, { "data-slot": "slider", className: cn("min-w-0", className), ...props, children: /* @__PURE__ */ jsx12(SliderPrimitive.Control, { "data-slot": "slider-control", className: "flex items-center w-full h-11 touch-none select-none cursor-pointer", children: /* @__PURE__ */ jsxs2(SliderPrimitive.Track, { "data-slot": "slider-track", className: "h-2 w-full rounded-pill pressed", children: [
+    /* @__PURE__ */ jsx12(SliderPrimitive.Indicator, { "data-slot": "slider-range", className: "h-full rounded-pill [background:var(--ds-action-gradient)]" }),
+    /* @__PURE__ */ jsx12(
+      SliderPrimitive.Thumb,
+      {
+        "data-slot": "slider-thumb",
+        className: "box-border size-[26px] border-3 border-[#FFFFFF] rounded-[50%] [background:var(--ds-action-gradient)] shadow-[0_0_0_1px_rgba(38,38,36,.18),0_6px_12px_-4px_rgba(0,0,0,.45)] before:absolute before:-inset-3 before:content-[''] has-focus-visible:outline-3 has-focus-visible:outline-offset-4 has-focus-visible:outline-focus",
+        ...thumbProps
+      }
+    )
+  ] }) }) });
+}
+
+// src/ui/select.jsx
+import { Select as SelectPrimitive } from "@base-ui/react/select";
+import { cva as cva7 } from "class-variance-authority";
+
+// src/ui/icons.jsx
+import { jsx as jsx13 } from "react/jsx-runtime";
+var stroke = { fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" };
+function ChevronIcon(props) {
+  return /* @__PURE__ */ jsx13("svg", { viewBox: "0 0 16 16", width: "14", height: "14", "aria-hidden": "true", ...props, children: /* @__PURE__ */ jsx13("path", { d: "M3.5 6l4.5 4.5L12.5 6", ...stroke }) });
+}
+function CheckIcon(props) {
+  return /* @__PURE__ */ jsx13("svg", { viewBox: "0 0 16 16", width: "14", height: "14", "aria-hidden": "true", ...props, children: /* @__PURE__ */ jsx13("path", { d: "M3 8.5l3.2 3L13 4.5", ...stroke, strokeWidth: 2.2 }) });
+}
+
+// src/ui/menu-classes.js
+var menuClasses = {
+  popup: "box-border p-1.5 rounded-control bg-overlay text-ink shadow-overlay outline-none font-normal text-body leading-[1.4]",
+  item: "flex items-center min-h-target rounded-[10px] cursor-pointer outline-none font-medium data-highlighted:bg-selection data-disabled:text-ink-disabled data-disabled:cursor-not-allowed",
+  separator: "h-0 mx-1 my-1.5 border-0 border-t-[1.5px] border-dashed border-stitch",
+  groupLabel: "px-3 pt-1 pb-1.5 text-[.75rem] font-bold text-ink-secondary"
+};
+
+// src/ui/select.jsx
+import { jsx as jsx14, jsxs as jsxs3 } from "react/jsx-runtime";
+function Select(props) {
+  return /* @__PURE__ */ jsx14(SelectPrimitive.Root, { "data-slot": "select", ...props });
+}
+function SelectGroup({ className, ...props }) {
+  return /* @__PURE__ */ jsx14(SelectPrimitive.Group, { "data-slot": "select-group", className: cn("mt-1.5 pt-1.5 border-t-[1.5px] border-dashed border-stitch", className), ...props });
+}
+function SelectLabel({ className, ...props }) {
+  return /* @__PURE__ */ jsx14(SelectPrimitive.GroupLabel, { "data-slot": "select-label", className: cn(menuClasses.groupLabel, className), ...props });
+}
+function SelectValue({ className, ...props }) {
+  return /* @__PURE__ */ jsx14(SelectPrimitive.Value, { "data-slot": "select-value", className: cn("min-w-0 overflow-hidden text-ellipsis whitespace-nowrap", className), ...props });
+}
+var selectTriggerVariants = cva7(
+  "box-border flex items-center justify-between gap-2.5 w-full min-h-[max(44px,var(--ds-control-height))] py-1.5 pr-3 pl-3.5 border border-line rounded-control text-ink font-normal text-body leading-[1.4] text-left cursor-pointer focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-focus data-disabled:cursor-not-allowed data-disabled:text-ink-disabled",
+  {
+    variants: {
+      variant: {
+        field: "pressed",
+        quiet: "w-auto max-w-full gap-1.5 px-2 bg-transparent border-transparent font-medium hover:bg-inset hover:border-line data-popup-open:bg-inset data-popup-open:border-line"
+      },
+      size: {
+        default: "",
+        small: "relative min-h-control-compact py-1 pr-2.5 pl-3 text-caption leading-[1.4] after:absolute after:inset-x-0 after:top-1/2 after:h-[max(100%,var(--ds-control-target))] after:-translate-y-1/2"
+      }
+    },
+    compoundVariants: [{ variant: "quiet", size: "small", className: "px-2" }],
+    defaultVariants: {
+      variant: "field",
+      size: "default"
+    }
+  }
+);
+function SelectTrigger({ className, variant, size, children, ...props }) {
+  return /* @__PURE__ */ jsxs3(SelectPrimitive.Trigger, { "data-slot": "select-trigger", className: cn(selectTriggerVariants({ variant, size }), className), ...props, children: [
+    children,
+    /* @__PURE__ */ jsx14(ChevronIcon, { className: "flex-none text-ink-secondary" })
+  ] });
+}
+function SelectContent({ className, children, align = "start", sideOffset = 6, ...props }) {
+  return /* @__PURE__ */ jsx14(SelectPrimitive.Portal, { children: /* @__PURE__ */ jsx14(SelectPrimitive.Positioner, { className: "z-210", align, sideOffset, alignItemWithTrigger: false, children: /* @__PURE__ */ jsx14(
+    SelectPrimitive.Popup,
+    {
+      "data-slot": "select-content",
+      className: cn(menuClasses.popup, "min-w-(--anchor-width) max-h-[min(360px,var(--available-height))] overflow-y-auto", className),
+      ...props,
+      children: /* @__PURE__ */ jsx14(SelectPrimitive.List, { children })
+    }
+  ) }) });
+}
+function SelectItem({ className, children, ...props }) {
+  return /* @__PURE__ */ jsxs3(
+    SelectPrimitive.Item,
+    {
+      "data-slot": "select-item",
+      className: cn(menuClasses.item, "justify-between gap-4 px-3 whitespace-nowrap data-selected:font-bold", className),
+      ...props,
+      children: [
+        /* @__PURE__ */ jsx14(SelectPrimitive.ItemText, { children }),
+        /* @__PURE__ */ jsx14(SelectPrimitive.ItemIndicator, { className: "flex action-link", children: /* @__PURE__ */ jsx14(CheckIcon, {}) })
+      ]
+    }
+  );
+}
+function SelectSeparator({ className, ...props }) {
+  return /* @__PURE__ */ jsx14(SelectPrimitive.Separator, { "data-slot": "select-separator", className: cn(menuClasses.separator, className), ...props });
+}
+
+// src/ui/dropdown-menu.jsx
+import { Menu as MenuPrimitive } from "@base-ui/react/menu";
+import { jsx as jsx15, jsxs as jsxs4 } from "react/jsx-runtime";
+function DropdownMenu(props) {
+  return /* @__PURE__ */ jsx15(MenuPrimitive.Root, { "data-slot": "dropdown-menu", ...props });
+}
+function DropdownMenuTrigger({ className, variant, size, loading = false, disabled = false, children, ...props }) {
+  return /* @__PURE__ */ jsxs4(
+    MenuPrimitive.Trigger,
+    {
+      "data-slot": "dropdown-menu-trigger",
+      className: cn(buttonVariants({ variant, size }), "gap-1.5 pl-4 pr-3 data-popup-open:bg-inset data-popup-open:bg-none data-popup-open:shadow-pressed", className),
+      disabled: disabled || loading,
+      "aria-busy": loading || void 0,
+      ...props,
+      children: [
+        children,
+        /* @__PURE__ */ jsx15(ChevronIcon, {})
+      ]
+    }
+  );
+}
+function DropdownMenuContent({ className, align = "end", sideOffset = 6, children, ...props }) {
+  return /* @__PURE__ */ jsx15(MenuPrimitive.Portal, { children: /* @__PURE__ */ jsx15(MenuPrimitive.Positioner, { className: "z-210", align, sideOffset, children: /* @__PURE__ */ jsx15(MenuPrimitive.Popup, { "data-slot": "dropdown-menu-content", className: cn(menuClasses.popup, "min-w-[180px]", className), ...props, children }) }) });
+}
+function DropdownMenuGroup(props) {
+  return /* @__PURE__ */ jsx15(MenuPrimitive.Group, { "data-slot": "dropdown-menu-group", ...props });
+}
+function DropdownMenuLabel({ className, ...props }) {
+  return /* @__PURE__ */ jsx15(MenuPrimitive.GroupLabel, { "data-slot": "dropdown-menu-label", className: cn(menuClasses.groupLabel, className), ...props });
+}
+function DropdownMenuItem({ className, ...props }) {
+  return /* @__PURE__ */ jsx15(MenuPrimitive.Item, { "data-slot": "dropdown-menu-item", className: cn(menuClasses.item, "px-3.5", className), ...props });
+}
+function DropdownMenuSeparator({ className, ...props }) {
+  return /* @__PURE__ */ jsx15(MenuPrimitive.Separator, { "data-slot": "dropdown-menu-separator", className: cn(menuClasses.separator, className), ...props });
+}
+
+// src/ui/dialog.jsx
+import * as React4 from "react";
+import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
+import { jsx as jsx16, jsxs as jsxs5 } from "react/jsx-runtime";
+function Dialog({ dismissible = true, onOpenChange, ...props }) {
+  return /* @__PURE__ */ jsx16(
+    DialogPrimitive.Root,
+    {
+      "data-slot": "dialog",
+      disablePointerDismissal: !dismissible,
+      onOpenChange: (next, details) => {
+        if (!dismissible && !next && ["escape-key", "outside-press"].includes(details.reason)) {
+          details.cancel();
+          return;
+        }
+        onOpenChange?.(next, details);
+      },
+      ...props
+    }
+  );
+}
+function DialogTrigger(props) {
+  return /* @__PURE__ */ jsx16(DialogPrimitive.Trigger, { "data-slot": "dialog-trigger", ...props });
+}
+function DialogClose({ className, ...props }) {
+  return /* @__PURE__ */ jsx16(DialogPrimitive.Close, { "data-slot": "dialog-close", className: cn(buttonVariants({ variant: "secondary" }), className), ...props });
+}
+function DialogContent({ className, children, initialFocus, finalFocus, ...props }) {
+  const [origin] = React4.useState(() => typeof document === "undefined" ? null : { current: document.activeElement });
+  return /* @__PURE__ */ jsxs5(DialogPrimitive.Portal, { children: [
+    /* @__PURE__ */ jsx16(DialogPrimitive.Backdrop, { "data-slot": "dialog-overlay", className: "fixed inset-0 z-200 bg-[rgba(38,38,36,.5)]" }),
+    /* @__PURE__ */ jsx16(DialogPrimitive.Viewport, { "data-slot": "dialog-viewport", className: "fixed inset-0 z-201 grid place-items-center overflow-auto overscroll-contain box-border p-5 max-[380.98px]:p-3", children: /* @__PURE__ */ jsx16(
+      DialogPrimitive.Popup,
+      {
+        "data-slot": "dialog-content",
+        initialFocus,
+        finalFocus: finalFocus ?? origin,
+        className: cn(
+          "box-border max-w-full w-[36rem] max-h-[calc(100dvh-40px)] overflow-auto p-panel border-0 rounded-dialog bg-overlay text-ink shadow-overlay font-normal text-body max-[380.98px]:max-h-[calc(100dvh-24px)] max-[380.98px]:p-5",
+          className
+        ),
+        ...props,
+        children
+      }
+    ) })
+  ] });
+}
+function DialogTitle({ className, ...props }) {
+  return /* @__PURE__ */ jsx16(DialogPrimitive.Title, { "data-slot": "dialog-title", className: cn("m-0 mb-3 font-medium text-section leading-[1.2] tracking-[-.025em] wrap-anywhere", className), ...props });
+}
+function DialogDescription({ className, ...props }) {
+  return /* @__PURE__ */ jsx16(DialogPrimitive.Description, { "data-slot": "dialog-description", className: cn("m-0 mb-5 text-ink-secondary", className), ...props });
+}
+function DialogBody({ className, ...props }) {
+  return /* @__PURE__ */ jsx16("div", { "data-slot": "dialog-body", className: cn("min-w-0 wrap-anywhere", className), ...props });
+}
+function DialogFooter({ className, ...props }) {
+  return /* @__PURE__ */ jsx16("div", { "data-slot": "dialog-footer", className: cn("flex flex-wrap items-center justify-end gap-3 mt-6", className), ...props });
+}
+
+// src/ui/combobox.jsx
+import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox";
+import { jsx as jsx17 } from "react/jsx-runtime";
+function Combobox(props) {
+  return /* @__PURE__ */ jsx17(ComboboxPrimitive.Root, { "data-slot": "combobox", ...props });
+}
+function ComboboxInput({ className, ...props }) {
+  return /* @__PURE__ */ jsx17(ComboboxPrimitive.Input, { "data-slot": "combobox-input", className: cn(inputClasses, "placeholder:text-ink-secondary placeholder:opacity-100", className), ...props });
+}
+function ComboboxContent({ className, children, align = "start", sideOffset = 4, ...props }) {
+  return /* @__PURE__ */ jsx17(ComboboxPrimitive.Portal, { children: /* @__PURE__ */ jsx17(ComboboxPrimitive.Positioner, { className: "z-210", align, sideOffset, children: /* @__PURE__ */ jsx17(
+    ComboboxPrimitive.Popup,
+    {
+      "data-slot": "combobox-content",
+      className: cn(menuClasses.popup, "min-w-(--anchor-width) max-w-(--available-width) max-h-[min(360px,var(--available-height))] overflow-y-auto", className),
+      ...props,
+      children
+    }
+  ) }) });
+}
+function ComboboxList(props) {
+  return /* @__PURE__ */ jsx17(ComboboxPrimitive.List, { "data-slot": "combobox-list", ...props });
+}
+function ComboboxItem({ className, ...props }) {
+  return /* @__PURE__ */ jsx17(ComboboxPrimitive.Item, { "data-slot": "combobox-item", className: cn(menuClasses.item, "px-3 data-selected:font-bold", className), ...props });
+}
+function ComboboxEmpty({ className, ...props }) {
+  return /* @__PURE__ */ jsx17(ComboboxPrimitive.Empty, { "data-slot": "combobox-empty", className: cn("px-3 py-2.5 text-ink-secondary empty:hidden", className), ...props });
+}
 export {
   Alert,
   AlertAction,
@@ -502,6 +806,27 @@ export {
   CardHeader,
   CardTitle,
   Checkbox,
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+  Dialog,
+  DialogBody,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
+  DialogTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
   Field,
   FieldDescription,
   FieldError,
@@ -510,6 +835,7 @@ export {
   FieldLabel,
   FieldLegend,
   FieldSet,
+  HelpPopover,
   Input,
   InputGroup,
   InputGroupAddon,
@@ -517,11 +843,27 @@ export {
   NativeSelect,
   NativeSelectOptGroup,
   NativeSelectOption,
+  Popover,
+  PopoverClose,
+  PopoverContent,
+  PopoverDescription,
+  PopoverTitle,
+  PopoverTrigger,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+  Slider,
   Toggle,
   alertVariants,
   badgeVariants,
   buttonVariants,
   cardVariants,
   cn,
+  selectTriggerVariants,
   toggleVariants
 };
