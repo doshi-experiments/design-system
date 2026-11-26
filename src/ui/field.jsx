@@ -57,7 +57,7 @@ function FieldHeading({ className, ...props }) {
   return (
     <div
       data-slot="field-heading"
-      className={cn("flex flex-wrap items-end gap-1 min-h-8 mb-1.5 text-ink-secondary text-[.8125rem] font-semibold", className)}
+      className={cn("flex flex-wrap items-end gap-1 min-h-8 mb-1.5 text-ink-secondary text-[.8125rem] font-semibold *:data-[slot=help-trigger]:size-11 *:data-[slot=help-trigger]:bg-transparent *:data-[slot=help-trigger]:shadow-none *:data-[slot=help-trigger]:-my-1.5", className)}
       {...props}
     />
   )

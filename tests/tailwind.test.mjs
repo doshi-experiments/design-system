@@ -61,13 +61,14 @@ test('the theme generates Felt utilities and nothing from Tailwind or shadcn def
 });
 
 test('every class the components use generates CSS', async () => {
-  const {buttonVariants, toggleVariants, badgeVariants, alertVariants, cardVariants} = await import('../dist/ui.js');
+  const {buttonVariants, toggleVariants, badgeVariants, alertVariants, cardVariants, selectTriggerVariants} = await import('../dist/ui.js');
   const classes = new Set();
   const add = list => list.split(/\s+/).forEach(name => name && classes.add(name));
   for (const variant of ['default', 'secondary', 'primary', 'danger', 'ghost', 'link']) for (const size of ['default', 'small', 'icon']) add(buttonVariants({variant, size}));
   for (const tone of ['default', ...tones]) {add(toggleVariants({tone, size: 'small'})); add(badgeVariants({tone}));}
   for (const tone of tones) add(alertVariants({tone}));
   for (const variant of ['default', 'flat']) add(cardVariants({variant}));
+  for (const variant of ['field', 'quiet']) for (const size of ['default', 'small']) add(selectTriggerVariants({variant, size}));
   const output = await compile([...classes]);
   const missing = [...classes].filter(name => !generates(output, name));
   assert.deepEqual(missing, [], 'unstyled classes');

@@ -18,6 +18,7 @@ await buildTailwindPreview(out);
 await mkdir(shots, {recursive: true});
 
 const types = {'.css': 'text/css', '.js': 'text/javascript', '.woff2': 'font/woff2', '.svg': 'image/svg+xml'};
+// Popups are positioned by Base UI from where their trigger is, so their left and top are not compared.
 const page = query => {
   const css = query.get('set') === 'new' ? 'tailwind-html.css' : 'tailwind.css';
   return `<!doctype html><html lang="en" data-project="finance" data-theme="${query.get('theme')}" data-density="${query.get('density')}" data-texture="off"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/build/${css}"><style>body{margin:0;color:var(--ds-text);background:var(--ds-surface-page)}.parity{display:grid;gap:24px;padding:24px;max-width:640px}.parity-case h2{font-size:12px;margin:0 0 8px}</style><script type="module" src="/build/ui-parity.js"></script></head><body><div id="root"></div></body></html>`;
@@ -82,35 +83,67 @@ try {
     cases = await old.evaluate(() => window.__cases);
     for (const item of cases) {
       const scope = tab => tab.locator(`[data-case="${item.id}"]`);
-      const states = item.target ? ['rest', 'hover', 'focus'] : ['rest'];
+      // A selector starting with @ is a popup part, found in the whole page and measured open.
+      const find = (tab, selector) => selector.startsWith('@') ? tab.locator(selector.slice(1)) : scope(tab).locator(selector);
+      const inline = Object.entries(item.parts).filter(([, [selector]]) => !selector.startsWith('@'));
+      const popup = Object.entries(item.parts).filter(([, [selector]]) => selector.startsWith('@'));
+      const states = [...(inline.length ? item.target ? ['rest', 'hover', 'focus'] : ['rest'] : []), ...(item.open ? ['open'] : [])];
       for (const state of states) {
         const values = {};
+        const parts = state === 'open' ? [...inline, ...popup] : inline;
         for (const [tab, set, index] of [[old, 'old', 0], [next, 'new', 1]]) {
-          if (state !== 'rest') {
+          if (state === 'open') {
+            await scope(tab).locator(item.open[index]).first().click();
+            await find(tab, popup[0][1][index]).first().waitFor();
+            await tab.mouse.move(0, 0); await tab.waitForTimeout(150);
+          } else if (state !== 'rest') {
             const target = scope(tab).locator(item.parts[item.target]?.[index] ?? item.parts.root[index]).first();
             if (state === 'hover') await target.hover(); else await target.focus();
           }
           values[set] = {};
-          for (const [part, selectors] of Object.entries(item.parts)) {
-            const element = scope(tab).locator(selectors[index]).first();
+          for (const [part, selectors] of parts) {
+            const element = find(tab, selectors[index]).first();
             if (!await element.count()) {failures.push(`${label} ${item.id}: ${set} has no ${part} (${selectors[index]})`); continue;}
             values[set][part] = await element.evaluate(measure, properties);
           }
+          if (state === 'open') {
+            await tab.keyboard.press('Escape');
+            await find(tab, popup[0][1][index]).first().waitFor({state: 'hidden'}).catch(() => failures.push(`${label} ${item.id}: ${set} did not close on Escape`));
+          }
           await tab.mouse.move(0, 0); await tab.evaluate(() => document.activeElement?.blur());
+          // Hovering a help key opens its popup; let it close before the next measurement.
+          await tab.waitForTimeout(state === 'hover' ? 400 : 0);
         }
-        for (const part of Object.keys(item.parts)) {
+        if (values.old.range && values.old.track) for (const set of ['old', 'new']) values[set].range.share = (values[set].range.width / values[set].track.width).toFixed(3);
+        for (const [part] of parts) {
           const a = values.old[part], b = values.new[part];
           if (!a || !b) continue;
-          const differences = Object.keys(a).filter(key => a[key] !== b[key]).map(key => `${key}: ${a[key]} → ${b[key]}`);
+          const ignored = item.ignore?.[part] ?? [];
+          const differences = Object.keys(a).filter(key => a[key] !== b[key] && !ignored.includes(key)).map(key => `${key}: ${a[key]} → ${b[key]}`);
           if (differences.length) failures.push(`${label} ${item.id} ${part} ${state}\n    ${differences.join('\n    ')}`);
           checks++;
         }
       }
+      if (item.pixels === false) continue;
       const [a, b] = [await scope(old).screenshot({animations: 'disabled'}), await scope(next).screenshot({animations: 'disabled'})];
       const pixels = await compare(next, a, b);
       if (pixels.size || pixels.changed) failures.push(`${label} ${item.id}: pixels differ ${JSON.stringify(pixels)}`);
       checks++;
     }
+    // Combobox: typing filters, Enter takes the highlighted match, and no match says so.
+    const combo = next.getByLabel('Category', {exact: true});
+    await combo.fill('fu');
+    const shown = await next.locator('[data-slot=combobox-item]').allTextContents();
+    if (JSON.stringify(shown) !== '["Fuel"]') failures.push(`${label} combobox: "fu" shows ${JSON.stringify(shown)}`);
+    const look = await next.locator('[data-slot=combobox-content]').evaluate(el => {const s = getComputedStyle(el); return [s.backgroundColor, s.boxShadow !== 'none', s.borderTopLeftRadius].join(' ');});
+    const menu = await next.evaluate(() => {const probe = Object.assign(document.createElement('div'), {className: 'bg-overlay rounded-control'}); document.body.append(probe); const s = getComputedStyle(probe); const out = [s.backgroundColor, true, s.borderTopLeftRadius].join(' '); probe.remove(); return out;});
+    if (look !== menu) failures.push(`${label} combobox: popup draws ${look}, not the felt menu ${menu}`);
+    await next.keyboard.press('Enter');
+    if (await next.locator('#combobox-value').textContent() !== 'fuel') failures.push(`${label} combobox: Enter did not choose Fuel`);
+    await combo.fill('zz');
+    if (!await next.getByText('No matches.').isVisible()) failures.push(`${label} combobox: no empty message`);
+    await next.keyboard.press('Escape'); await combo.blur();
+    checks += 4;
     await old.screenshot({path: join(shots, `${setting.theme}-${setting.width}-${setting.density}-old.png`), fullPage: true});
     await next.screenshot({path: join(shots, `${setting.theme}-${setting.width}-${setting.density}-new.png`), fullPage: true});
     await old.close(); await next.close();

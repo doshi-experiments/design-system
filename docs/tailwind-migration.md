@@ -7,7 +7,8 @@ visualizations and Mr. Shake, is merged and live (22 November). 0.10.2 adds what
 after wave 1 asked for: the Button's secondary, link and icon, `ds-button` and `ds-chip` for
 plain HTML, Felt's breakpoints, and card sections and titles. Mr. Shake's and the visualizations'
 own controls move onto `/ui` in wave 2. Wave 2 began with 0.11.0: Toggle, the field family,
-Input, Input Group, Native Select, Checkbox, Card, Badge and Alert.
+Input, Input Group, Native Select, Checkbox, Card, Badge and Alert; 0.12.0 adds Popover (and
+HelpPopover), Slider, Select, Dropdown Menu, Dialog and Combobox.
 
 Every app moves onto Tailwind CSS v4, with React components that follow shadcn's
 structure on Base UI. Felt stays exactly as it is: same tokens, same surfaces, same

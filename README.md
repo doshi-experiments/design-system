@@ -1,6 +1,6 @@
 # Doshi design system
 
-Version 0.11.0 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation underlines the current page; the labeled System / Light / Dark appearance control is unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. From 0.10.0 the same identity also ships for Tailwind CSS v4 (`tailwind.css`, generated from `src/tailwind-theme.js`) with components in shadcn's structure on Base UI (`src/ui/`, exported as `/ui`); see [the migration plan](docs/tailwind-migration.md). Generated assets must not be edited in consuming repos.
+Version 0.12.0 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation underlines the current page; the labeled System / Light / Dark appearance control is unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. From 0.10.0 the same identity also ships for Tailwind CSS v4 (`tailwind.css`, generated from `src/tailwind-theme.js`) with components in shadcn's structure on Base UI (`src/ui/`, exported as `/ui`); see [the migration plan](docs/tailwind-migration.md). Generated assets must not be edited in consuming repos.
 
 ```sh
 npm run build
@@ -28,7 +28,7 @@ import '@doshi-experiments/design-system/tokens.css';
 import '@doshi-experiments/design-system/components.css';
 ```
 
-Deprecated since 0.11.0, and removed at 1.0: `ToggleButton`, `Badge`, `Alert`, `Card`, `CardTitle`, `TextField`, `SelectField`, `CheckboxField`, `FieldGroup` and `NumericField`'s markup, with their `ds-*` classes. Use `/ui`'s `Toggle`, `Badge`, `Alert`, `Card`, `CardTitle`, `Field` with `Input`, `NativeSelect` or `Checkbox`, and `FieldSet` with `FieldGroup`.
+Deprecated since 0.11.0, and removed at 1.0: `ToggleButton`, `Badge`, `Alert`, `Card`, `CardTitle`, `TextField`, `SelectField`, `CheckboxField`, `FieldGroup` and `NumericField`'s markup, with their `ds-*` classes. Use `/ui`'s `Toggle`, `Badge`, `Alert`, `Card`, `CardTitle`, `Field` with `Input`, `NativeSelect` or `Checkbox`, and `FieldSet` with `FieldGroup`. Deprecated since 0.12.0: `HelpPopover`, `RangeField`'s slider, `Select`, `MenuButton` and `Dialog`; use `/ui`'s `HelpPopover`, `Slider`, `Select`, `DropdownMenu` and `Dialog`.
 
 React consumers also install React, React DOM and `@base-ui/react`. They are optional peer dependencies so static consumers need none of them. `Button` preserves native disabled semantics and locks during loading. `HelpPopover` uses Base UI focus/dismissal behavior and a portaled, fixed positioner. These are app-owned initial recipes over the Base UI foundation selected for shadcn; this release does not claim to contain the full shadcn component catalogue.
 
@@ -59,7 +59,7 @@ import {Button, Card, CardTitle, Field, FieldLabel, Input, cn} from '@doshi-expe
 </Field>
 ```
 
-A numeric field puts `FieldLabel variant="heading"` in a `FieldHeading` and its input in an `InputGroup` with `InputGroupAddon` prefixes or suffixes; fields in a `FieldGroup` share rows so their inputs line up. Hide a label with `sr-only`. `Checkbox` stays the browser's own 20px box in the signal, and `NativeSelect` keeps the browser's arrow.
+A numeric field puts `FieldLabel variant="heading"` in a `FieldHeading` and its input in an `InputGroup` with `InputGroupAddon` prefixes or suffixes; fields in a `FieldGroup` share rows so their inputs line up. Hide a label with `sr-only`. `Checkbox` stays the browser's own 20px box in the signal, and `NativeSelect` keeps the browser's arrow. From 0.12, `/ui` also holds the popups: `HelpPopover` (and `Popover` with `PopoverTrigger`, `PopoverContent`, `PopoverTitle`, `PopoverDescription`, `PopoverClose`), `Slider`, `Select` (with `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectItem`, `SelectGroup`, `SelectLabel`, `SelectSeparator`), `DropdownMenu` (with `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuGroup`, `DropdownMenuLabel`, `DropdownMenuSeparator`), `Dialog` (with `DialogTrigger`, `DialogContent`, `DialogTitle`, `DialogDescription`, `DialogBody`, `DialogFooter`, `DialogClose`) and `Combobox` (with `ComboboxInput`, `ComboboxContent`, `ComboboxList`, `ComboboxItem`, `ComboboxEmpty`). Popups render in a portal: help popovers at z-index 100, dialogs at 200 and 201, and select, menu and combobox popups at 210, above dialogs.
 
 `tailwind.css` brings `tokens.css` with it and declares `@source "./ui.js"`, so the shared components' classes are generated without any app config. Its theme points every utility at the `--ds-*` tokens (`bg-raised`, `text-ink`, `text-caption`, `rounded-pill`, `shadow-raised`, `min-h-target`, `p-panel`, `max-w-measure`), so colours switch with `data-theme` and sizes with `data-density` without a `dark:` variant. Tailwind's default palette, type sizes, radii and shadows are cleared: shadcn's `bg-primary` or `text-sm` generate nothing. Felt's surfaces are utilities: `raised`, `pressed`, `stitched` (on a positioned element), `stitch-rule`, `fibre`, the `signal` fill (with `hover:signal-hover` and `active:signal-pressed`), `signal-solid`, `accent-signal`, `action-link` for signal-coloured text, and `tone-success|warning|error|info` pairs. There is deliberately no signal or status text colour. Variants: `dark:` (for what differs by more than colour, such as the fibre) and `comfortable:`, `compact:` and `game:` for the root's density. Breakpoints are Felt's, not Tailwind's: `xs` 380px, `sm` 640px, `md` 800px, `lg` 1024px and `xl` 1240px (`2xl` is gone). `cn()` merges classes with tailwind-merge taught Felt's names.
 
@@ -498,4 +498,35 @@ draws differently; apps adopt them in their own pull requests.
   case by pixel, in light and dark, at 390px and 1440px, at comfortable and game density.
 - `identity.md` now lists the shared components' small type accurately: 13px labels,
   affixes and chips, 12px hints and 11px badges.
+
+## Popovers, slider, select, menus, dialogs and a combobox in /ui (0.12.0)
+
+The second wave 2 release: the shared popups as shadcn components on Base UI, restyled to
+Felt. Nothing already in use draws differently.
+
+- New in `/ui`: `Popover` and the Felt `HelpPopover` built on it, which keeps `/react`'s
+  behaviour: it opens on hover, tap or keyboard focus, closes on Escape or an outside
+  press, and returns focus to its key without reopening. Inside `FieldHeading` the key
+  loses its surface.
+- `Slider`: the signal track and white-rimmed thumb, with a 44px control row and a ring on
+  the thumb whose hidden input has focus.
+- `Select`: one felt popup in place of the operating system's sheet, `variant="quiet"` and
+  `size="small"`, groups with labels and the signal check on the chosen option. Give
+  `Select` an `items` list so `SelectValue` shows labels.
+- `DropdownMenu`: a button with a chevron that stays pressed in while its menu is open,
+  with items, groups and stitched separators.
+- `Dialog`: the dimmed backdrop and felt card, with `dismissible={false}` for a decision
+  that must be made, and focus returned to whatever had it when the dialog opened, even
+  without a trigger. `DialogClose` is the secondary button; `DialogFooter` aligns actions
+  right.
+- `Combobox` is new to the shared system: the text field's well with the select's popup.
+  It replaces Finance's local category picker.
+- Deprecated for 1.0: `/react`'s `HelpPopover`, `RangeField`'s slider, `Select`,
+  `MenuButton` and `Dialog`.
+- `check-ui.mjs` now opens popups: a case can name a trigger to click, and parts starting
+  with `@` are found in the whole page, measured open and closed again with Escape. It
+  adds help keys (alone and in a field heading), the slider, select (field, small, quiet
+  and small, open with groups), the menu (closed and open) and the dialog (open), and
+  drives the combobox: typing filters, Enter takes the match, no match says so. With
+  0.11's cases that is 33 cases and 1913 checks.
 
