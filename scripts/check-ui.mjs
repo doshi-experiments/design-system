@@ -20,7 +20,7 @@ await mkdir(shots, {recursive: true});
 const types = {'.css': 'text/css', '.js': 'text/javascript', '.woff2': 'font/woff2', '.svg': 'image/svg+xml'};
 // Popups are positioned by Base UI from where their trigger is, so their left and top are not compared.
 const page = query => {
-  const css = query.get('set') === 'new' ? 'tailwind-html.css' : 'tailwind.css';
+  const css = query.get('set') === 'new' ? 'ui-html.css' : 'tailwind.css';
   return `<!doctype html><html lang="en" data-project="finance" data-theme="${query.get('theme')}" data-density="${query.get('density')}" data-texture="off"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/build/${css}"><style>body{margin:0;color:var(--ds-text);background:var(--ds-surface-page)}.parity{display:grid;gap:24px;padding:24px;max-width:640px}.parity-case h2{font-size:12px;margin:0 0 8px}</style><script type="module" src="/build/ui-parity.js"></script></head><body><div id="root"></div></body></html>`;
 };
 const server = createServer(async (req, res) => {
@@ -114,7 +114,6 @@ try {
           // Hovering a help key opens its popup; let it close before the next measurement.
           await tab.waitForTimeout(state === 'hover' ? 400 : 0);
         }
-        if (values.old.range && values.old.track) for (const set of ['old', 'new']) values[set].range.share = (values[set].range.width / values[set].track.width).toFixed(3);
         for (const [part] of parts) {
           const a = values.old[part], b = values.new[part];
           if (!a || !b) continue;
@@ -125,7 +124,11 @@ try {
         }
       }
       if (item.pixels === false) continue;
-      const [a, b] = [await scope(old).screenshot({animations: 'disabled'}), await scope(next).screenshot({animations: 'disabled'})];
+      // A busy machine can stall one screenshot; a second try tells that apart from a real problem.
+      const capture = tab => scope(tab).screenshot({animations: 'disabled', timeout: 15000});
+      const shot = async (tab, set) => capture(tab).catch(() => capture(tab)).catch(error => {failures.push(`${label} ${item.id}: no ${set} screenshot (${error.message.split('\n')[0]})`); return null;});
+      const [a, b] = [await shot(old, 'old'), await shot(next, 'new')];
+      if (!a || !b) continue;
       const pixels = await compare(next, a, b);
       if (pixels.size || pixels.changed) failures.push(`${label} ${item.id}: pixels differ ${JSON.stringify(pixels)}`);
       checks++;

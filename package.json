@@ -1,6 +1,6 @@
 {
   "name": "@doshi-experiments/design-system",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "private": true,
   "type": "module",
   "files": [
@@ -14,6 +14,7 @@
     "./tokens.json": "./dist/tokens.json",
     "./react": "./dist/react.js",
     "./ui": "./dist/ui.js",
+    "./ui/table": "./dist/ui-table.js",
     "./components.css": "./dist/components.css",
     "./tailwind.css": {
       "style": "./dist/tailwind.css",

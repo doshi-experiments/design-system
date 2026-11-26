@@ -5,6 +5,8 @@ import * as React from 'react'
 import {createRoot} from 'react-dom/client'
 import * as Old from '../dist/react.js'
 import * as New from '../dist/ui.js'
+import {EditableTable as OldEditableTable} from '../dist/table.js'
+import {EditableTable as NewEditableTable} from '../dist/ui-table.js'
 
 const plain = () => {}
 const options = [{value: 'monthly', label: 'Monthly'}, {value: 'yearly', label: 'Yearly'}]
@@ -106,6 +108,13 @@ const cases = [
       <New.FieldDescription role="status" data-warning="">Enter a number up to 100.</New.FieldDescription></New.Field>},
 ]
 
+const rows = [{id: 'first', description: 'Market', category: 'food'}, {id: 'second', description: 'Bus', category: 'travel'}]
+const oldColumns = [{accessorKey: 'description', header: 'Description'}, {accessorKey: 'category', header: 'Category',
+  cell: ({row, getValue}) => <Old.SelectField label={`Category for ${row.original.description}`} hideLabel value={getValue()} options={options} onValueChange={plain} />}]
+const newColumns = [{accessorKey: 'description', header: 'Description'}, {accessorKey: 'category', header: 'Category',
+  cell: ({row, getValue}) => <New.Field><New.FieldLabel htmlFor={`n-cat-${row.id}`} className="sr-only">{`Category for ${row.original.description}`}</New.FieldLabel>
+    <New.NativeSelect id={`n-cat-${row.id}`} value={getValue()} onChange={plain}>{options.map(o => <New.NativeSelectOption key={o.value} value={o.value}>{o.label}</New.NativeSelectOption>)}</New.NativeSelect></New.Field>}]
+
 // 0.12: popups. open names the trigger to click; parts starting with @ are found in the
 // whole document, because popups render in a portal.
 const groups = [{label: 'More', options: [{value: 'weekly', label: 'Weekly'}]}]
@@ -184,11 +193,34 @@ cases.push(
       title: ['@.ds-dialog-title', '@[data-slot=dialog-title]'], description: ['@.ds-dialog-description', '@[data-slot=dialog-description]'], body: ['@.ds-dialog-content', '@[data-slot=dialog-body]'],
       footer: ['@.ds-dialog-actions', '@[data-slot=dialog-footer]'], cancel: ['@.ds-dialog-actions > .ds-button:first-child', '@[data-slot=dialog-close]']},
     old: <OldDialogCase />, new: <NewDialogCase />},
+  // 0.13: tables and the empty state.
+  {id: 'table', target: 'row',
+    parts: {scroll: ['.ds-table-scroll', '[data-slot=table-container]'], table: ['table', 'table'], head: ['th', 'th'], cell: ['td', 'td'],
+      wrap: ['td.ds-table-wrap', 'td.whitespace-normal'], row: ['tbody tr', 'tbody tr']},
+    old: <Old.DataTable aria-label="Imports"><thead><tr><th>Date</th><th>Description</th><th>Amount</th></tr></thead>
+      <tbody><tr><td>2026-01-04</td><td className="ds-table-wrap">A long description that wraps onto a second line when the column is narrow</td><td>$12.40</td></tr>
+        <tr><td>2026-01-05</td><td className="ds-table-wrap">Short</td><td>$3.10</td></tr></tbody></Old.DataTable>,
+    new: <New.Table aria-label="Imports"><New.TableHeader><New.TableRow><New.TableHead>Date</New.TableHead><New.TableHead>Description</New.TableHead><New.TableHead>Amount</New.TableHead></New.TableRow></New.TableHeader>
+      <New.TableBody><New.TableRow><New.TableCell>2026-01-04</New.TableCell><New.TableCell className="whitespace-normal wrap-break-word">A long description that wraps onto a second line when the column is narrow</New.TableCell><New.TableCell>$12.40</New.TableCell></New.TableRow>
+        <New.TableRow><New.TableCell>2026-01-05</New.TableCell><New.TableCell className="whitespace-normal wrap-break-word">Short</New.TableCell><New.TableCell>$3.10</New.TableCell></New.TableRow></New.TableBody></New.Table>},
+  {id: 'table-in-card', parts: {scroll: ['.ds-table-scroll', '[data-slot=table-container]']},
+    old: <Old.Card><Old.DataTable aria-label="Totals"><tbody><tr><td>Total</td><td>$15.50</td></tr></tbody></Old.DataTable></Old.Card>,
+    new: <New.Card><New.Table aria-label="Totals"><New.TableBody><New.TableRow><New.TableCell>Total</New.TableCell><New.TableCell>$15.50</New.TableCell></New.TableRow></New.TableBody></New.Table></New.Card>},
+  {id: 'editable-table', target: 'row',
+    parts: {scroll: ['.ds-table-scroll', '[data-slot=table-container]'], table: ['table', 'table'], caption: ['caption', 'caption'], head: ['th', 'th'], cell: ['td', 'td'],
+      field: ['.ds-field', '[data-slot=field]'], label: ['.ds-field-label', '[data-slot=field-label]'], row: ['tbody tr', 'tbody tr']},
+    old: <OldEditableTable data={rows} columns={oldColumns} getRowId={row => row.id} caption="Editable categories" label="Review items" />,
+    new: <NewEditableTable data={rows} columns={newColumns} getRowId={row => row.id} caption="Editable categories" label="Review items" />},
+  {id: 'editable-table-empty', parts: {empty: ['td', 'td']},
+    old: <OldEditableTable data={[]} columns={oldColumns} label="Review items" emptyMessage="Nothing to review." />,
+    new: <NewEditableTable data={[]} columns={newColumns} label="Review items" emptyMessage="Nothing to review." />},
+  {id: 'empty', parts: {root: ['.ds-empty-state', '[data-slot=empty]'], title: ['h2', 'h2'], description: ['p', 'p'], actions: ['.ds-actions', '[data-slot=empty-content]']},
+    old: <Old.EmptyState title="All caught up" description="No other items need review." actions={<Old.Button>Import more</Old.Button>} />,
+    new: <New.Empty><New.EmptyTitle>All caught up</New.EmptyTitle><New.EmptyDescription>No other items need review.</New.EmptyDescription>
+      <New.EmptyContent><New.Button>Import more</New.Button></New.EmptyContent></New.Empty>},
   // Last of the compared cases: the old RangeField also draws its number field, so the cases' heights
   // differ, and anything after would sit at a different sub-pixel offset.
-  // Widths follow the layout around the slider; the range's share of the track is compared by its
-  // width relative to the track instead.
-  {id: 'slider', target: 'thumb', pixels: false, ignore: {control: ['width'], track: ['width'], range: ['width']},
+  {id: 'slider', target: 'thumb', pixels: false,
     parts: {control: ['.ds-slider-control', '[data-slot=slider-control]'], track: ['.ds-slider-track', '[data-slot=slider-track]'],
       range: ['.ds-slider-indicator', '[data-slot=slider-range]'], thumb: ['.ds-slider-thumb', '[data-slot=slider-thumb]']},
     old: <Old.RangeField label="How long you stay" value="10" min={1} max={30} onValueChange={plain} suffix="yr" />,

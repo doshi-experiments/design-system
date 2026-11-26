@@ -17,3 +17,5 @@ export {Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSepar
 export {DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger} from './dropdown-menu.jsx'
 export {Dialog, DialogBody, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger} from './dialog.jsx'
 export {Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList} from './combobox.jsx'
+export {Table, TableHeader, TableBody, TableFooter, TableRow, TableHead, TableCell, TableCaption, TableEmpty} from './table.jsx'
+export {Empty, EmptyTitle, EmptyDescription, EmptyContent} from './empty.jsx'

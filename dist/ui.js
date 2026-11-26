@@ -355,7 +355,7 @@ function FieldHeading({ className, ...props }) {
 var fieldLabelVariants = cva6("", {
   variants: {
     variant: {
-      default: "block m-0 mb-1.5 text-ink-secondary font-semibold text-caption",
+      default: "block m-0 mb-1.5 text-ink-secondary font-semibold text-caption normal-nums",
       // Inside FieldHeading, which sets the type.
       heading: "flex-1 min-w-0",
       // Wraps a Checkbox: the whole 44px row is the target. A label hidden with sr-only keeps
@@ -791,6 +791,66 @@ function ComboboxItem({ className, ...props }) {
 function ComboboxEmpty({ className, ...props }) {
   return /* @__PURE__ */ jsx17(ComboboxPrimitive.Empty, { "data-slot": "combobox-empty", className: cn("px-3 py-2.5 text-ink-secondary empty:hidden", className), ...props });
 }
+
+// src/ui/table.jsx
+import { jsx as jsx18 } from "react/jsx-runtime";
+function Table({ className, label = "Results table", maxHeight, containerClassName, ...props }) {
+  return /* @__PURE__ */ jsx18(
+    "div",
+    {
+      "data-slot": "table-container",
+      tabIndex: 0,
+      role: "region",
+      "aria-label": props["aria-label"] || label,
+      style: maxHeight ? { maxHeight } : void 0,
+      className: cn(
+        "max-w-full overflow-auto border-0 rounded-container bg-raised shadow-raised in-data-[slot=card]:rounded-control focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-focus",
+        containerClassName
+      ),
+      children: /* @__PURE__ */ jsx18("table", { "data-slot": "table", className: cn("w-full border-collapse font-normal text-caption leading-[1.5] tabular-nums", className), ...props })
+    }
+  );
+}
+function TableHeader(props) {
+  return /* @__PURE__ */ jsx18("thead", { "data-slot": "table-header", ...props });
+}
+function TableBody({ className, ...props }) {
+  return /* @__PURE__ */ jsx18("tbody", { "data-slot": "table-body", className: cn("[&>tr:hover]:bg-selection", className), ...props });
+}
+function TableFooter(props) {
+  return /* @__PURE__ */ jsx18("tfoot", { "data-slot": "table-footer", ...props });
+}
+function TableRow(props) {
+  return /* @__PURE__ */ jsx18("tr", { "data-slot": "table-row", ...props });
+}
+var cellClasses = "px-4 py-3 border-b-[1.5px] border-dashed border-stitch whitespace-nowrap";
+function TableHead({ className, ...props }) {
+  return /* @__PURE__ */ jsx18("th", { "data-slot": "table-head", className: cn(cellClasses, "sticky top-0 bg-raised font-semibold text-ink-secondary text-left", className), ...props });
+}
+function TableCell({ className, ...props }) {
+  return /* @__PURE__ */ jsx18("td", { "data-slot": "table-cell", className: cn(cellClasses, className), ...props });
+}
+function TableCaption({ className, ...props }) {
+  return /* @__PURE__ */ jsx18("caption", { "data-slot": "table-caption", className: cn("p-4 text-left text-ink-secondary", className), ...props });
+}
+function TableEmpty({ className, colSpan = 1, children = "No rows to show.", ...props }) {
+  return /* @__PURE__ */ jsx18(TableRow, { children: /* @__PURE__ */ jsx18(TableCell, { colSpan, className: cn("whitespace-normal text-center px-5 py-8 text-ink-secondary", className), ...props, children }) });
+}
+
+// src/ui/empty.jsx
+import { jsx as jsx19 } from "react/jsx-runtime";
+function Empty({ className, ...props }) {
+  return /* @__PURE__ */ jsx19("div", { "data-slot": "empty", className: cn("px-5 py-8 text-left text-ink font-sans", className), ...props });
+}
+function EmptyTitle({ className, ...props }) {
+  return /* @__PURE__ */ jsx19("h2", { "data-slot": "empty-title", className: cn("m-0 mb-3 text-[1.25rem]", className), ...props });
+}
+function EmptyDescription({ className, ...props }) {
+  return /* @__PURE__ */ jsx19("p", { "data-slot": "empty-description", className: cn("max-w-measure m-0 mb-5 text-ink-secondary leading-[1.6]", className), ...props });
+}
+function EmptyContent({ className, ...props }) {
+  return /* @__PURE__ */ jsx19("div", { "data-slot": "empty-content", className: cn("flex flex-wrap items-center justify-start gap-3", className), ...props });
+}
 export {
   Alert,
   AlertAction,
@@ -827,6 +887,10 @@ export {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyTitle,
   Field,
   FieldDescription,
   FieldError,
@@ -858,6 +922,15 @@ export {
   SelectTrigger,
   SelectValue,
   Slider,
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableEmpty,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
   Toggle,
   alertVariants,
   badgeVariants,
