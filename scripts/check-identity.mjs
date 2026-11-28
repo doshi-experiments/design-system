@@ -66,7 +66,7 @@ try {
    assert.equal(await nav.getByRole('link',{name:'Home',exact:true}).isVisible(),true);
    assert.equal(await appearance.isVisible(),true);
    const headerOverlap=await nav.evaluate(element=>{
-    const a=element.getBoundingClientRect(),b=element.closest('.ds-site-header').querySelector('.ds-appearance').getBoundingClientRect();
+    const a=element.getBoundingClientRect(),b=element.closest('header').querySelector('.ds-appearance, [data-slot=appearance]').getBoundingClientRect();
     return a.left<b.right && a.right>b.left && a.top<b.bottom && a.bottom>b.top;
    });
    assert.equal(headerOverlap,false,`${name}/${width}/${mode}: navigation must not overlap appearance`);
