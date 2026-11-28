@@ -21,13 +21,13 @@ try {
    const more = players.getByRole('button', {name:'More players', exact:true});
    for (let i=0;i<20 && await fewer.isEnabled();i++) await fewer.click();
    assert.equal(await fewer.isDisabled(),true);
-   assert.equal((await players.locator('.ds-stepper-value').innerText()).trim().split('\n')[0],'3');
+   assert.equal((await players.locator('.ds-stepper-value, [data-slot=number-stepper-value]').innerText()).trim().split('\n')[0],'3');
    for (let i=0;i<20 && await more.isEnabled();i++) await more.click();
    assert.equal(await more.isDisabled(),true);
-   assert.equal((await players.locator('.ds-stepper-value').innerText()).trim().split('\n')[0],'20');
+   assert.equal((await players.locator('.ds-stepper-value, [data-slot=number-stepper-value]').innerText()).trim().split('\n')[0],'20');
    for (let i=0;i<14;i++) await fewer.click();
    await more.focus(); await page.keyboard.press('Enter');
-   assert.equal((await players.locator('.ds-stepper-value').innerText()).trim().split('\n')[0],'7');
+   assert.equal((await players.locator('.ds-stepper-value, [data-slot=number-stepper-value]').innerText()).trim().split('\n')[0],'7');
    await fewer.click();
    await page.getByLabel('Name of player 1',{exact:true}).fill('Alex');
    await page.getByRole('button',{name:'Deal the words',exact:true}).click();
