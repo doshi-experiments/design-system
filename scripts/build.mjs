@@ -34,6 +34,11 @@ for (const file of ['react.js','table.js','components.css','metadata.js','site.j
 await writeFile(new URL('tailwind.css', out), tailwindCss());
 await build({absWorkingDir:new URL('../', import.meta.url).pathname, entryPoints:[new URL('../src/ui/index.js', import.meta.url).pathname], outfile:new URL('ui.js', out).pathname, bundle:true, format:'esm', jsx:'automatic', target:'es2020',
   external:['react','react/jsx-runtime','@base-ui/react','@base-ui/react/*','class-variance-authority','clsx','tailwind-merge'], legalComments:'none', logLevel:'warning'});
+// 0.13: /ui/table, the TanStack table on /ui's Table. It is its own file because TanStack is an
+// optional peer dependency, and it imports the shared pieces from ui.js rather than copying them.
+const fromUi = {name:'from-ui', setup(build) {build.onResolve({filter:/^@\/ui\//}, () => ({path:'./ui.js', external:true}));}};
+await build({absWorkingDir:new URL('../', import.meta.url).pathname, entryPoints:[new URL('../src/ui/editable-table.jsx', import.meta.url).pathname], outfile:new URL('ui-table.js', out).pathname, bundle:true, format:'esm', jsx:'automatic', target:'es2020',
+  plugins:[fromUi], external:['react','react/jsx-runtime','@tanstack/react-table'], legalComments:'none', logLevel:'warning'});
 
 await mkdir(new URL('fonts/', out), {recursive:true});
 for (const file of ['host-grotesk-latin.woff2','host-grotesk-latin-ext.woff2','host-grotesk-OFL.txt','host-grotesk-source.txt']) await copyFile(new URL(`../src/fonts/${file}`, import.meta.url), new URL(`fonts/${file}`, out));

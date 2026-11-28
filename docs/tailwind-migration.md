@@ -8,7 +8,8 @@ after wave 1 asked for: the Button's secondary, link and icon, `ds-button` and `
 plain HTML, Felt's breakpoints, and card sections and titles. Mr. Shake's and the visualizations'
 own controls move onto `/ui` in wave 2. Wave 2 began with 0.11.0: Toggle, the field family,
 Input, Input Group, Native Select, Checkbox, Card, Badge and Alert; 0.12.0 adds Popover (and
-HelpPopover), Slider, Select, Dropdown Menu, Dialog and Combobox.
+HelpPopover), Slider, Select, Dropdown Menu, Dialog and Combobox; 0.13.0 adds Table, Empty and
+`/ui/table`'s EditableTable, which completes the component list. The apps move next.
 
 Every app moves onto Tailwind CSS v4, with React components that follow shadcn's
 structure on Base UI. Felt stays exactly as it is: same tokens, same surfaces, same

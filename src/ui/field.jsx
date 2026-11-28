@@ -66,7 +66,7 @@ function FieldHeading({ className, ...props }) {
 const fieldLabelVariants = cva("", {
   variants: {
     variant: {
-      default: "block m-0 mb-1.5 text-ink-secondary font-semibold text-caption",
+      default: "block m-0 mb-1.5 text-ink-secondary font-semibold text-caption normal-nums",
       // Inside FieldHeading, which sets the type.
       heading: "flex-1 min-w-0",
       // Wraps a Checkbox: the whole 44px row is the target. A label hidden with sr-only keeps

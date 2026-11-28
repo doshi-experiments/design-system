@@ -1,6 +1,6 @@
 # Doshi design system
 
-Version 0.12.0 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation underlines the current page; the labeled System / Light / Dark appearance control is unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. From 0.10.0 the same identity also ships for Tailwind CSS v4 (`tailwind.css`, generated from `src/tailwind-theme.js`) with components in shadcn's structure on Base UI (`src/ui/`, exported as `/ui`); see [the migration plan](docs/tailwind-migration.md). Generated assets must not be edited in consuming repos.
+Version 0.13.0 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation underlines the current page; the labeled System / Light / Dark appearance control is unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. From 0.10.0 the same identity also ships for Tailwind CSS v4 (`tailwind.css`, generated from `src/tailwind-theme.js`) with components in shadcn's structure on Base UI (`src/ui/`, exported as `/ui`); see [the migration plan](docs/tailwind-migration.md). Generated assets must not be edited in consuming repos.
 
 ```sh
 npm run build
@@ -28,7 +28,7 @@ import '@doshi-experiments/design-system/tokens.css';
 import '@doshi-experiments/design-system/components.css';
 ```
 
-Deprecated since 0.11.0, and removed at 1.0: `ToggleButton`, `Badge`, `Alert`, `Card`, `CardTitle`, `TextField`, `SelectField`, `CheckboxField`, `FieldGroup` and `NumericField`'s markup, with their `ds-*` classes. Use `/ui`'s `Toggle`, `Badge`, `Alert`, `Card`, `CardTitle`, `Field` with `Input`, `NativeSelect` or `Checkbox`, and `FieldSet` with `FieldGroup`. Deprecated since 0.12.0: `HelpPopover`, `RangeField`'s slider, `Select`, `MenuButton` and `Dialog`; use `/ui`'s `HelpPopover`, `Slider`, `Select`, `DropdownMenu` and `Dialog`.
+Deprecated since 0.11.0, and removed at 1.0: `ToggleButton`, `Badge`, `Alert`, `Card`, `CardTitle`, `TextField`, `SelectField`, `CheckboxField`, `FieldGroup` and `NumericField`'s markup, with their `ds-*` classes. Use `/ui`'s `Toggle`, `Badge`, `Alert`, `Card`, `CardTitle`, `Field` with `Input`, `NativeSelect` or `Checkbox`, and `FieldSet` with `FieldGroup`. Deprecated since 0.12.0: `HelpPopover`, `RangeField`'s slider, `Select`, `MenuButton` and `Dialog`; use `/ui`'s `HelpPopover`, `Slider`, `Select`, `DropdownMenu` and `Dialog`. Deprecated since 0.13.0: `DataTable`, `EmptyState` and `/table`'s `EditableTable`; use `/ui`'s `Table` and `Empty`, and `/ui/table`'s `EditableTable`.
 
 React consumers also install React, React DOM and `@base-ui/react`. They are optional peer dependencies so static consumers need none of them. `Button` preserves native disabled semantics and locks during loading. `HelpPopover` uses Base UI focus/dismissal behavior and a portaled, fixed positioner. These are app-owned initial recipes over the Base UI foundation selected for shadcn; this release does not claim to contain the full shadcn component catalogue.
 
@@ -59,7 +59,7 @@ import {Button, Card, CardTitle, Field, FieldLabel, Input, cn} from '@doshi-expe
 </Field>
 ```
 
-A numeric field puts `FieldLabel variant="heading"` in a `FieldHeading` and its input in an `InputGroup` with `InputGroupAddon` prefixes or suffixes; fields in a `FieldGroup` share rows so their inputs line up. Hide a label with `sr-only`. `Checkbox` stays the browser's own 20px box in the signal, and `NativeSelect` keeps the browser's arrow. From 0.12, `/ui` also holds the popups: `HelpPopover` (and `Popover` with `PopoverTrigger`, `PopoverContent`, `PopoverTitle`, `PopoverDescription`, `PopoverClose`), `Slider`, `Select` (with `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectItem`, `SelectGroup`, `SelectLabel`, `SelectSeparator`), `DropdownMenu` (with `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuGroup`, `DropdownMenuLabel`, `DropdownMenuSeparator`), `Dialog` (with `DialogTrigger`, `DialogContent`, `DialogTitle`, `DialogDescription`, `DialogBody`, `DialogFooter`, `DialogClose`) and `Combobox` (with `ComboboxInput`, `ComboboxContent`, `ComboboxList`, `ComboboxItem`, `ComboboxEmpty`). Popups render in a portal: help popovers at z-index 100, dialogs at 200 and 201, and select, menu and combobox popups at 210, above dialogs.
+A numeric field puts `FieldLabel variant="heading"` in a `FieldHeading` and its input in an `InputGroup` with `InputGroupAddon` prefixes or suffixes; fields in a `FieldGroup` share rows so their inputs line up. Hide a label with `sr-only`. `Checkbox` stays the browser's own 20px box in the signal, and `NativeSelect` keeps the browser's arrow. From 0.12, `/ui` also holds the popups: `HelpPopover` (and `Popover` with `PopoverTrigger`, `PopoverContent`, `PopoverTitle`, `PopoverDescription`, `PopoverClose`), `Slider`, `Select` (with `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectItem`, `SelectGroup`, `SelectLabel`, `SelectSeparator`), `DropdownMenu` (with `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuGroup`, `DropdownMenuLabel`, `DropdownMenuSeparator`), `Dialog` (with `DialogTrigger`, `DialogContent`, `DialogTitle`, `DialogDescription`, `DialogBody`, `DialogFooter`, `DialogClose`) and `Combobox` (with `ComboboxInput`, `ComboboxContent`, `ComboboxList`, `ComboboxItem`, `ComboboxEmpty`). Popups render in a portal: help popovers at z-index 100, dialogs at 200 and 201, and select, menu and combobox popups at 210, above dialogs. From 0.13, `Table` (with `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption` and `TableEmpty`) draws the raised, scrolling results table around a native table, and `Empty` (with `EmptyTitle`, `EmptyDescription`, `EmptyContent`) the empty state. A column of long text wraps with `whitespace-normal wrap-break-word`. The TanStack table is `EditableTable` from `@doshi-experiments/design-system/ui/table`, a separate entry because `@tanstack/react-table` is an optional peer dependency.
 
 `tailwind.css` brings `tokens.css` with it and declares `@source "./ui.js"`, so the shared components' classes are generated without any app config. Its theme points every utility at the `--ds-*` tokens (`bg-raised`, `text-ink`, `text-caption`, `rounded-pill`, `shadow-raised`, `min-h-target`, `p-panel`, `max-w-measure`), so colours switch with `data-theme` and sizes with `data-density` without a `dark:` variant. Tailwind's default palette, type sizes, radii and shadows are cleared: shadcn's `bg-primary` or `text-sm` generate nothing. Felt's surfaces are utilities: `raised`, `pressed`, `stitched` (on a positioned element), `stitch-rule`, `fibre`, the `signal` fill (with `hover:signal-hover` and `active:signal-pressed`), `signal-solid`, `accent-signal`, `action-link` for signal-coloured text, and `tone-success|warning|error|info` pairs. There is deliberately no signal or status text colour. Variants: `dark:` (for what differs by more than colour, such as the fibre) and `comfortable:`, `compact:` and `game:` for the root's density. Breakpoints are Felt's, not Tailwind's: `xs` 380px, `sm` 640px, `md` 800px, `lg` 1024px and `xl` 1240px (`2xl` is gone). `cn()` merges classes with tailwind-merge taught Felt's names.
 
@@ -529,4 +529,29 @@ Felt. Nothing already in use draws differently.
   and small, open with groups), the menu (closed and open) and the dialog (open), and
   drives the combobox: typing filters, Enter takes the match, no match says so. With
   0.11's cases that is 33 cases and 1913 checks.
+
+## Tables and the empty state in /ui (0.13.0)
+
+The last component release of wave 2. Every component on the migration plan's list now has
+a `/ui` version; nothing already in use draws differently.
+
+- `Table` and its parts: the raised panel that scrolls, as a focusable, labelled region,
+  around a native table, with sticky headers, stitched rules between rows, the selection
+  colour on a hovered row, and one-line cells unless a column opts into wrapping. Inside a
+  card it takes the control radius. `TableEmpty` is the row a table shows when it has none.
+- `Empty`, `EmptyTitle`, `EmptyDescription` and `EmptyContent`: the left-aligned empty
+  state with its heading, a line in a readable measure, and actions.
+- `/ui/table` (new export): `EditableTable` on `/ui`'s `Table`, with the same props as
+  `/table`'s. It imports its parts from `ui.js`, and `tailwind.css` scans it.
+- Deprecated for 1.0: `/react`'s `DataTable` and `EmptyState`, and `/table`'s
+  `EditableTable`.
+- `check-ui.mjs` adds the plain table (headers, cells, a wrapping column, a hovered row), a
+  table in a card, the editable table with a select in a cell and with no rows, and the
+  empty state: 38 cases and 2337 checks. Two fixes to the check itself: the preview build
+  resolves its folder's real path, because macOS's temporary folder sits behind a symlink
+  and Tailwind silently skipped the cases' own classes (which is why 0.12 excluded the
+  slider's widths; they are compared again and match), and a stalled screenshot is retried
+  once before it counts as a failure.
+- `FieldLabel` resets numerals to proportional, as `.ds-field-label`'s font shorthand did,
+  so a label inside a table no longer inherits its tabular figures.
 
