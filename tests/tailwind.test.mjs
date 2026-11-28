@@ -118,3 +118,16 @@ test('ds-button and ds-chip compile for plain markup, with the disabled look las
   assert.doesNotMatch(button, /data-disabled/, 'plain buttons use :disabled');
   assert.match(out, /\.ds-chip \{[\s\S]*aria-pressed="true"/);
 });
+
+test('the global header\'s classes all generate CSS from dist/tailwind.css alone', async () => {
+  const {siteHeaderClasses} = await import('../src/site-contract.js');
+  const classes = [...new Set(Object.values(siteHeaderClasses).flatMap(list => list.split(/\s+/)).filter(Boolean))];
+  const dir = await mkdtemp(join(tmpdir(), 'ds-header-'));
+  try {
+    // No @source of our own: the classes must come from tailwind.css scanning site-contract.js.
+    await writeFile(join(dir, 'input.css'), `@import "${join(root, 'node_modules/tailwindcss/index.css')}" source(none);\n@import "${join(root, 'dist/tailwind.css')}";\n`);
+    await promisify(execFile)(join(root, 'node_modules/.bin/tailwindcss'), ['-i', join(dir, 'input.css'), '-o', join(dir, 'out.css')]);
+    const output = await readFile(join(dir, 'out.css'), 'utf8');
+    assert.deepEqual(classes.filter(name => !generates(output, name)), [], 'unstyled header classes');
+  } finally {await rm(dir, {recursive: true, force: true});}
+});

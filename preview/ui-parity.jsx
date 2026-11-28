@@ -7,6 +7,7 @@ import * as Old from '../dist/react.js'
 import * as New from '../dist/ui.js'
 import {EditableTable as OldEditableTable} from '../dist/table.js'
 import {EditableTable as NewEditableTable} from '../dist/ui-table.js'
+import {mountSiteHeader} from '../dist/site.js'
 
 const plain = () => {}
 const options = [{value: 'monthly', label: 'Monthly'}, {value: 'yearly', label: 'Yearly'}]
@@ -115,6 +116,19 @@ const newColumns = [{accessorKey: 'description', header: 'Description'}, {access
   cell: ({row, getValue}) => <New.Field><New.FieldLabel htmlFor={`n-cat-${row.id}`} className="sr-only">{`Category for ${row.original.description}`}</New.FieldLabel>
     <New.NativeSelect id={`n-cat-${row.id}`} value={getValue()} onChange={plain}>{options.map(o => <New.NativeSelectOption key={o.value} value={o.value}>{o.label}</New.NativeSelectOption>)}</New.NativeSelect></New.Field>}]
 
+// 0.14: Felt's own components. The static header gets a stub controller so it can't change
+// the page's appearance.
+const stubController = {getPreference: () => 'system', setPreference() {}, subscribe: () => () => {}, destroy() {}}
+function StaticHeader({project, showProjectTitle = true}) {
+  const ref = React.useRef(null)
+  React.useEffect(() => {const header = mountSiteHeader(ref.current, {project, controller: stubController, showProjectTitle}); return () => header.destroy()}, [project, showProjectTitle])
+  return <div ref={ref} />
+}
+const headerParts = {header: ['header', 'header'], nav: ['nav', 'nav'], link: ['nav a:not([aria-current])', 'nav a:not([aria-current])'], current: ['nav a[aria-current]', 'nav a[aria-current]'],
+  appearance: ['label', 'label'], appearanceLabel: ['label span', 'label span'], select: ['select', 'select']}
+const segmentOptions = [['buy', 'Buy'], ['rent', 'Rent'], ['both', 'Both']]
+const range = {label: 'How long you stay', value: '10', min: 1, max: 30, onValueChange: plain, suffix: 'yr'}
+
 // 0.12: popups. open names the trigger to click; parts starting with @ are found in the
 // whole document, because popups render in a portal.
 const groups = [{label: 'More', options: [{value: 'weekly', label: 'Weekly'}]}]
@@ -218,6 +232,53 @@ cases.push(
     old: <Old.EmptyState title="All caught up" description="No other items need review." actions={<Old.Button>Import more</Old.Button>} />,
     new: <New.Empty><New.EmptyTitle>All caught up</New.EmptyTitle><New.EmptyDescription>No other items need review.</New.EmptyDescription>
       <New.EmptyContent><New.Button>Import more</New.Button></New.EmptyContent></New.Empty>},
+  {id: 'site-header', target: 'link', parts: {...headerParts, project: ['header > span', 'header > span']},
+    old: <Old.SiteHeader project="experiments" />, new: <New.SiteHeader project="experiments" />},
+  // Every part's computed style matches, but Chromium draws the static header's <select> text a
+  // pixel lower than the React one, with identical styles, so this case is compared by part only.
+  {id: 'site-header-static', target: 'link', pixels: false, parts: {...headerParts, project: ['header > span', 'header > span']},
+    old: <Old.SiteHeader project="experiments" />, new: <StaticHeader project="experiments" />},
+  {id: 'site-header-static-untitled', parts: {header: ['header', 'header'], appearance: ['label', 'label']},
+    old: <div ref={el => el && mountSiteHeader(el, {project: 'experiments', controller: stubController, showProjectTitle: false})} />,
+    new: <StaticHeader project="experiments" showProjectTitle={false} />},
+  {id: 'disclosure', target: 'summary', parts: {root: ['details', 'details'], summary: ['summary', 'summary']},
+    old: <Old.Disclosure title="Technical details"><p>The source columns are preserved.</p></Old.Disclosure>,
+    new: <New.Disclosure><New.DisclosureSummary>Technical details</New.DisclosureSummary><New.DisclosureContent><p>The source columns are preserved.</p></New.DisclosureContent></New.Disclosure>},
+  {id: 'disclosure-open', parts: {root: ['details', 'details'], summary: ['summary', 'summary'], content: ['.ds-disclosure-content', '[data-slot=disclosure-content]'], paragraph: ['details p', 'details p']},
+    old: <Old.Disclosure title="How this comparison works" defaultOpen><p>Both lines are after selling costs and tax.</p></Old.Disclosure>,
+    new: <New.Disclosure defaultOpen><New.DisclosureSummary>How this comparison works</New.DisclosureSummary><New.DisclosureContent><p>Both lines are after selling costs and tax.</p></New.DisclosureContent></New.Disclosure>},
+  {id: 'number-stepper', target: 'increase', ignore: {decrease: ['display', 'gap', 'align-items', 'justify-content'], increase: ['display', 'gap', 'align-items', 'justify-content']},
+    parts: {group: ['[role=group]', '[role=group]'], decrease: ['button:first-child', 'button:first-child'], value: ['.ds-stepper-value', '[data-slot=number-stepper-value]'],
+      suffix: ['.ds-stepper-value small', '[data-slot=number-stepper-value] small'], increase: ['button:last-child', 'button:last-child']},
+    old: <Old.NumberStepper label="Players" value={3} min={3} max={20} suffix="players" onValueChange={plain} />,
+    new: <New.NumberStepper label="Players" value={3} min={3} max={20} suffix="players" onValueChange={plain} />},
+  {id: 'segmented', target: 'segment', parts: {group: ['[role=radiogroup]', '[role=radiogroup]'], checked: ['[data-checked]', '[data-checked]'], segment: ['[role=radio]:not([data-checked])', '[role=radio]:not([data-checked])']},
+    old: <Old.SegmentedControl options={segmentOptions} value="rent" onValueChange={plain} label="Compare" />,
+    new: <New.SegmentedControl options={segmentOptions} value="rent" onValueChange={plain} label="Compare" />},
+  {id: 'segmented-small', target: 'segment', parts: {group: ['[role=radiogroup]', '[role=radiogroup]'], checked: ['[data-checked]', '[data-checked]'], segment: ['[role=radio]:not([data-checked])', '[role=radio]:not([data-checked])']},
+    old: <Old.SegmentedControl size="small" options={segmentOptions} value="buy" onValueChange={plain} label="Compare" />,
+    new: <New.SegmentedControl size="small" options={segmentOptions} value="buy" onValueChange={plain} label="Compare" />},
+  {id: 'metric', parts: {root: ['.ds-metric', '[data-slot=metric]'], label: ['.ds-metric-label', '[data-slot=metric-label]'], help: ['.ds-help', '[data-slot=help-trigger]'],
+      value: ['.ds-metric-value', '[data-slot=metric-value]'], note: ['.ds-metric-note', '[data-slot=metric-note]']},
+    old: <Old.Metric label="Owner at year 10" value="$1,081,182" note="Home equity plus savings" tone="var(--ds-action-link)" help={<Old.HelpPopover title="Owner">After selling costs.</Old.HelpPopover>} />,
+    new: <New.Metric label="Owner at year 10" value="$1,081,182" note="Home equity plus savings" tone="var(--ds-action-link)" help={<New.HelpPopover title="Owner">After selling costs.</New.HelpPopover>} />},
+  {id: 'data-row', parts: {root: ['.ds-data-row', '[data-slot=data-row]'], label: ['.ds-data-label', '[data-slot=data-label]'], help: ['.ds-help', '[data-slot=help-trigger]'], value: ['.ds-data-value', '[data-slot=data-value]']},
+    old: <Old.DataRow label="Property transfer tax" value="$27,000" help={<Old.HelpPopover title="Tax">Provincial.</Old.HelpPopover>} />,
+    new: <New.DataRow label="Property transfer tax" value="$27,000" help={<New.HelpPopover title="Tax">Provincial.</New.HelpPopover>} />},
+  {id: 'data-row-strong', parts: {root: ['.ds-data-row', '[data-slot=data-row]'], value: ['.ds-data-value', '[data-slot=data-value]']},
+    old: <Old.DataRow strong label="Total" value="$31,450" tone="var(--ds-action-link)" />, new: <New.DataRow strong label="Total" value="$31,450" tone="var(--ds-action-link)" />},
+  {id: 'page-header', parts: {root: ['header', 'header'], intro: ['header > div:first-child', 'header > div:first-child'], eyebrow: ['.ds-eyebrow', '[data-slot=page-eyebrow]'],
+      title: ['h1', 'h1'], description: ['.ds-page-description', '[data-slot=page-description]']},
+    old: <Old.PageHeader eyebrow="Components" title="Review workspace" description="Keyboard, mobile and appearance checks." actions={<Old.Button>Export</Old.Button>} />,
+    new: <New.PageHeader eyebrow="Components" title="Review workspace" description="Keyboard, mobile and appearance checks." actions={<New.Button>Export</New.Button>} />},
+  {id: 'numeric-field', target: 'input', parts: {field: ['.ds-field', '[data-slot=field]'], heading: ['.ds-field-heading', '[data-slot=field-heading]'], wrap: ['.ds-input-wrap', '[data-slot=input-group]'],
+      input: ['input', 'input'], affix: ['.ds-input-affix', '[data-slot=input-group-addon]'], hint: ['.ds-field-hint', '[data-slot=field-description]']},
+    old: <Old.NumericField label="Purchase price" value="650000" prefix="$" hint="Before closing costs." onValueChange={plain} />,
+    new: <New.NumericField label="Purchase price" value="650000" prefix="$" hint="Before closing costs." onValueChange={plain} />},
+  {id: 'range-field', target: 'thumb', parts: {root: ['.ds-range-field', '[data-slot=range-field]'], label: ['.ds-range-label', '[data-slot=range-field] > div:first-child'],
+      thumb: ['.ds-slider-thumb', '[data-slot=slider-thumb]'], range: ['.ds-slider-indicator', '[data-slot=slider-range]'], field: ['.ds-field', '[data-slot=field]'], wrap: ['.ds-input-wrap', '[data-slot=input-group]'],
+      heading: ['.ds-field-heading', '[data-slot=field-heading]']},
+    old: <Old.RangeField {...range} />, new: <New.RangeField {...range} />},
   // Last of the compared cases: the old RangeField also draws its number field, so the cases' heights
   // differ, and anything after would sit at a different sub-pixel offset.
   {id: 'slider', target: 'thumb', pixels: false,

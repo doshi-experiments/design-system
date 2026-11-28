@@ -9,7 +9,10 @@ plain HTML, Felt's breakpoints, and card sections and titles. Mr. Shake's and th
 own controls move onto `/ui` in wave 2. Wave 2 began with 0.11.0: Toggle, the field family,
 Input, Input Group, Native Select, Checkbox, Card, Badge and Alert; 0.12.0 adds Popover (and
 HelpPopover), Slider, Select, Dropdown Menu, Dialog and Combobox; 0.13.0 adds Table, Empty and
-`/ui/table`'s EditableTable, which completes the component list. The apps move next.
+`/ui/table`'s EditableTable, which completes the shadcn list. The Felt-owned components below
+were never given a release, and every app uses some, so they come first (decided 27 November):
+0.14.0 rebuilds the ones Mr. Shake, the calculator and the static sites use, and 0.15 the rest
+for Finance and household-tasks. Each app then moves once, fully off `/react` and `ds-*`.
 
 Every app moves onto Tailwind CSS v4, with React components that follow shadcn's
 structure on Base UI. Felt stays exactly as it is: same tokens, same surfaces, same
@@ -265,6 +268,7 @@ service workers precache a fixed list of names (`app.css`, `app.js`).
 | 3 | **visualizations** | The second static site, on a proven pattern. It adds canvas token reads, vendored modules that must stay pinned, and `?debug` checks. |
 | 4 | **mr-shake** | After the e2e suite is fixed (its own PR first). It needs the `game` density variant, 60px targets and the unchanged secrecy invariant, and its React 19 upgrade is independent of the others. |
 | 5 | **design-system 0.11 to 0.13**: port the remaining components (below) | Finance and household-tasks use most of the catalogue, so they wait for it. |
+| 5b | **design-system 0.14 and 0.15**: rebuild the Felt-owned components on `/ui` | Every app uses some of them; without them no app can leave `/react`. 0.14: SiteHeader, AppearanceControl, the static header, Disclosure, NumberStepper, SegmentedControl, Metric, DataRow, PageHeader, NumericField, RangeField. 0.15: AppShell, WorkflowSteps, FileUpload, DateField, TimeField, toast. |
 | 6 | **portfolio-landing** | The most visible site, for hiring teams, and the most unusual: a split, an iframe and frozen archives. It goes after two static sites have proven the pattern. |
 | 7 | **household-tasks** | Production, deployed on the home server, and the heaviest component consumer: pickers, menus, toasts, toggles, dialogs. It needs the full catalogue and the rollout decision (question 7). |
 | 8 | **finance** | Private, works on real financial data, has frozen code surfaces and a rebuild that has slipped before. It goes last, when every component is proven elsewhere. |
