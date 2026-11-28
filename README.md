@@ -1,6 +1,6 @@
 # Doshi design system
 
-Version 0.13.0 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation underlines the current page; the labeled System / Light / Dark appearance control is unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. From 0.10.0 the same identity also ships for Tailwind CSS v4 (`tailwind.css`, generated from `src/tailwind-theme.js`) with components in shadcn's structure on Base UI (`src/ui/`, exported as `/ui`); see [the migration plan](docs/tailwind-migration.md). Generated assets must not be edited in consuming repos.
+Version 0.14.0 keeps Felt, the one identity for the portfolio and every app: Host Grotesk, warm grey wool in light, charcoal in dark, and one signal, a raspberry-to-brick gradient under white text, with raised and stitched surfaces, pressed-in fields and a fibre texture. Global navigation underlines the current page; the labeled System / Light / Dark appearance control is unchanged. Tokens live in `src/tokens.js`; React components and their styles live in `src/react.js`, `src/table.js` and `src/components.css`. Static navigation lives in `src/site.js`. From 0.10.0 the same identity also ships for Tailwind CSS v4 (`tailwind.css`, generated from `src/tailwind-theme.js`) with components in shadcn's structure on Base UI (`src/ui/`, exported as `/ui`); see [the migration plan](docs/tailwind-migration.md). Generated assets must not be edited in consuming repos.
 
 ```sh
 npm run build
@@ -28,7 +28,7 @@ import '@doshi-experiments/design-system/tokens.css';
 import '@doshi-experiments/design-system/components.css';
 ```
 
-Deprecated since 0.11.0, and removed at 1.0: `ToggleButton`, `Badge`, `Alert`, `Card`, `CardTitle`, `TextField`, `SelectField`, `CheckboxField`, `FieldGroup` and `NumericField`'s markup, with their `ds-*` classes. Use `/ui`'s `Toggle`, `Badge`, `Alert`, `Card`, `CardTitle`, `Field` with `Input`, `NativeSelect` or `Checkbox`, and `FieldSet` with `FieldGroup`. Deprecated since 0.12.0: `HelpPopover`, `RangeField`'s slider, `Select`, `MenuButton` and `Dialog`; use `/ui`'s `HelpPopover`, `Slider`, `Select`, `DropdownMenu` and `Dialog`. Deprecated since 0.13.0: `DataTable`, `EmptyState` and `/table`'s `EditableTable`; use `/ui`'s `Table` and `Empty`, and `/ui/table`'s `EditableTable`.
+Deprecated since 0.11.0, and removed at 1.0: `ToggleButton`, `Badge`, `Alert`, `Card`, `CardTitle`, `TextField`, `SelectField`, `CheckboxField`, `FieldGroup` and `NumericField`'s markup, with their `ds-*` classes. Use `/ui`'s `Toggle`, `Badge`, `Alert`, `Card`, `CardTitle`, `Field` with `Input`, `NativeSelect` or `Checkbox`, and `FieldSet` with `FieldGroup`. Deprecated since 0.12.0: `HelpPopover`, `RangeField`'s slider, `Select`, `MenuButton` and `Dialog`; use `/ui`'s `HelpPopover`, `Slider`, `Select`, `DropdownMenu` and `Dialog`. Deprecated since 0.13.0: `DataTable`, `EmptyState` and `/table`'s `EditableTable`; use `/ui`'s `Table` and `Empty`, and `/ui/table`'s `EditableTable`. Deprecated since 0.14.0: `SiteHeader`, `AppearanceControl`, `Disclosure`, `NumberStepper`, `SegmentedControl`, `Metric`, `DataRow`, `PageHeader`, `NumericField` and `RangeField`; use `/ui`'s.
 
 React consumers also install React, React DOM and `@base-ui/react`. They are optional peer dependencies so static consumers need none of them. `Button` preserves native disabled semantics and locks during loading. `HelpPopover` uses Base UI focus/dismissal behavior and a portaled, fixed positioner. These are app-owned initial recipes over the Base UI foundation selected for shadcn; this release does not claim to contain the full shadcn component catalogue.
 
@@ -59,7 +59,7 @@ import {Button, Card, CardTitle, Field, FieldLabel, Input, cn} from '@doshi-expe
 </Field>
 ```
 
-A numeric field puts `FieldLabel variant="heading"` in a `FieldHeading` and its input in an `InputGroup` with `InputGroupAddon` prefixes or suffixes; fields in a `FieldGroup` share rows so their inputs line up. Hide a label with `sr-only`. `Checkbox` stays the browser's own 20px box in the signal, and `NativeSelect` keeps the browser's arrow. From 0.12, `/ui` also holds the popups: `HelpPopover` (and `Popover` with `PopoverTrigger`, `PopoverContent`, `PopoverTitle`, `PopoverDescription`, `PopoverClose`), `Slider`, `Select` (with `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectItem`, `SelectGroup`, `SelectLabel`, `SelectSeparator`), `DropdownMenu` (with `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuGroup`, `DropdownMenuLabel`, `DropdownMenuSeparator`), `Dialog` (with `DialogTrigger`, `DialogContent`, `DialogTitle`, `DialogDescription`, `DialogBody`, `DialogFooter`, `DialogClose`) and `Combobox` (with `ComboboxInput`, `ComboboxContent`, `ComboboxList`, `ComboboxItem`, `ComboboxEmpty`). Popups render in a portal: help popovers at z-index 100, dialogs at 200 and 201, and select, menu and combobox popups at 210, above dialogs. From 0.13, `Table` (with `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption` and `TableEmpty`) draws the raised, scrolling results table around a native table, and `Empty` (with `EmptyTitle`, `EmptyDescription`, `EmptyContent`) the empty state. A column of long text wraps with `whitespace-normal wrap-break-word`. The TanStack table is `EditableTable` from `@doshi-experiments/design-system/ui/table`, a separate entry because `@tanstack/react-table` is an optional peer dependency.
+A numeric field puts `FieldLabel variant="heading"` in a `FieldHeading` and its input in an `InputGroup` with `InputGroupAddon` prefixes or suffixes; fields in a `FieldGroup` share rows so their inputs line up. Hide a label with `sr-only`. `Checkbox` stays the browser's own 20px box in the signal, and `NativeSelect` keeps the browser's arrow. From 0.12, `/ui` also holds the popups: `HelpPopover` (and `Popover` with `PopoverTrigger`, `PopoverContent`, `PopoverTitle`, `PopoverDescription`, `PopoverClose`), `Slider`, `Select` (with `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectItem`, `SelectGroup`, `SelectLabel`, `SelectSeparator`), `DropdownMenu` (with `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuGroup`, `DropdownMenuLabel`, `DropdownMenuSeparator`), `Dialog` (with `DialogTrigger`, `DialogContent`, `DialogTitle`, `DialogDescription`, `DialogBody`, `DialogFooter`, `DialogClose`) and `Combobox` (with `ComboboxInput`, `ComboboxContent`, `ComboboxList`, `ComboboxItem`, `ComboboxEmpty`). Popups render in a portal: help popovers at z-index 100, dialogs at 200 and 201, and select, menu and combobox popups at 210, above dialogs. From 0.13, `Table` (with `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption` and `TableEmpty`) draws the raised, scrolling results table around a native table, and `Empty` (with `EmptyTitle`, `EmptyDescription`, `EmptyContent`) the empty state. A column of long text wraps with `whitespace-normal wrap-break-word`. The TanStack table is `EditableTable` from `@doshi-experiments/design-system/ui/table`, a separate entry because `@tanstack/react-table` is an optional peer dependency. From 0.14, `/ui` also holds Felt's own components: `SiteHeader` and `AppearanceControl`, `Disclosure` (with `DisclosureSummary` and `DisclosureContent`), `NumberStepper`, `SegmentedControl`, `Metric`, `DataRow`, `PageHeader`, and `NumericField` and `RangeField`, which keep `/react`'s typing, pasting and arrow-key behaviour. `site.js`'s static header draws with the same classes (`siteHeaderClasses` in `site-contract.js`, which `tailwind.css` scans) and keeps its `ds-site-*` names until 1.0, so a page without Tailwind still draws it.
 
 `tailwind.css` brings `tokens.css` with it and declares `@source "./ui.js"`, so the shared components' classes are generated without any app config. Its theme points every utility at the `--ds-*` tokens (`bg-raised`, `text-ink`, `text-caption`, `rounded-pill`, `shadow-raised`, `min-h-target`, `p-panel`, `max-w-measure`), so colours switch with `data-theme` and sizes with `data-density` without a `dark:` variant. Tailwind's default palette, type sizes, radii and shadows are cleared: shadcn's `bg-primary` or `text-sm` generate nothing. Felt's surfaces are utilities: `raised`, `pressed`, `stitched` (on a positioned element), `stitch-rule`, `fibre`, the `signal` fill (with `hover:signal-hover` and `active:signal-pressed`), `signal-solid`, `accent-signal`, `action-link` for signal-coloured text, and `tone-success|warning|error|info` pairs. There is deliberately no signal or status text colour. Variants: `dark:` (for what differs by more than colour, such as the fibre) and `comfortable:`, `compact:` and `game:` for the root's density. Breakpoints are Felt's, not Tailwind's: `xs` 380px, `sm` 640px, `md` 800px, `lg` 1024px and `xl` 1240px (`2xl` is gone). `cn()` merges classes with tailwind-merge taught Felt's names.
 
@@ -554,4 +554,34 @@ a `/ui` version; nothing already in use draws differently.
   once before it counts as a failure.
 - `FieldLabel` resets numerals to proportional, as `.ds-field-label`'s font shorthand did,
   so a label inside a table no longer inherits its tabular figures.
+
+## Felt's own components in /ui (0.14.0)
+
+The migration plan listed a second group, Felt's own components rebuilt with Tailwind, but
+gave them no release, and every app uses some. 0.14 rebuilds the ones Mr. Shake, the
+calculator and the static sites need, so each can leave `/react` in one pull request; 0.15
+follows with Finance's and household-tasks'. Nothing already in use draws differently.
+
+- `SiteHeader` and `AppearanceControl`, with `showProjectTitle`. Their classes live in
+  `site-contract.js` as `siteHeaderClasses`, which `site.js`'s static header uses too, so
+  the React and static headers are one drawing. `tailwind.css` scans `site-contract.js`.
+  The static header keeps its `ds-site-*` names until 1.0 for pages without Tailwind.
+- `Disclosure`, `DisclosureSummary` and `DisclosureContent` on native `<details>`.
+- `NumberStepper`, `SegmentedControl` (a radio group; `size="small"`), `Metric`,
+  `DataRow` (with `strong` and `tone`) and `PageHeader`. Help keys inside a metric label,
+  data label or field heading lose their surface, as before.
+- `NumericField` and `RangeField` on `/ui`'s field, input group and slider, keeping
+  sanitising with feedback, arrow-key steps (Shift for ten) and the range message.
+- Deprecated for 1.0: the `/react` versions of all of these.
+- `check-ui.mjs` adds the React and static headers (titled and untitled; the static one on
+  a page without `components.css`), closed and open disclosures, the stepper at its
+  minimum, both segmented sizes, a metric with help, tone and note, plain and strong data
+  rows, the page header, the numeric field and the whole range field: 52 cases and 3625
+  checks. A pixel difference is captured twice before it counts, and rasterising noise
+  (at most 0.1% of a case, each pixel at most 48 levels off) is listed in the summary
+  instead of failing. The static header is compared by part only, because Chromium draws
+  its select's text a pixel lower than the React header's with identical styles.
+- `tests/tailwind.test.mjs` checks that every class in `siteHeaderClasses` generates CSS
+  from `tailwind.css` alone, since Tailwind reads the file's text and can't see classes
+  assembled at runtime.
 

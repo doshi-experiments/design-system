@@ -851,11 +851,325 @@ function EmptyDescription({ className, ...props }) {
 function EmptyContent({ className, ...props }) {
   return /* @__PURE__ */ jsx19("div", { "data-slot": "empty-content", className: cn("flex flex-wrap items-center justify-start gap-3", className), ...props });
 }
+
+// src/ui/site-header.jsx
+import * as React5 from "react";
+
+// src/site-contract.js
+var siteLinks = {
+  home: { label: "Home", href: "https://rishabhdoshi.com/" },
+  experiments: { label: "Experiments", href: "https://experiments.rishabhdoshi.com/" }
+};
+var titles = { portfolio: "Rishabh Doshi", experiments: "Experiments", visualizations: "Visualizations", calculator: "Calculators", game: "Mr. Shake", finance: "Finance", household: "Household" };
+function projectTitle(project) {
+  return titles[project] || String(project || "Rishabh Doshi");
+}
+var appearanceOptions = [["system", "System"], ["light", "Light"], ["dark", "Dark"]];
+var siteHeaderClasses = {
+  header: "box-border grid items-center gap-5 w-[calc(100%-2*clamp(16px,4vw,48px))] max-w-[calc(var(--ds-page-width)-2*clamp(16px,4vw,48px))] mx-auto mt-4 mb-0 py-1.5 pr-1.5 pl-[22px] rounded-pill raised font-sans font-normal text-body leading-[1.55] max-[640.98px]:grid-cols-[minmax(0,1fr)_auto] max-[640.98px]:[align-items:end] max-[640.98px]:gap-x-3 max-[640.98px]:gap-y-2 max-[640.98px]:p-2.5 max-[640.98px]:pl-[18px] max-[640.98px]:rounded-container",
+  // Exactly one of each pair, since the static header has no class merging.
+  withTitle: "grid-cols-[auto_minmax(0,1fr)_auto]",
+  withoutTitle: "grid-cols-[minmax(0,1fr)_auto]",
+  navigation: "flex items-center gap-4 min-w-0 max-[640.98px]:gap-3",
+  link: "relative box-border inline-flex items-center justify-center min-h-11 min-w-11 text-ink-secondary font-medium text-body leading-[1.55] no-underline whitespace-nowrap after:content-[''] after:absolute after:inset-x-0 after:bottom-1.5 after:h-0.5 after:rounded-[1px] after:bg-[var(--ds-action-primary)] after:scale-x-0 after:transition-transform after:duration-base after:ease-spring hover:text-ink hover:after:scale-x-100 aria-[current=page]:text-ink aria-[current=page]:after:scale-x-100 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-focus",
+  project: "min-w-0 px-2 text-ink-secondary font-normal text-caption leading-[1.55] wrap-anywhere max-[640.98px]:col-start-1 max-[640.98px]:row-start-2 max-[640.98px]:p-0 max-[640.98px]:text-[.75rem]",
+  appearance: "box-border flex items-center gap-2.5 w-auto min-w-0 max-w-full m-0 text-ink-secondary font-normal text-caption leading-[1.55] normal-case tracking-normal max-[640.98px]:col-start-2 max-[640.98px]:row-start-1 max-[640.98px]:flex-col max-[640.98px]:items-start max-[640.98px]:gap-1",
+  appearanceWithTitle: "max-[640.98px]:row-end-3",
+  appearanceWithoutTitle: "max-[640.98px]:row-end-auto",
+  appearanceLabel: "block whitespace-nowrap max-[640.98px]:text-[.75rem]",
+  appearanceSelect: "box-border block flex-none w-28 min-w-0 max-w-full min-h-11 px-3.5 py-2 border border-line rounded-pill text-ink pressed font-semibold text-body leading-[1.55] cursor-pointer appearance-auto [&_option]:text-ink [&_option]:bg-overlay focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-focus"
+};
+
+// src/ui/site-header.jsx
+import { jsx as jsx20, jsxs as jsxs6 } from "react/jsx-runtime";
+function AppearanceControl({ value = "system", onValueChange, className, withTitle = true }) {
+  const labelId = React5.useId();
+  return /* @__PURE__ */ jsxs6("label", { "data-slot": "appearance", className: cn(siteHeaderClasses.appearance, withTitle ? siteHeaderClasses.appearanceWithTitle : siteHeaderClasses.appearanceWithoutTitle, className), children: [
+    /* @__PURE__ */ jsx20("span", { id: labelId, className: siteHeaderClasses.appearanceLabel, children: "Appearance" }),
+    /* @__PURE__ */ jsx20("select", { className: siteHeaderClasses.appearanceSelect, "aria-labelledby": labelId, value, onChange: (event) => onValueChange?.(event.target.value), children: appearanceOptions.map(([option, label]) => /* @__PURE__ */ jsx20("option", { value: option, children: label }, option)) })
+  ] });
+}
+function SiteHeader({ project = "portfolio", appearance = "system", onAppearanceChange, showProjectTitle = true, className }) {
+  return /* @__PURE__ */ jsxs6("header", { "data-slot": "site-header", className: cn(siteHeaderClasses.header, showProjectTitle ? siteHeaderClasses.withTitle : siteHeaderClasses.withoutTitle, className), children: [
+    /* @__PURE__ */ jsx20("nav", { className: siteHeaderClasses.navigation, "aria-label": "Global navigation", children: Object.entries(siteLinks).map(([name, link]) => /* @__PURE__ */ jsx20(
+      "a",
+      {
+        className: siteHeaderClasses.link,
+        href: link.href,
+        "aria-current": name === "home" && project === "portfolio" || name === "experiments" && project === "experiments" ? "page" : void 0,
+        children: link.label
+      },
+      name
+    )) }),
+    showProjectTitle && /* @__PURE__ */ jsx20("span", { className: siteHeaderClasses.project, children: projectTitle(project) }),
+    /* @__PURE__ */ jsx20(AppearanceControl, { value: appearance, onValueChange: onAppearanceChange, withTitle: showProjectTitle })
+  ] });
+}
+
+// src/ui/disclosure.jsx
+import { jsx as jsx21 } from "react/jsx-runtime";
+function Disclosure({ className, open, defaultOpen = false, ...props }) {
+  return /* @__PURE__ */ jsx21(
+    "details",
+    {
+      "data-slot": "disclosure",
+      className: cn("overflow-hidden border-0 rounded-container bg-raised shadow-raised", className),
+      ...open === void 0 ? { open: defaultOpen || void 0 } : { open },
+      ...props
+    }
+  );
+}
+function DisclosureSummary({ className, ...props }) {
+  return /* @__PURE__ */ jsx21(
+    "summary",
+    {
+      "data-slot": "disclosure-summary",
+      className: cn("box-border min-h-target px-5 py-4 cursor-pointer text-ink font-semibold text-[.9375rem] leading-[1.5] wrap-anywhere hover:bg-selection focus-visible:outline-3 focus-visible:-outline-offset-4 focus-visible:outline-focus", className),
+      ...props
+    }
+  );
+}
+function DisclosureContent({ className, ...props }) {
+  return /* @__PURE__ */ jsx21("div", { "data-slot": "disclosure-content", className: cn("px-5 pb-5 min-w-0 text-ink font-normal text-[.9375rem] leading-[1.6]", className), ...props });
+}
+
+// src/ui/number-stepper.jsx
+import * as React6 from "react";
+import { jsx as jsx22, jsxs as jsxs7 } from "react/jsx-runtime";
+function NumberStepper({ label, value, min = 0, max = Infinity, step = 1, onValueChange, suffix, decreaseLabel, increaseLabel, className }) {
+  const id = React6.useId();
+  const key = "w-target min-w-target min-h-target p-2 text-[1.5rem]";
+  return /* @__PURE__ */ jsxs7("div", { "data-slot": "number-stepper", role: "group", "aria-label": label, className: cn("flex items-center gap-2 shrink-0", className), children: [
+    /* @__PURE__ */ jsx22(
+      Button,
+      {
+        type: "button",
+        className: key,
+        "aria-label": decreaseLabel || `Decrease ${label}`,
+        "aria-describedby": id,
+        disabled: value <= min,
+        onClick: () => onValueChange(Math.max(min, value - step)),
+        children: "\u2212"
+      }
+    ),
+    /* @__PURE__ */ jsxs7(
+      "span",
+      {
+        id,
+        "data-slot": "number-stepper-value",
+        "aria-live": "polite",
+        "aria-atomic": "true",
+        className: "min-w-[2ch] text-center text-ink font-sans font-medium text-[1.625rem] leading-[1.2] tabular-nums",
+        children: [
+          value,
+          suffix && /* @__PURE__ */ jsx22("small", { className: "block mt-1 text-ink-secondary font-normal text-[.75rem] leading-[1.4] normal-nums", children: suffix })
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsx22(
+      Button,
+      {
+        type: "button",
+        className: key,
+        "aria-label": increaseLabel || `Increase ${label}`,
+        "aria-describedby": id,
+        disabled: value >= max,
+        onClick: () => onValueChange(Math.min(max, value + step)),
+        children: "+"
+      }
+    )
+  ] });
+}
+
+// src/ui/segmented-control.jsx
+import { Radio } from "@base-ui/react/radio";
+import { RadioGroup } from "@base-ui/react/radio-group";
+import { jsx as jsx23 } from "react/jsx-runtime";
+function SegmentedControl({ options, value, onValueChange, label, size, className }) {
+  return /* @__PURE__ */ jsx23(
+    RadioGroup,
+    {
+      "data-slot": "segmented-control",
+      "data-size": size,
+      "aria-label": label || `Choose: ${options.map(([, text]) => text).join(", ")}`,
+      value: String(options.findIndex(([option]) => option === value)),
+      onValueChange: (index) => {
+        const option = options[Number(index)];
+        if (option) onValueChange(option[0]);
+      },
+      className: cn(
+        "inline-flex flex-wrap gap-1.5 max-w-full p-[5px] rounded-[calc(var(--ds-control-target)/2+5px)] pressed data-[size=small]:rounded-[calc(var(--ds-control-compact-height)/2+5px)]",
+        className
+      ),
+      children: options.map(([, text], index) => /* @__PURE__ */ jsx23(
+        Radio.Root,
+        {
+          value: String(index),
+          "data-slot": "segment",
+          className: "inline-flex items-center justify-center min-h-target px-4 py-2 border border-transparent rounded-pill bg-transparent text-ink-secondary font-sans font-semibold text-caption leading-[normal] cursor-pointer not-data-checked:hover:text-ink data-checked:raised focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-focus in-data-[size=small]:relative in-data-[size=small]:min-h-control-compact in-data-[size=small]:leading-[1.25] in-data-[size=small]:px-3.5 in-data-[size=small]:py-1.5 in-data-[size=small]:after:absolute in-data-[size=small]:after:inset-x-0 in-data-[size=small]:after:top-1/2 in-data-[size=small]:after:h-[max(100%,var(--ds-control-target))] in-data-[size=small]:after:-translate-y-1/2",
+          children: text
+        },
+        index
+      ))
+    }
+  );
+}
+
+// src/ui/metric.jsx
+import { jsx as jsx24, jsxs as jsxs8 } from "react/jsx-runtime";
+function Metric({ label, value, note, help, tone, className }) {
+  return /* @__PURE__ */ jsxs8(
+    "div",
+    {
+      "data-slot": "metric",
+      style: tone ? { "--ds-metric-accent": tone } : void 0,
+      className: cn("min-w-0 border-0 border-t-[1.5px] border-dashed border-stitch rounded-none px-0 pt-4 pb-1 bg-transparent", className),
+      children: [
+        /* @__PURE__ */ jsxs8("div", { "data-slot": "metric-label", className: "flex gap-2 items-center justify-between min-h-8 font-sans font-semibold text-[.8125rem] leading-[1.4] text-ink-secondary *:data-[slot=help-trigger]:bg-transparent *:data-[slot=help-trigger]:shadow-none *:data-[slot=help-trigger]:-m-2", children: [
+          /* @__PURE__ */ jsx24("span", { children: label }),
+          help
+        ] }),
+        /* @__PURE__ */ jsx24("div", { "data-slot": "metric-value", className: "mt-2 font-sans font-medium text-[clamp(1.5rem,2.5vw,2.25rem)] leading-[1.2] tracking-[-.03em] tabular-nums text-[var(--ds-metric-accent,var(--ds-text))] wrap-anywhere", children: value }),
+        note && /* @__PURE__ */ jsx24("p", { "data-slot": "metric-note", className: "mt-2 mb-0 font-sans font-normal text-[.8125rem] leading-[1.5] text-ink-secondary", children: note })
+      ]
+    }
+  );
+}
+function DataRow({ label, value, help, tone, strong = false, className }) {
+  return /* @__PURE__ */ jsxs8("div", { "data-slot": "data-row", className: cn("flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-3 border-b-[1.5px] border-dashed border-stitch font-sans font-normal text-caption leading-[1.5]", strong && "font-semibold", className), children: [
+    /* @__PURE__ */ jsxs8("div", { "data-slot": "data-label", className: "flex items-center gap-1.5 text-ink-secondary min-w-0 flex-1 *:data-[slot=help-trigger]:bg-transparent *:data-[slot=help-trigger]:shadow-none *:data-[slot=help-trigger]:-my-2.5", children: [
+      /* @__PURE__ */ jsx24("span", { children: label }),
+      help
+    ] }),
+    /* @__PURE__ */ jsx24("div", { "data-slot": "data-value", className: "font-sans tabular-nums text-right wrap-anywhere", style: tone ? { color: tone } : void 0, children: value })
+  ] });
+}
+
+// src/ui/page-header.jsx
+import { jsx as jsx25, jsxs as jsxs9 } from "react/jsx-runtime";
+function PageHeader({ eyebrow, title, description, actions, className }) {
+  return /* @__PURE__ */ jsxs9("header", { "data-slot": "page-header", className: cn("flex flex-wrap items-center justify-between gap-6 pt-8 pb-10", className), children: [
+    /* @__PURE__ */ jsxs9("div", { className: "min-w-0 max-w-[850px]", children: [
+      eyebrow && /* @__PURE__ */ jsx25("p", { "data-slot": "page-eyebrow", className: "m-0 action-link font-sans font-semibold text-caption leading-[1.55] tracking-normal normal-case", children: eyebrow }),
+      /* @__PURE__ */ jsx25("h1", { "data-slot": "page-title", className: "mt-2 mb-4 text-ink font-sans font-medium text-display leading-[1.05] tracking-[-.04em] text-balance", children: title }),
+      description && /* @__PURE__ */ jsx25("p", { "data-slot": "page-description", className: "m-0 max-w-measure text-ink-secondary font-sans font-normal text-body leading-[1.55]", children: description })
+    ] }),
+    actions && /* @__PURE__ */ jsx25("div", { "data-slot": "page-actions", children: actions })
+  ] });
+}
+
+// src/ui/numeric-field.jsx
+import * as React7 from "react";
+import { jsx as jsx26, jsxs as jsxs10 } from "react/jsx-runtime";
+function NumericField({
+  label,
+  value,
+  onValueChange,
+  sanitize = (text) => text,
+  parse = Number,
+  format = String,
+  step = 1,
+  min,
+  max,
+  prefix,
+  suffix,
+  hint,
+  badge,
+  readOnly,
+  help,
+  compact = false,
+  className
+}) {
+  const id = React7.useId();
+  const [changed, setChanged] = React7.useState(false);
+  const numeric = parse(value);
+  const outside = String(value).trim() !== "" && (!Number.isFinite(numeric) || min !== void 0 && numeric < min || max !== void 0 && numeric > max);
+  const message = outside ? `Enter a number${min !== void 0 ? ` from ${min}` : ""}${max !== void 0 ? ` up to ${max}` : ""}.` : changed ? "Numbers only \u2014 other characters were ignored." : hint;
+  const bound = (number) => Math.min(max ?? Infinity, Math.max(min ?? -Infinity, number));
+  return /* @__PURE__ */ jsxs10(Field, { "data-compact": compact || void 0, className, children: [
+    /* @__PURE__ */ jsxs10(FieldHeading, { className: compact ? "absolute size-px overflow-hidden [clip-path:inset(50%)] m-0" : void 0, children: [
+      /* @__PURE__ */ jsx26(FieldLabel, { variant: "heading", htmlFor: id, children: label }),
+      help,
+      badge
+    ] }),
+    /* @__PURE__ */ jsxs10(InputGroup, { children: [
+      prefix && /* @__PURE__ */ jsx26(InputGroupAddon, { children: prefix }),
+      /* @__PURE__ */ jsx26(
+        InputGroupInput,
+        {
+          id,
+          type: "text",
+          inputMode: "decimal",
+          autoComplete: "off",
+          value,
+          readOnly,
+          "aria-invalid": outside || void 0,
+          "aria-describedby": message ? `${id}-hint` : void 0,
+          onChange: (event) => {
+            const raw = event.target.value;
+            const clean = sanitize(raw);
+            if (clean !== raw) event.target.value = clean;
+            setChanged(clean !== raw);
+            onValueChange(clean);
+          },
+          onKeyDown: (event) => {
+            if (readOnly || !["ArrowUp", "ArrowDown"].includes(event.key)) return;
+            event.preventDefault();
+            setChanged(false);
+            const next = (Number.isFinite(numeric) ? numeric : 0) + (event.key === "ArrowUp" ? 1 : -1) * step * (event.shiftKey ? 10 : 1);
+            onValueChange(format(bound(next)));
+          }
+        }
+      ),
+      suffix && /* @__PURE__ */ jsx26(InputGroupAddon, { children: suffix })
+    ] }),
+    /* @__PURE__ */ jsx26(FieldDescription, { id: `${id}-hint`, role: "status", "data-warning": changed || outside || void 0, children: message })
+  ] });
+}
+function RangeField({ label, value, onValueChange, min = 0, max = 100, step = 1, prefix, suffix, sanitize, parse = Number, format = String, className }) {
+  const id = React7.useId();
+  const numeric = parse(value);
+  const bounded = Math.min(max, Math.max(min, Number.isFinite(numeric) ? numeric : min));
+  return /* @__PURE__ */ jsxs10("div", { "data-slot": "range-field", className: cn("grid grid-cols-[minmax(0,1fr)_minmax(100px,140px)] gap-x-5 gap-y-1 items-center py-2 min-w-0", className), children: [
+    /* @__PURE__ */ jsx26("div", { id, className: "font-sans font-semibold text-caption leading-[1.5] text-ink-secondary", children: label }),
+    /* @__PURE__ */ jsx26(
+      Slider,
+      {
+        className: "col-start-1",
+        min,
+        max,
+        step,
+        value: bounded,
+        onValueChange: (next) => onValueChange(format(Array.isArray(next) ? next[0] : next)),
+        thumbProps: { "aria-labelledby": id }
+      }
+    ),
+    /* @__PURE__ */ jsx26(
+      NumericField,
+      {
+        className: "col-start-2 row-start-1 row-end-3",
+        label: `${label} value`,
+        value,
+        onValueChange,
+        min,
+        max,
+        step,
+        prefix,
+        suffix,
+        sanitize,
+        parse,
+        format,
+        compact: true
+      }
+    )
+  ] });
+}
 export {
   Alert,
   AlertAction,
   AlertDescription,
   AlertTitle,
+  AppearanceControl,
   Badge,
   Button,
   Card,
@@ -872,6 +1186,7 @@ export {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
+  DataRow,
   Dialog,
   DialogBody,
   DialogClose,
@@ -880,6 +1195,9 @@ export {
   DialogFooter,
   DialogTitle,
   DialogTrigger,
+  Disclosure,
+  DisclosureContent,
+  DisclosureSummary,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -904,15 +1222,21 @@ export {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
+  Metric,
   NativeSelect,
   NativeSelectOptGroup,
   NativeSelectOption,
+  NumberStepper,
+  NumericField,
+  PageHeader,
   Popover,
   PopoverClose,
   PopoverContent,
   PopoverDescription,
   PopoverTitle,
   PopoverTrigger,
+  RangeField,
+  SegmentedControl,
   Select,
   SelectContent,
   SelectGroup,
@@ -921,6 +1245,7 @@ export {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
+  SiteHeader,
   Slider,
   Table,
   TableBody,

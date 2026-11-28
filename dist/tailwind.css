@@ -2,10 +2,12 @@
 /* Felt for Tailwind CSS v4. Import it after "tailwindcss":
      @import "tailwindcss";
      @import "@doshi-experiments/design-system/tailwind.css";
-   It brings tokens.css with it and scans ui.js and ui-table.js, so the shared components need no config. */
+   It brings tokens.css with it and scans ui.js, ui-table.js and site-contract.js, so the shared
+   components and the static header need no config. */
 @import "./tokens.css";
 @source "./ui.js";
 @source "./ui-table.js";
+@source "./site-contract.js";
 
 /* The palette already follows the root's data-theme. dark: is for what differs by more than
    colour, such as the fibre's blend mode. A root without data-theme follows the system. */
