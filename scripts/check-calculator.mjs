@@ -20,8 +20,8 @@ try {
    await page.goto(`http://127.0.0.1:4195${route.path}`,{waitUntil:'networkidle'});
    assert.equal(await page.locator('h1').textContent(),route.h1);
    const data=await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,
-     cards:document.querySelectorAll('.ds-card').length,fields:document.querySelectorAll('.ds-field').length,
-     sliders:document.querySelectorAll('.ds-slider').length,metrics:document.querySelectorAll('.ds-metric').length,
+     cards:document.querySelectorAll('.ds-card, [data-slot=card]').length,fields:document.querySelectorAll('.ds-field, [data-slot=field]').length,
+     sliders:document.querySelectorAll('.ds-slider, [data-slot=slider]').length,metrics:document.querySelectorAll('.ds-metric, [data-slot=metric]').length,
      bg:getComputedStyle(document.documentElement).getPropertyValue('--ds-surface-page').trim()}));
    results.push({route:route.path,appearance,...data,errors});
    if(appearance==='light' && width!==320) await page.screenshot({path:`${output}/${route.id}-${width}.png`});
