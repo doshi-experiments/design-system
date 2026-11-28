@@ -35,17 +35,17 @@ try {
    assert.equal(await page.getByRole('button',{name:'Deal the words',exact:true}).count(),0);
    assert.ok((await page.locator('body').innerText()).includes('Alex'));
   } else {
-   const help = page.locator('.ds-help').first();
+   const help = page.locator('.ds-help, [data-slot=help-trigger]').first();
    await help.focus();
-   await page.locator('.ds-popover').waitFor({state:'visible'});
+   await page.locator('.ds-popover, [data-slot=popover-content]').waitFor({state:'visible'});
    await page.keyboard.press('Escape');
-   await page.locator('.ds-popover').waitFor({state:'hidden'});
+   await page.locator('.ds-popover, [data-slot=popover-content]').waitFor({state:'hidden'});
    await help.click();
-   await page.locator('.ds-popover').waitFor({state:'visible'});
-   const rect = await page.locator('.ds-popover').boundingBox();
+   await page.locator('.ds-popover, [data-slot=popover-content]').waitFor({state:'visible'});
+   const rect = await page.locator('.ds-popover, [data-slot=popover-content]').boundingBox();
    assert.ok(rect.x >= 0 && rect.x + rect.width <= 391, 'Help stays in viewport');
    await page.getByRole('button',{name:'Close',exact:true}).click();
-   await page.locator('.ds-popover').waitFor({state:'hidden'});
+   await page.locator('.ds-popover, [data-slot=popover-content]').waitFor({state:'hidden'});
    const numeric = page.getByLabel('Purchase price', {exact:true});
    await numeric.fill('$1,450,000'); assert.equal(await numeric.inputValue(),'1450000');
    assert.ok((await page.getByRole('status').allTextContents()).some(t=>t.includes('ignored')));
@@ -59,10 +59,10 @@ try {
    assert.equal(await horizon.inputValue(), await slider.getAttribute('max'));
    await horizon.fill('10');
    await numeric.fill('1450000');
-   const ledger = page.locator('.ds-card').filter({has:page.getByRole('heading',{name:'Year-by-year ledger',exact:true})});
+   const ledger = page.locator('.ds-card, [data-slot=card]').filter({has:page.getByRole('heading',{name:'Year-by-year ledger',exact:true})});
    await ledger.getByRole('button',{name:'Show',exact:true}).click();
    assert.ok(await page.getByRole('table',{name:'Year-by-year financial projection'}).isVisible());
-   const scroll = page.locator('.ds-table-scroll');
+   const scroll = page.locator('.ds-table-scroll, [data-slot=table-container]');
    await scroll.evaluate(e => {e.scrollTop=120;});
    const sticky = await scroll.evaluate(e => ({box:e.getBoundingClientRect().top,heading:e.querySelector('th').getBoundingClientRect().top}));
    assert.ok(Math.abs(sticky.heading-sticky.box)<3, 'Table header stays visible while scrolling');
