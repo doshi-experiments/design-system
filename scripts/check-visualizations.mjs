@@ -21,12 +21,13 @@ await new Promise(ready=>server.listen(0,'127.0.0.1',ready));
 const url=`http://127.0.0.1:${server.address().port}/`;
 let browser;
 const results=[];
-const inkNames=['accent','cage','go','ink-dim','line-2','paper-0','redline','safety'];
+// The custom properties the exhibits' canvases read: Felt's tokens, plus the exhibit's own cage and line-2.
+const inkNames=['--ds-action-primary','cage','--ds-success-text','--ds-text-secondary','line-2','--ds-surface-page','--ds-error-text','--ds-crane'];
 
 async function sharedPaper(page){
  const pixels=await page.evaluate(()=>{
   const reference=document.createElement('canvas');reference.width=reference.height=1;
-  const g=reference.getContext('2d');g.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--paper-0').trim();g.fillRect(0,0,1,1);
+  const g=reference.getContext('2d');g.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--ds-surface-page').trim();g.fillRect(0,0,1,1);
   const target=[...g.getImageData(0,0,1,1).data];
   const canvases=[...document.querySelectorAll('#stage canvas')];
   const samples=canvases.map(canvas=>{const context=canvas.getContext('2d');return context?[1,28,140].map(x=>[...context.getImageData(x,250,1,1).data]):null;});
@@ -45,7 +46,7 @@ try{
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
   await page.goto(url,{waitUntil:'networkidle'});
   await page.getByLabel('Appearance',{exact:true}).selectOption(appearance);
-  const inks=await page.evaluate(names=>{const css=getComputedStyle(document.documentElement);return names.map(name=>({name,value:css.getPropertyValue('--'+name).trim()}));},inkNames);
+  const inks=await page.evaluate(names=>{const css=getComputedStyle(document.documentElement);return names.map(name=>({name,value:css.getPropertyValue(name.startsWith('--')?name:'--'+name).trim()}));},inkNames);
   for(const token of inks)assert.ok(token.value&&await page.evaluate(value=>CSS.supports('color',value),token.value),`Valid ${token.name} ink in ${appearance} mode`);
   for(const name of['Growth Cage','Silk','Divergence','Harmonograph']){
    await page.getByRole('tab',{name,exact:true}).click();await page.waitForTimeout(150);
